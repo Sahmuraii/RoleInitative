@@ -10,7 +10,6 @@ db = SQLAlchemy()
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-
 class Users(db.Model, UserMixin):
 	id = db.Column(db.Integer, primary_key=True)
 	username = db.Column(db.String(250), unique=True, nullable=False)
