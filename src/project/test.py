@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql+psycopg2://{user}:{pw}@{url}/{db}'.format(user="postgres",pw="password",url="localhost",db="flask_db")
+app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://{user}:{pw}@{url}/{db}'.format(user="dungeon_master",pw="Roll4Initiative#Nat20_Crit",url="71.93.81.236:10020",db="RoleInitiative")
 app.config["SECRET_KEY"] = "abc"
 db = SQLAlchemy()
 
