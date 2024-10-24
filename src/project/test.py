@@ -33,7 +33,7 @@ with app.app_context():
 def loader_user(user_id):
 	return Users.query.get(user_id)
 
-@login_manager.route('/profile/<username>')
+@app.route('/profile/<username>')
 def profile(username):
     # Query the database to find the user by username
     user = Users.query.filter_by(username=username).first()
