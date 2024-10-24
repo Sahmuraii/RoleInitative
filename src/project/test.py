@@ -75,7 +75,7 @@ def login():
 		if password_match:
 			login_user(user)
 			return redirect(url_for("home"))
-	return render_template("login.html")
+	return render_template("home.html")
 
 
 @app.route("/logout")
