@@ -4,6 +4,8 @@ from flask_login import LoginManager
 from os import getenv
 from app.models import db
 from app.models import Users
+from auth import auth_bp
+from profile import profile_bp
 
 app = Flask(__name__)
 
