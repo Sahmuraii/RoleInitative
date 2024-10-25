@@ -1,6 +1,7 @@
-from flask import render_template
-from . import profile_bp
+from flask import render_template, Blueprint
 from app.models import Users
+
+profile_bp = Blueprint('profile', __name__, template_folder='../templates')
 
 @profile_bp.route('/profile/<username>')
 def profile(username):

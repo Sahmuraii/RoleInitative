@@ -4,8 +4,8 @@ from flask_login import LoginManager
 from os import getenv
 from app.models import db
 from app.models import Users
-from app.auth import auth_bp
-from app.profile import profile_bp
+from .auth.routes import auth_bp
+from .profile.routes import profile_bp
 
 app = Flask(__name__)
 
