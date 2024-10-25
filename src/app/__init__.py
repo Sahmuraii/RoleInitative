@@ -29,10 +29,6 @@ with app.app_context():
 def load_user(user_id):
     return Users.query.get(user_id)
 
-@app.route('/')
-def home():
-    return render_template('home.html')
-
 from app.auth import auth_bp
 from app.profile import profile_bp
 
