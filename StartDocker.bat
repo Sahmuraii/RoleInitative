@@ -1,5 +1,20 @@
 @echo off
 
+:: Set the image name and container name
+set imageName=flask-app
+set containerName=RoleInitiative-container
+
+:: Set dockerfile name
+set dockerfilePath=BatchDockerfile.local
+
+:: Set file structure information
+set appFolder=/RoleInitiativeFolder
+set projectFolder=/RoleInitiative
+set appPath=/src
+set appName=app
+
+
+
 :: Check if Docker is running by using docker info
 docker info >nul 2>&1
 if errorlevel 1 (
@@ -7,48 +22,72 @@ if errorlevel 1 (
     exit /b 1
 )
 
-:: Set the image name and container name
-set imageName=flask-app
-set containerName=RoleInitiative-container
+:: Prompt the user for which Dockerfile to use
+echo Select which Dockerfile to use for building the Docker image:
+echo (1). Github Main Branch
+echo (2). Github Dev Branch
+echo (3). Local Files
+echo (4). *Custom Github branch
+choice /c 1234 /n /m "Enter the number (1, 2, 3, or 4): "
 
-:: Define Dockerfile paths
-set dockerfile1=Dockerfile-MainGit
-set dockerfile2=Dockerfile-DevGit
-set dockerfile3=Dockerfile-LocalFile
-
-:: Check if Dockerfile1 exists, if not, create it
-if not exist %dockerfile1% (
-    echo Creating Dockerfile-MainGit...
+:: Determine which Dockerfile to use based on user input
+if errorlevel 4 (
+	echo Creating Custom Dockerfile...
+	set /p choice="Enter the name of the branch: "
     (
-        echo # Dockerfile - Main Github configuration
+        echo # Dockerfile - Custom-branch configuration
         echo FROM python:3.12.7
 		echo.
 		echo ARG CACHEBUST=1
 		echo.
-		echo WORKDIR /RoleInitiativeFolder
+		echo WORKDIR %appFolder%
+		echo #RUN git clone -b %choice% https://github.com/Sahmuraii/RoleInitiative.git
 		echo.
-		echo RUN git clone -b main https://github.com/Sahmuraii/RoleInitiative.git
-		echo #RUN git clone -b dev-branch https://github.com/Sahmuraii/RoleInitiative.git
-		echo.
-		echo WORKDIR /RoleInitiativeFolder/RoleInitiative
-		echo COPY requirements.txt .
+		echo WORKDIR %appFolder%%projectFolder%
+		echo COPY . . 
 		echo.
 		echo RUN pip install -r requirements.txt
 		echo.
 		echo EXPOSE 5000
 		echo.
 		echo #Run Github Branch
-		echo WORKDIR /RoleInitiativeFolder/RoleInitiative/src/project
+		echo #WORKDIR %appFolder%%projectFolder%/%appPath%
 		echo.
 		echo #Run local development
-		echo #WORKDIR /RoleInitiativeFolder/src/project
+		echo WORKDIR %appFolder%%projectFolder%/%appPath%
 		echo.
-		echo ENTRYPOINT FLASK_APP=test FLASK_DEBUG=1 flask run --port=5000 --host=0.0.0.0
-    ) > %dockerfile1%
-)
-
-:: Check if Dockerfile2 exists, if not, create it
-if not exist %dockerfile2% (
+		echo ENTRYPOINT FLASK_APP=%appName% FLASK_DEBUG=1 flask run --port=5000 --host=0.0.0.0
+    ) > %dockerfilePath%
+    echo Using Dockerfile - Custom-branch configuration...
+) else if errorlevel 3 (
+	echo Creating Dockerfile-LocalFile...
+    (
+        echo # Dockerfile - Local File configuration
+        echo FROM python:3.12.7
+		echo.
+		echo ARG CACHEBUST=1
+		echo.
+		echo WORKDIR %appFolder%
+		echo #RUN git clone -b main https://github.com/Sahmuraii/RoleInitiative.git
+		echo #RUN git clone -b dev-branch https://github.com/Sahmuraii/RoleInitiative.git
+		echo.
+		echo WORKDIR %appFolder%%projectFolder%
+		echo COPY . . 
+		echo.
+		echo RUN pip install -r requirements.txt
+		echo.
+		echo EXPOSE 5000
+		echo.
+		echo #Run Github Branch
+		echo #WORKDIR %appFolder%%projectFolder%/%appPath%
+		echo.
+		echo #Run local development
+		echo WORKDIR %appFolder%%projectFolder%/%appPath%
+		echo.
+		echo ENTRYPOINT FLASK_APP=%appName% FLASK_DEBUG=1 flask run --port=5000 --host=0.0.0.0
+    ) > %dockerfilePath%
+    echo Using Dockerfile - Local File configuration...
+) else if errorlevel 2 (
     echo Creating Dockerfile-DevGit...
     (
         echo # Dockerfile - Developer Github configuration
@@ -56,12 +95,12 @@ if not exist %dockerfile2% (
 		echo.
 		echo ARG CACHEBUST=1
 		echo.
-		echo WORKDIR /RoleInitiativeFolder
+		echo WORKDIR %appFolder%
 		echo.
 		echo #RUN git clone -b main https://github.com/Sahmuraii/RoleInitiative.git
 		echo RUN git clone -b dev-branch https://github.com/Sahmuraii/RoleInitiative.git
 		echo.
-		echo WORKDIR /RoleInitiativeFolder/RoleInitiative
+		echo WORKDIR %appFolder%%projectFolder%
 		echo COPY . . 
 		echo.
 		echo RUN pip install -r requirements.txt
@@ -69,64 +108,45 @@ if not exist %dockerfile2% (
 		echo EXPOSE 5000
 		echo.
 		echo #Run Github Branch
-		echo WORKDIR /RoleInitiativeFolder/RoleInitiative/src/project
+		echo WORKDIR %appFolder%%projectFolder%/%appPath%
 		echo.
 		echo #Run local development
-		echo #WORKDIR /RoleInitiativeFolder/src/project
+		echo #WORKDIR %appFolder%/%appPath%
 		echo.
-		echo ENTRYPOINT FLASK_APP=test FLASK_DEBUG=1 flask run --port=5000 --host=0.0.0.0
-    ) > %dockerfile2%
-)
-
-:: Check if Dockerfile3 exists, if not, create it
-if not exist %dockerfile3% (
-    echo Creating Dockerfile-LocalFile...
-    (
-        echo # Dockerfile - Developer Github configuration
+		echo ENTRYPOINT FLASK_APP=%appName% FLASK_DEBUG=1 flask run --port=5000 --host=0.0.0.0
+    ) > %dockerfilePath%
+    echo Using Dockerfile - Developer Github configuration...
+) else if errorlevel 1 (
+	echo Creating Dockerfile-MainGit...
+	(
+        echo # Dockerfile - Main Github configuration
         echo FROM python:3.12.7
 		echo.
 		echo ARG CACHEBUST=1
 		echo.
-		echo WORKDIR /RoleInitiativeFolder/RoleInitiativeFolder
-		echo #RUN git clone -b main https://github.com/Sahmuraii/RoleInitiative.git
+		echo WORKDIR %appFolder%
+		echo.
+		echo RUN git clone -b main https://github.com/Sahmuraii/RoleInitiative.git
 		echo #RUN git clone -b dev-branch https://github.com/Sahmuraii/RoleInitiative.git
 		echo.
-		echo WORKDIR /RoleInitiativeFolder/RoleInitiative
-		echo COPY . . 
+		echo WORKDIR %appFolder%%projectFolder%
+		echo COPY requirements.txt .
 		echo.
 		echo RUN pip install -r requirements.txt
 		echo.
 		echo EXPOSE 5000
 		echo.
 		echo #Run Github Branch
-		echo #WORKDIR /RoleInitiativeFolder/RoleInitiative/src/project
+		echo WORKDIR %appFolder%%projectFolder%/%appPath%
 		echo.
 		echo #Run local development
-		echo WORKDIR /RoleInitiativeFolder/RoleInitiative/src/project
+		echo #WORKDIR %appFolder%/%appPath%
 		echo.
-		echo ENTRYPOINT FLASK_APP=test FLASK_DEBUG=1 flask run --port=5000 --host=0.0.0.0
-    ) > %dockerfile3%
-)
-
-:: Prompt the user for which Dockerfile to use
-echo Select which Dockerfile to use for building the Docker image:
-echo (1). Github Main Branch (located at ./Dockerfile1)
-echo (2). Github Dev Branch (located at ./Dockerfile2)
-echo (3). Local Files (located at ./Dockerfile3)
-choice /c 123 /n /m "Enter the number (1, 2, or 3): "
-
-:: Determine which Dockerfile to use based on user input
-if errorlevel 3 (
-	set dockerfilePath=%dockerfile3%
-    echo Using %dockerfile3%...
-) else if errorlevel 2 (
-    set dockerfilePath=%dockerfile2%
-    echo Using %dockerfile2%...
-) else if errorlevel 1 (
-	set dockerfilePath=%dockerfile1%
-    echo Using %dockerfile1%...
+		echo ENTRYPOINT FLASK_APP=%appName% FLASK_DEBUG=1 flask run --port=5000 --host=0.0.0.0
+    ) > %dockerfilePath%
+    echo Using Dockerfile - Main Github configuration...
 ) else (
-    echo Invalid choice. Please enter 1, 2, or 3.
+    echo Invalid choice. Please enter 1, 2, 3, or 4.
 	echo Closing in 5 seconds...
 	timeout /t 5 /nobreak >nul
     exit /b 1
@@ -176,5 +196,5 @@ echo Docker image built and running successfully with container name and port ma
 
 :: Add a 15-second timer before closing
 echo Closing in 15 seconds...
-timeout /t 15 /nobreak >nul
+timeout /t 15 /nobreak
 exit /b 0
