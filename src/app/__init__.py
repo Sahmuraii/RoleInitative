@@ -16,7 +16,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://{user}:{pw}@{url}/{db}'.fo
 app.config["SECRET_KEY"] = getenv('FLASK_SECRET_KEY')
 
 
-db = SQLAlchemy()
+db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 db.init_app(app)
