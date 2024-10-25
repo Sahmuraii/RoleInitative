@@ -1,0 +1,24 @@
+# Dockerfile - Developer Github configuration
+FROM python:3.12.7
+
+ARG CACHEBUST=1
+
+WORKDIR /RoleInitiativeFolder
+
+#RUN git clone -b main https://github.com/Sahmuraii/RoleInitiative.git
+RUN git clone -b dev-branch https://github.com/Sahmuraii/RoleInitiative.git
+
+WORKDIR /RoleInitiativeFolder/RoleInitiative
+COPY . . 
+
+RUN pip install -r requirements.txt
+
+EXPOSE 5000
+
+#Run Github Branch
+WORKDIR /RoleInitiativeFolder/RoleInitiative/src/project
+
+#Run local development
+#WORKDIR /RoleInitiativeFolder/src/project
+
+ENTRYPOINT FLASK_APP=test FLASK_DEBUG=1 flask run --port=5000 --host=0.0.0.0
