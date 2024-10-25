@@ -1,9 +1,10 @@
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, Blueprint
 from flask_login import login_user, logout_user
 from app.models import Users
-from . import auth_bp
 from app import db
 import bcrypt
+
+auth_bp = Blueprint('auth', __name__, template_folder='../templates')
 
 @auth_bp.route("/register", methods=["GET", "POST"])
 def register():
