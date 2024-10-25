@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from os import getenv
 from app.models import db
+from app.models import Users
 
 app = Flask(__name__)
 
