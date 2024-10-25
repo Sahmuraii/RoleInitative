@@ -30,8 +30,8 @@ def load_user(user_id):
     return Users.query.get(user_id)
 
 # Register Blueprints
-app.register_blueprint(auth_bp, url_prefix='/auth')
-app.register_blueprint(profile_bp, url_prefix='/profile')
+app.register_blueprint(auth_bp)
+app.register_blueprint(profile_bp)
 
 # Home route
 @app.route('/')
