@@ -2,7 +2,7 @@ FROM python:3.12.7
 
 ARG CACHEBUST=1
 
-RUN git clone -b blueprint https://github.com/Sahmuraii/RoleInitiative.git
+RUN git clone -b dev-branch https://github.com/Sahmuraii/RoleInitiative.git
 COPY . . 
 
 WORKDIR /RoleInitiative
