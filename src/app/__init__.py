@@ -2,7 +2,7 @@ from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from os import getenv
-from . import models
+from models import db
 
 app = Flask(__name__)
 
@@ -14,7 +14,6 @@ app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://{user}:{pw}@{url}/{db}'.fo
     db=getenv('DATABASE_NAME')
 )
 app.config["SECRET_KEY"] = getenv('FLASK_SECRET_KEY')
-
 
 login_manager = LoginManager()
 login_manager.init_app(app)
