@@ -29,9 +29,6 @@ with app.app_context():
 def load_user(user_id):
     return Users.query.get(user_id)
 
-from app.auth import auth_bp
-from app.profile import profile_bp
-
 # Register Blueprints
 app.register_blueprint(auth_bp, url_prefix='/auth')
 app.register_blueprint(profile_bp, url_prefix='/profile')
