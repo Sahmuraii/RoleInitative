@@ -3,8 +3,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from os import getenv
 from app.models import Users
-db = SQLAlchemy()
-login_manager = LoginManager()
 
 app = Flask(__name__)
 
@@ -16,10 +14,12 @@ app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://{user}:{pw}@{url}/{db}'.fo
     db=getenv('DATABASE_NAME')
 )
 app.config["SECRET_KEY"] = getenv('FLASK_SECRET_KEY')
-    
 
-db.init_app(app)
+
+db = SQLAlchemy()
+login_manager = LoginManager()
 login_manager.init_app(app)
+db.init_app(app)
 
 with app.app_context():
     db.create_all()
