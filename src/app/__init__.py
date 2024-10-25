@@ -37,4 +37,3 @@ app.register_blueprint(profile_bp)
 @app.route('/')
 def home():
     return render_template('home.html')
-
