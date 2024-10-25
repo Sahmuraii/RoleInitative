@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
-from .models import Users
+from app.models import Users
 
 db = SQLAlchemy()
 login_manager = LoginManager()
