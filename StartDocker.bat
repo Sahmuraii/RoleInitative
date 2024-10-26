@@ -19,6 +19,7 @@ set appName=app
 docker info >nul 2>&1
 if errorlevel 1 (
     echo Docker Desktop is not running. Please start Docker Desktop and try again.
+	timeout /t 5 /nobreak
     exit /b 1
 )
 
