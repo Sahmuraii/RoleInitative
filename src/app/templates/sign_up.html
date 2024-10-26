@@ -19,12 +19,36 @@
 	</ul>
 	</nav>
 	<h1>Create an account</h1>
-	<form action="#" method="post">
-	<label for="username">Username:</label>
-	<input type="text" name="username" />
-	<label for="password">Password:</label>
-	<input type="password" name="password" />
-	<button type="submit">Submit</button>
+	<form action="#" method="post" onsubmit="return validateForm()">
+    <label for="username">Username:</label>
+    <input type="text" name="username" required />
+
+    <label for="password">Password:</label>
+    <input type="password" name="password" id="password" required />
+
+    <button type="submit">Submit</button>
+
+    <p id="passwordError" style="color: red; display: none;">Password must be at least 8 characters long, and include at least one uppercase letter, one lowercase letter, one number, and one special character.</p>
 	</form>
+
+	<script>
+	function validateForm() {
+	    const password = document.getElementById("password").value;
+	    const errorElement = document.getElementById("passwordError");
+
+	    // Regular expression for strong password criteria
+	    const strongPasswordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+
+	    if (!strongPasswordPattern.test(password)) {
+	        // Show error message and prevent form submission
+	        errorElement.style.display = "block";
+	        return false;
+	    } else {
+	        // Hide error message and allow form submission
+	        errorElement.style.display = "none";
+	        return true;
+	    }
+	}
+	</script>
 </body>
 </html>
