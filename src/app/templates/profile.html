@@ -8,5 +8,16 @@
 <body>
     <h1>{{ user.username }}'s Profile</h1>
     <p>Email: {{ user.email }}</p>
+    <p>user characters:</p>
+    <ul>
+        {% for entry in userChars %}
+        <li>{{entry.name}}</li>
+        {%endfor%}
+    </ul>
+    <form method="post">
+        <label for="charname">character name:</label>
+        <input type="text" name="charname" required />
+        <button type="submit">create character</button>
+    </form>
 </body>
 </html>
