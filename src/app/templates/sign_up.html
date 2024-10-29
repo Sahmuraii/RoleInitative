@@ -14,9 +14,9 @@
 <body>
 	<nav>
 	<ul>
-		<a href="/login">Log In</a>
+		<a href="{{ url_for('auth.login') }}">Log In</a>
 		 | 
-		<a href="/register">Create Account</a>
+		<a href="{{ url_for('auth.register') }}">Create Account</a>
 	</ul>
 	</nav>
 	<h1>Create an account</h1>
@@ -38,7 +38,7 @@
     <button type="submit">Submit</button>
 
     <p id="passwordError" style="color: red; display: none;">
-        Password must be at least 8 characters long, and include at least one uppercase letter, one lowercase letter, one number, and one special character.
+        Password must be at least 8 characters long, and include at least: one uppercase letter, one lowercase letter, one number, and one special character.
     </p>
     <p id="matchError" style="color: red; display: none;">
         Passwords do not match.

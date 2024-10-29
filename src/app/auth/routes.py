@@ -1,5 +1,5 @@
 from flask import render_template, request, redirect, url_for, Blueprint
-from flask_login import login_user, logout_user
+from flask_login import login_user, logout_user, login_required
 from app.models import Users
 from app import db
 import bcrypt
@@ -37,6 +37,7 @@ def login():
     return render_template("login.html")
 
 @auth_bp.route("/logout")
+@login_required
 def logout():
     logout_user()
     return redirect(url_for("home"))

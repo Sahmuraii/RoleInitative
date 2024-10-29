@@ -14,9 +14,9 @@
 <body>
 	<nav>
 	<ul>
-		<a href="/login">Log In</a>
+		<a href="{{ url_for('auth.login') }}">Log In</a>
 		 | 
-		<a href="/register">Create Account</a>
+		<a href="{{ url_for('auth.register') }}">Create Account</a>
 	</ul>
 	</nav>
 	<h1>Login to your account</h1>
