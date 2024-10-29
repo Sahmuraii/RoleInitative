@@ -24,17 +24,19 @@ if errorlevel 1 (
 )
 
 :: Prompt the user for which Dockerfile to use
+echo -------------------------------------------------------------
 echo Select which Dockerfile to use for building the Docker image:
 echo (1). Github Main Branch
 echo (2). Github Dev Branch
 echo (3). Local Files
 echo (4). *Custom Github branch
 choice /c 1234 /n /m "Enter the number (1, 2, 3, or 4): "
+echo.
 
 :: Determine which Dockerfile to use based on user input
 if errorlevel 4 (
-	echo Creating Custom Dockerfile...
 	set /p choice="Enter the name of the branch: "
+	echo Creating Dockerfile (Custom - %choice%^)...
     (
         echo # Dockerfile - Custom-branch configuration
         echo FROM python:3.12.7
@@ -61,7 +63,7 @@ if errorlevel 4 (
     ) > %dockerfilePath%
     echo Using Dockerfile - Custom-branch configuration...
 ) else if errorlevel 3 (
-	echo Creating Dockerfile-LocalFile...
+	echo Creating Dockerfile (LocalFile^)...
     (
         echo # Dockerfile - Local File configuration
         echo FROM python:3.12.7
@@ -89,7 +91,7 @@ if errorlevel 4 (
     ) > %dockerfilePath%
     echo Using Dockerfile - Local File configuration...
 ) else if errorlevel 2 (
-    echo Creating Dockerfile-DevGit...
+    echo Creating Dockerfile (DevGit^)...
     (
         echo # Dockerfile - Developer Github configuration
         echo FROM python:3.12.7
@@ -118,7 +120,7 @@ if errorlevel 4 (
     ) > %dockerfilePath%
     echo Using Dockerfile - Developer Github configuration...
 ) else if errorlevel 1 (
-	echo Creating Dockerfile-MainGit...
+	echo Creating Dockerfile (MainGit^)...
 	(
         echo # Dockerfile - Main Github configuration
         echo FROM python:3.12.7
@@ -153,9 +155,10 @@ if errorlevel 4 (
     exit /b 1
 )
 timeout /t 1 /nobreak >nul
-echo.
 
 :: Check for any running container with the same name
+echo.
+echo -------------------------------------------------------------
 echo Checking for any running container with the name %containerName%...
 for /f "tokens=*" %%i in ('docker ps -a -q -f "name=%containerName%"') do set containerExists=%%i
 
@@ -193,9 +196,44 @@ if errorlevel 1 (
 
 echo.
 echo.
+echo -------------------------------------------------------------
 echo Docker image built and running successfully with container name and port mapping.
 
-:: Add a 15-second timer before closing
-echo Closing in 15 seconds...
-timeout /t 15 /nobreak
+
+:: Prompt the user if they would like to stop the dockerfile
+echo.
+echo -------------------------------------------------------------
+echo Would you like to stop the docker container?
+echo (Will default to option 3 after 30 seconds^)
+echo (1). Ready to stop
+echo (2). Leave it running
+echo (3). Wait 2 minutes and stop
+choice /t 30 /c 123 /d 3 /n /m "Enter the number (1, 2, or 3): "
+
+:: Determine whether or not to stop the container based on user input
+echo.
+echo -------------------------------------------------------------
+if errorlevel 3 (
+	echo Setting 2 minute timer...
+	timeout /t 120
+	echo Stopping the container %containerName%...
+	docker stop %containerName% >nul
+) else if errorlevel 2 (
+	::Do nothing...
+	echo Closing gently...
+) else if errorlevel 1 (
+	echo Stopping the container %containerName%...
+	docker stop %containerName% >nul
+) else (
+    echo Invalid choice. Please enter 1, 2, or 3
+	echo Closing in 5 seconds...
+	timeout /t 5 /nobreak >nul
+    exit /b 1
+)
+
+:: Show a 10-second timer before closing
+echo.
+echo -------------------------------------------------------------
+echo Closing in 10 seconds...
+timeout /t 10 /nobreak
 exit /b 0
