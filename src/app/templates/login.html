@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title_content %}Login{% endblock %}
+
+{% block body_content %}
+	<nav>
+	<ul>
+		<a href="{{ url_for('auth.login') }}">Log In</a>
+		 | 
+		<a href="{{ url_for('auth.register') }}">Create Account</a>
+	</ul>
+	</nav>
+	<h1>Login to your account</h1>
+	<form action="#" method="post">
+	<label for="username">Username:</label>
+	<input type="text" name="username" />
+	<label for="password">Password:</label>
+	<input type="password" name="password" />
+	<button type="submit">Submit</button>
+	</form>
+{% endblock %}
