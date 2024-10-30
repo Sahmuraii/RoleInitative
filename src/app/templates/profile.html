@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ user.username }}'s Profile</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title_content %}{{ user.username }}'s Profile{% endblock %}
+
+{% block body_content %}
     <nav>
         <ul>
             <a href="{{url_for('auth.logout')}}">Logout</a>
@@ -26,7 +23,4 @@
         <input type="text" name="charname" required />
         <button type="submit">create character</button>
     </form>
-
-    
-</body>
-</html>
+{% endblock %}

@@ -1,17 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8" />
-	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>Login</title>
-	<style>
-		h1{
-		color: green;
-		}
-	</style>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title_content %}Login{% endblock %}
+
+{% block body_content %}
 	<nav>
 	<ul>
 		<a href="{{ url_for('auth.login') }}">Log In</a>
@@ -27,5 +18,4 @@
 	<input type="password" name="password" />
 	<button type="submit">Submit</button>
 	</form>
-</body>
-</html>
+{% endblock %}

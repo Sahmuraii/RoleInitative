@@ -1,0 +1,29 @@
+
+/*----------------------------------------------------------------*/
+/* Main Stylings and variable definitions*/
+:root {
+    /*color-scheme: light dark;*/
+    
+    --accentColor: rgb(240, 240, 229 );
+    --primaryRed: rgb(146, 12, 16);
+    --darkRed: rgb(26, 15, 15);
+    --secondaryColor: rgb(195, 152, 60);
+    --lightText: rgb(235, 232, 230);
+    --darkText: rgb(8, 0, 0);
+    --white: rgb(255, 255, 255);
+    --black: rgb(0, 0, 0);
+    --transparent: rgba(250, 23, 23, 0);
+
+    /*Light theme colors*/
+    --mainBackgroundColor: var(--accentColor);
+    }
+
+body {
+  background: url('../images/BackgroundOverlay.png') left top repeat;
+  background-color: var(--mainBackgroundColor);
+  color: var(--black);
+}
+
+h1 {
+  color: var(--darkRed);
+}

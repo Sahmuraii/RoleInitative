@@ -19,7 +19,7 @@ set appName=app
 docker info >nul 2>&1
 if errorlevel 1 (
     echo Docker Desktop is not running. Please start Docker Desktop and try again.
-	timeout /t 5 /nobreak
+    timeout /t 5 /nobreak
     exit /b 1
 )
 
@@ -207,15 +207,15 @@ echo Would you like to stop the docker container?
 echo (Will default to option 3 after 30 seconds^)
 echo (1). Ready to stop
 echo (2). Leave it running
-echo (3). Wait 2 minutes and stop
+echo (3). Wait 75 seconds and stop
 choice /t 30 /c 123 /d 3 /n /m "Enter the number (1, 2, or 3): "
 
 :: Determine whether or not to stop the container based on user input
 echo.
 echo -------------------------------------------------------------
 if errorlevel 3 (
-	echo Setting 2 minute timer...
-	timeout /t 120
+	echo Setting 75 second timer...
+	timeout /t 75
 	echo Stopping the container %containerName%...
 	docker stop %containerName% >nul
 ) else if errorlevel 2 (
