@@ -3,7 +3,7 @@
 /* Main Stylings and variable definitions*/
 :root {
     /*color-scheme: light dark;*/
-    
+
     --accentColor: rgb(240, 240, 229 );
     --primaryRed: rgb(146, 12, 16);
     --darkRed: rgb(26, 15, 15);
@@ -16,14 +16,79 @@
 
     /*Light theme colors*/
     --mainBackgroundColor: var(--accentColor);
-    }
+    --whiteText: var(--white);
+    --blackText: var(--black);
+}
 
+/*----------------------------------------------------------------*/
+/* General Stylings and variable definitions*/
 body {
-  background: url('../images/BackgroundOverlay.png') left top repeat;
-  background-color: var(--mainBackgroundColor);
-  color: var(--black);
+    background: url('../images/BackgroundOverlay.png') left top repeat;
+    background-color: var(--mainBackgroundColor);
+    color: var(--black);
 }
 
 h1 {
-  color: var(--darkRed);
+    color: var(--darkRed);
 }
+
+
+/*----------------------------------------------------------------*/
+/* Page Navbar Stylings*/
+.nav_page_header {
+    background-color: var(--primaryRed);
+}
+
+.nav_page_header ul {
+    padding: 0px;
+    margin: 0px;
+    list-style: none;
+    position: relative;
+}
+
+.nav_page_header ul li {
+    display: inline-block;
+    background-color: var(--primaryRed);
+}
+
+.nav_page_header a {
+    display: block;
+    padding: 0px 10px;
+    color: var(--whiteText);
+    /*font size: 20px;*/
+    line-height: 60px;
+    text-decoration: none;
+}
+
+.nav_page_header a:hover {
+    background-color: var(--darkRed);
+    color: var(--whiteText);
+    font-weight: bold;
+}
+
+.nav_page_header ul ul {
+    display: none;
+    position: absolute;
+    top: 60px;
+}
+
+.nav_page_header ul li:hover > ul {
+    display: inherit;
+}
+
+.nav_page_header ul ul li {
+    width: 170px;
+    float: none;
+    display: list-item;
+    position: relative;
+}
+
+.nav_page_header ul ul ul li {
+    position: relative;
+    top: -60px;
+    left: 170px;
+}
+
+li > a:after { content:  ' +'; }
+li > a:only-child:after { content: ''; }
+
