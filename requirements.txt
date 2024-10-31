@@ -18,3 +18,4 @@ bcrypt~=4.2.0
 WTForms~=3.2.1
 decouple~=0.0.7
 Flask-Migrate~=4.0.7
+email-validator==1.2.1

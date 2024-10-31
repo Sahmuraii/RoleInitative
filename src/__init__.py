@@ -6,40 +6,47 @@ from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
 
-app = Flask(__name__)
+db = SQLAlchemy()
+migrate = Migrate()
+bcrypt = Bcrypt()
 
-# Load configuration from config.py or environment variables
-app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://{user}:{pw}@{url}/{db}'.format(
-    user=getenv('DATABASE_USER'),
-    pw=getenv('DATABASE_PASSWORD'),
-    url=getenv('DATABASE_URL'),
-    db=getenv('DATABASE_NAME')
-)
-app.config["SECRET_KEY"] = getenv('FLASK_SECRET_KEY')
+def create_app():
+    app = Flask(__name__)
 
-login_manager = LoginManager()
-login_manager.init_app(app)
+    # Load configuration from config.py or environment variables
+    app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://{user}:{pw}@{url}/{db}'.format(
+        user=getenv('DATABASE_USER'),
+        pw=getenv('DATABASE_PASSWORD'),
+        url=getenv('DATABASE_URL'),
+        db=getenv('DATABASE_NAME')
+    )
+    app.config["SECRET_KEY"] = getenv('FLASK_SECRET_KEY')
 
-bcrypt = Bcrypt(app)
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
+    login_manager = LoginManager()
+    login_manager.init_app(app)
 
-# Registering blueprints
-from src.auth.views import auth_bp
-from src.core.views import core_bp
+    bcrypt = Bcrypt(app)
+    db = SQLAlchemy(app)
+    migrate = Migrate(app, db)
 
-app.register_blueprint(auth_bp)
-app.register_blueprint(core_bp)
+    # Registering blueprints
+    from src.auth.views import auth_bp
+    from src.core.views import core_bp
 
-from src.auth.models import User
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(core_bp)
 
-login_manager.login_view = "auth.login"
-login_manager.login_message_category = "danger"
+    from src.auth.models import User
+
+    login_manager.login_view = "auth_bp.login"
+    login_manager.login_message_category = "danger"
 
 
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.filter(User.id == int(user_id)).first()
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.query.filter(User.id == int(user_id)).first()
+
+    return app
 
 
 ########################

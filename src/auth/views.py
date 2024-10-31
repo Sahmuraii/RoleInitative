@@ -1,10 +1,11 @@
 from flask import render_template, request, redirect, url_for, Blueprint, flash
 from flask_login import login_user, logout_user, login_required, current_user
 
-from src import bcrypt, db
+import bcrypt
 from src.auth.models import User
 
 from .forms import LoginForm, RegisterForm
+from .. import db
 
 auth_bp = Blueprint("auth_bp", __name__, template_folder="templates")
 
@@ -59,6 +60,7 @@ def login():
             flash("Invalid email or password. Please check your entered information, then try again", "danger")
             return render_template("auth/login.html")
             # return render_template("login.html")
+    return render_template("auth/login.html", form=form)
 
 @auth_bp.route("/logout")
 @login_required

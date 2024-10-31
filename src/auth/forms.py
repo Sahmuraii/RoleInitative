@@ -26,10 +26,7 @@ class LoginForm(FlaskForm):
 class RegisterForm(FlaskForm):
     username = StringField(
         "Username",
-        validators=[
-            DataRequired(),
-            Length(min=3, max=20, message="Username must be between 3 and 20 characters")
-        ]
+        validators=[DataRequired(), Length(min=3, max=20, message="Username must be between 3 and 20 characters")]
     )
     email = EmailField(
         "Email",
@@ -39,23 +36,23 @@ class RegisterForm(FlaskForm):
             Length(min=6, max=40)
         ]
     )
-    password = PasswordField(
+    password = PasswordField(  # Removed comma here
         "Password",
         validators=[
             DataRequired(),
             Length(min=8, max=25)
         ]
-    ),
-    confirm = PasswordField(
+    )
+    confirm = PasswordField(  # Removed comma here
         "Repeat password",
         validators=[
             DataRequired(),
-            EqualTo("password", message="Passwords must match."),
-        ],
+            EqualTo("password", message="Passwords must match.")
+        ]
     )
 
-    def validate(self):
-        if not super(RegisterForm, self).validate():
+    def validate(self, **kwargs):
+        if not super(RegisterForm, self).validate(**kwargs):
             return False
         user = User.query.filter_by(email=self.email.data).first()
         if user:
