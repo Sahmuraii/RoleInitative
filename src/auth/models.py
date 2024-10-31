@@ -2,15 +2,26 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 
+from datetime import datetime
+
 db = SQLAlchemy()
 
-class Users(db.Model, UserMixin):
+class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(250), unique=True, nullable=False)
-    password = db.Column(db.String(250), nullable=False)
+    email = db.Column(db.String, unique=True, nullable=False)
+    username = db.Column(db.String, unique=True, nullable=False)
+    password = db.Column(db.String, nullable=False)
+    created_on = db.Column(db.DateTime, nullable=False)
     chars = db.relationship("Characters", backref="owner", lazy="dynamic")
 
-class Characters(db.Model):
+    def __init__(self, email, username, password, isAdmin=False):
+        self.email = email
+        self.username = username
+        self.password = password
+        self.created_on = datetime.now()
+        self.is_admin = isAdmin
+
+class Character(db.Model):
     char_id = db.Column(db.Integer, primary_key=True)
     owner_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable = False)
     campaign_id = db.Column(db.Integer)
