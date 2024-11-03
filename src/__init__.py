@@ -5,7 +5,7 @@ from os import getenv
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
-
+from flask_mail import Mail
 
 app = Flask(__name__)
 
@@ -17,6 +17,17 @@ app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://{user}:{pw}@{url}/{db}'.fo
     db=getenv('DATABASE_NAME')
 )
 app.config["SECRET_KEY"] = getenv('FLASK_SECRET_KEY')
+app.config["SECURITY_PASSWORD_SALT"] = getenv("SECURITY_PASSWORD_SALT", default="very-important")
+
+# Mail Settings
+app.config["MAIL_DEFAULT_SENDER"] = "noreply@flask.com"
+app.config["MAIL_SERVER"] = "smtp.gmail.com"
+app.config["MAIL_PORT"] = 465
+app.config["MAIL_USE_TLS"] = False
+app.config["MAIL_USE_SSL"] = True
+app.config["MAIL_DEBUG"] = False
+app.config["MAIL_USERNAME"] = getenv("EMAIL_USER")
+app.config["MAIL_PASSWORD"] = getenv("EMAIL_PASSWORD")
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -24,13 +35,16 @@ login_manager.init_app(app)
 bcrypt = Bcrypt(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+mail = Mail(app)
 
 # Registering blueprints
 from src.auth.views import auth_bp
 from src.core.views import core_bp
+from src.profile.views import profile_bp
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(core_bp)
+app.register_blueprint(profile_bp)
 
 from src.auth.models import User
 

@@ -5,15 +5,20 @@ import bcrypt
 from src.auth.models import User
 
 from .forms import LoginForm, RegisterForm
-from .. import db
+from src import db
+from src.utils.decorators import logout_required
+from src.auth.token import generate_token, confirm_token
+
+from datetime import datetime
+
+from ..utils.email import send_email
 
 auth_bp = Blueprint("auth_bp", __name__, template_folder="templates")
 
+
 @auth_bp.route("/register", methods=["GET", "POST"])
+@logout_required
 def register():
-    if current_user.is_authenticated:
-        flash("You are already registered.", "info")
-        return redirect(url_for("core.home"))
     form = RegisterForm(request.form)
     if form.validate_on_submit():
         # Grab information from the form
@@ -28,19 +33,57 @@ def register():
         db.session.add(user)
         db.session.commit()
 
-        # Log in the user after they register
         login_user(user)
-        flash("You registered and are now logged in. Welcome!", "success")
 
-        return redirect(url_for("core.home"))
+        return redirect(url_for("auth_bp.send_confirmation"))
     return render_template("auth/register.html", form=form)
 
 
-@auth_bp.route("/login", methods=["GET", "POST"])
-def login():
-    if current_user.is_authenticated:
-        flash("You are already logged in.", "info")
+@auth_bp.route("/inactive")
+@login_required
+def inactive():
+    if current_user.is_confirmed:
         return redirect(url_for("core.home"))
+    return render_template("auth/inactive.html")
+
+
+@auth_bp.route("/send_confirmation")
+@login_required
+def send_confirmation():
+    if current_user.is_confirmed:
+        flash("Your account has already been confirmed.", "success")
+        return redirect(url_for("core.home"))
+    token = generate_token(current_user.email)
+    confirm_url = url_for("auth_bp.confirm_email", token=token, _external=True)
+    html = render_template("auth/confirm_email.html", confirm_url=confirm_url)
+    subject = "RoleInitiative confirmation email"
+    send_email(current_user.email, subject, html)
+    flash("A confirmation email has been sent to your provided email.", "success")
+    return redirect(url_for("auth_bp.inactive"))
+
+
+@auth_bp.route("/confirm/<token>")
+@login_required
+def confirm_email(token):
+    if current_user.is_confirmed:
+        flash("Account already confirmed.", "success")
+        return redirect(url_for("core.home"))
+    email = confirm_token(token)
+    user = User.query.filter_by(email=current_user.email).first_or_404()
+    if user.email == email:  # Compare current email against the email that generated the token
+        user.is_confirmed = True
+        user.confirmed_on = datetime.now()
+        db.session.add(user)
+        db.session.commit()
+        flash("You have confirmed your account.", "success")
+    else:
+        flash("The confirmation link is invalid or has expired.", "danger")
+    return redirect(url_for("core.home"))
+
+
+@auth_bp.route("/login", methods=["GET", "POST"])
+@logout_required
+def login():
     form = LoginForm(request.form)
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
@@ -57,6 +100,7 @@ def login():
             flash("Invalid email or password. Please check your entered information, then try again", "danger")
             return render_template("auth/login.html", form=form)
     return render_template("auth/login.html", form=form)
+
 
 @auth_bp.route("/logout")
 @login_required

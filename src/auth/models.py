@@ -1,5 +1,3 @@
-# models.py
-from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from src import db
 
@@ -15,7 +13,7 @@ class User(db.Model, UserMixin):
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
     is_confirmed = db.Column(db.Boolean, nullable=False, default=False)
     confirmed_on = db.Column(db.TIMESTAMP, nullable=True)
-    #chars = db.relationship("Characters", backref="owner", lazy="dynamic")
+    chars = db.relationship("Character", backref="owner", lazy="dynamic")
 
     def __init__(self, email, username, password, is_admin=False, is_confirmed=False, confirmed_on=None):
         self.email = email
@@ -28,7 +26,7 @@ class User(db.Model, UserMixin):
 
 class Character(db.Model):
     char_id = db.Column(db.Integer, primary_key=True)
-    owner_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable = False)
+    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
     campaign_id = db.Column(db.Integer)
     name = db.Column(db.String(250), nullable = False)
     class_id = db.Column(db.ARRAY(db.Integer), nullable = False)
