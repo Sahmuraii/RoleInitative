@@ -5,9 +5,9 @@
 {% block body_content %}
     <nav>
         <ul>
-            <a href="{{url_for('auth.logout')}}">Logout</a>
-             | 
-            <a href="{{url_for('home')}}">Home</a>
+            <a href="{{url_for('auth_bp.logout')}}">Logout</a>
+             |
+            <a href="{{url_for('core.home')}}">Home</a>
         </ul>
     </nav>
     <h1>{{ user.username }}'s Profile</h1>

@@ -14,7 +14,6 @@ set appPath=/src
 set appName=app
 
 
-
 :: Check if Docker is running by using docker info
 docker info >nul 2>&1
 if errorlevel 1 (
