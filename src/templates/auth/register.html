@@ -1,63 +1,131 @@
 {% block content %}
 
-<div class="row">
-  <div class="col-md-4"></div>
-  <div class="col-md-4">
-    <main class="form-signin w-100 m-auto">
-      <form role="form" method="post" action="">
-        {{ form.csrf_token }}
-        <h1 class="h3 mb-3 fw-normal text-center">Please register</h1>
+    <div class="row">
+      <div class="col-md-4"></div>
+      <div class="col-md-4">
+        <main class="form-signin w-100 m-auto">
+          <form role="form" method="post" action="", onsubmit="return validateForm()">
+            {{ form.csrf_token }}
+            <h1 class="h3 mb-3 fw-normal text-center">Please register</h1>
 
-        <div class="form-floating">
-          {{ form.email(placeholder="email", class="form-control mb-2") }}
-          {{ form.email.label }}
-            {% if form.email.errors %}
-              {% for error in form.email.errors %}
-                <div class="alert alert-danger" role="alert">
-                  {{ error }}
+            {% with messages = get_flashed_messages(with_categories=True) %}
+              {% if messages %}
+                <div class="flashes">
+                  {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                  {% endfor %}
                 </div>
-              {% endfor %}
-            {% endif %}
-        </div>
-        <div class="form-floating">
-          {{ form.username(placeholder="username", class="form-control mb-2") }}
-          {{ form.username.label }}
-            {% if form.username.errors %}
-              {% for error in form.username.errors %}
-                <div class="alert alert-danger" role="alert">
-                  {{ error }}
-                </div>
-              {% endfor %}
-            {% endif %}
-        </div>
-        <div class="form-floating">
-          {{ form.password(placeholder="password", class="form-control mb-2") }}
-          {{ form.password.label }}
-            {% if form.password.errors %}
-              {% for error in form.password.errors %}
-                <div class="alert alert-danger" role="alert">
-                  {{ error }}
-                </div>
-              {% endfor %}
-            {% endif %}
-        </div>
-        <div class="form-floating">
-          {{ form.confirm(placeholder="Confirm Password", class="form-control mb-2") }}
-          {{ form.confirm.label }}
-            {% if form.confirm.errors %}
-              {% for error in form.confirm.errors %}
-                <div class="alert alert-danger" role="alert">
-                  {{ error }}
-                </div>
-              {% endfor %}
-            {% endif %}
-        </div>
-        <button class="w-100 btn btn-lg btn-primary" type="submit">Sign up</button>
-        <p class="text-center mt-3">Already registered? <a href="{{ url_for('auth_bp.login') }}">Login now</a></p>
-      </form>
-    </main>
-  </div>
-  <div class="col-md-4"></div>
-</div>
+              {% endif %}
+            {% endwith %}
+
+            <div class="form-group">
+              {{ form.email.label }}
+              {{ form.email(placeholder="Email", class="form-control") }}
+                {% if form.email.errors %}
+                  {% for error in form.email.errors %}
+                    <div class="text-danger">
+                      {{ error }}
+                    </div>
+                  {% endfor %}
+                {% endif %}
+            </div>
+            <div class="form-group">
+              {{ form.username.label }}
+              {{ form.username(placeholder="Username", class="form-control") }}
+                {% if form.username.errors %}
+                  {% for error in form.username.errors %}
+                    <div class="text-danger">
+                      {{ error }}
+                    </div>
+                  {% endfor %}
+                {% endif %}
+            </div>
+            <div class="form-group">
+              {{ form.password.label }}
+              {{ form.password(placeholder="Password", class="form-control") }}
+                {% if form.password.errors %}
+                  {% for error in form.password.errors %}
+                    <div class="text-danger">
+                      {{ error }}
+                    </div>
+                  {% endfor %}
+                {% endif %}
+            </div>
+            <div class="form-group">
+              {{ form.confirm.label }}
+              {{ form.confirm(placeholder="Confirm Password", class="form-control", id="confirmPassword") }}
+                {% if form.confirm.errors %}
+                  {% for error in form.confirm.errors %}
+                    <div class="alert alert-danger" role="alert">
+                      {{ error }}
+                    </div>
+                  {% endfor %}
+                {% endif %}
+            </div>
+            <!-- Show Password Toggle -->
+            <label>
+                <input type="checkbox" onclick="togglePassword()"> Show Password
+            </label>
+
+            <p id="passwordError" style="color: red; display: none;">
+                Password must be at least 8 characters long, and include at least: one uppercase letter, one lowercase letter, one number, and one special character.
+            </p>
+            <p id="matchError" style="color: red; display: none;">
+                Passwords do not match.
+            </p>
+            <button class="btn btn-primary" type="submit">Sign up</button>
+            <p class="text-center mt-3">Already registered? <a href="{{ url_for('auth_bp.login') }}">Login now</a></p>
+          </form>
+        </main>
+      </div>
+      <div class="col-md-4"></div>
+    </div>
+
+
+	<script>
+	function validateForm() {
+	    const password = document.getElementById("password").value;
+	    const confirmPassword = document.getElementById("confirmPassword").value;
+	    const passwordError = document.getElementById("passwordError");
+	    const matchError = document.getElementById("matchError");
+
+	    // Regular expression for strong password criteria
+	    const strongPasswordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[~`!@#$%^&*()\-_\+={}[\]|\\;:"<>,./?])[A-Za-z\d~`!@#$%^&*()\-_\+={}[\]|\\;:"<>,./?]{8,}$/;
+
+
+	    // Check if password meets strength criteria
+	    if (!strongPasswordPattern.test(password)) {
+	        passwordError.style.display = "block";
+	        matchError.style.display = "none"; // Hide other errors if any
+	        return false;
+	    } else {
+	        passwordError.style.display = "none";
+	    }
+
+	    // Check if password and confirm password match
+	    if (password !== confirmPassword) {
+	        matchError.style.display = "block";
+	        return false;
+	    } else {
+	        matchError.style.display = "none";
+	    }
+
+	    return true; // Allow form submission if all checks pass
+	}
+
+	function togglePassword() {
+	    const passwordField = document.getElementById("password");
+	    const confirmPasswordField = document.getElementById("confirmPassword");
+
+	    // Toggle password visibility for both password and confirm password fields
+	    if (passwordField.type === "password") {
+	        passwordField.type = "text";
+	        confirmPasswordField.type = "text";
+	    } else {
+	        passwordField.type = "password";
+	        confirmPasswordField.type = "password";
+	    }
+	}
+	</script>
 
 {% endblock %}

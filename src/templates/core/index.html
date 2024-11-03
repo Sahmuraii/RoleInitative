@@ -1,5 +1,12 @@
+{% block title_content %}{{ user.username }}'s Profile{% endblock %}
+
 {% block content %}
 
 <h1 class="text-center">Welcome {{current_user.email}}!</h1>
+    {% if current_user.is_authenticated %}
+	<a href="{{ url_for('auth_bp.logout') }}">Log Out</a>
+	{% else %}
+	<a href="{{ url_for('auth_bp.login') }}">Log In</a>
+	{% endif %}
 
 {% endblock %}

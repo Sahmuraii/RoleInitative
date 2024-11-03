@@ -33,9 +33,7 @@ def register():
         flash("You registered and are now logged in. Welcome!", "success")
 
         return redirect(url_for("core.home"))
-        #return redirect(url_for("auth.login"))
     return render_template("auth/register.html", form=form)
-    #return render_template("sign_up.html")
 
 
 @auth_bp.route("/login", methods=["GET", "POST"])
@@ -55,11 +53,9 @@ def login():
         if user and password_match:
             login_user(user)
             return redirect(url_for("core.home"))
-            #return redirect(url_for("home")
         else:
             flash("Invalid email or password. Please check your entered information, then try again", "danger")
-            return render_template("auth/login.html")
-            # return render_template("login.html")
+            return render_template("auth/login.html", form=form)
     return render_template("auth/login.html", form=form)
 
 @auth_bp.route("/logout")
@@ -67,5 +63,4 @@ def login():
 def logout():
     logout_user()
     flash("You have been logged out.", "success")
-    return redirect(url_for("accounts.login"))
-    #return redirect(url_for("home"))
+    return redirect(url_for("auth_bp.login"))
