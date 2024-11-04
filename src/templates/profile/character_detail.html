@@ -3,13 +3,12 @@
 {% block title_content %}{{ character.name }}'s Details{% endblock %}
 
 {% block body_content %}
-    <h1>{{ character.name }}</h1>
-    <p>Class: {{ character.dnd_class.name }}</p>  <!-- Access class through relationship -->
+    <h1>{{ character.name }}</h1>  <!-- Access class through relationship -->
     <p>Level: {{ character.level }}</p>
     <p>Owner: {{ user.username }}</p>
     
     <!-- Link to change class -->
-    <a href="{{ url_for('profile_bp.change_class', username=user.username, character=character.name) }}" class="btn btn-primary">Change Class</a>
+    <a href="{{ url_for('profile_bp.character_detail', username=user.username, character=character.name) }}" class="btn btn-primary">Change Class</a>
 
     <!-- Other character details -->
     <h2>Character Stats</h2>
