@@ -8,19 +8,21 @@
             <a href="{{url_for('auth_bp.logout')}}">Logout</a>
              |
             <a href="{{url_for('core.home')}}">Home</a>
+             |
         </ul>
     </nav>
     <h1>{{ user.username }}'s Profile</h1>
     <p>Email: {{ user.email }}</p>
     <p>Your characters:</p>
+    {% for entry in userChars %}
     <ul>
-        {% for entry in userChars %}
-        <li>{{entry.name}}</li>
-        {%endfor%}
+        <li><a href="{{ url_for('profile_bp.character_detail', username=user.username, character=entry.name) }}">{{ entry.name }}</a></li>
     </ul>
+    {%endfor%}
     <form method="post">
         <label for="charname">character name:</label>
         <input type="text" name="charname" required />
         <button type="submit">create character</button>
     </form>
+
 {% endblock %}
