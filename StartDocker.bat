@@ -10,8 +10,8 @@ set dockerfilePath=BatchDockerfile.local
 :: Set file structure information
 set appFolder=/RoleInitiativeFolder
 set projectFolder=/RoleInitiative
-set appPath=/src
-set appName=app
+set appPath=
+set appName=run
 
 
 :: Check if Docker is running by using docker info

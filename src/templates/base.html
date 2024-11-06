@@ -11,6 +11,23 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
         <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
     </header>
+    <nav class="nav_page_header">
+        <ul>
+            {% if not current_user.is_authenticated %}
+            <li><a href="{{ url_for('auth_bp.login') }}">Login</a></li>
+            {% endif %}
+            <li><a href="{{ url_for('core.home') }}">Home</a>
+            {% if current_user.is_authenticated %}
+                <ul>
+                    <li><a href="{{ url_for('core.home') }}">Home</a></li>
+                    <li><a href="{{ url_for('profile_bp.profile', username=current_user.username)}}">Profile</a></li>
+                </ul>
+            </li>
+            <li><a href="{{ url_for('profile_bp.profile', username=current_user.username)}}">Create Charater</a></li>
+            <li><a href="{{ url_for('auth_bp.logout') }}">Logout</a></li>
+            {% endif %}
+        </ul>
+    </nav>
     <main>
         {% block body_content %}{% endblock %}
     </main>
