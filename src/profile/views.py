@@ -1,8 +1,19 @@
-from flask import render_template, Blueprint, request
+from flask import render_template, Blueprint, request, jsonify
 from src.auth.models import User, Character
 from src import db
 
 profile_bp = Blueprint('profile_bp', __name__, template_folder='../templates')
+
+data = {
+    "id": "foundId",
+    "email": "foundEmail",
+    "username": "foundUsername",
+    "password": "foundPassword",
+    "created_on": "1/1/24",
+    "is_admin": False,
+    "is_confirmed": False,
+    "confirmed_on": "no date"
+}
 
 
 @profile_bp.route('/profile/<username>', methods=['GET', 'POST'])
@@ -19,3 +30,7 @@ def profile(username):
         return render_template('profile/account.html', user=user, userChars=user.chars)
     else:
         return "User not found", 404
+    
+@profile_bp.route('/profile/test')
+def test():
+    return jsonify(data)
