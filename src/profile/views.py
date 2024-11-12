@@ -1,5 +1,6 @@
 from flask import render_template, Blueprint, request, redirect, url_for
-from src.auth.models import User, Character, DnDClass
+from src.auth.models import User
+from src.profile.models import Character, DnD_Class
 from src import db
 
 profile_bp = Blueprint('profile_bp', __name__, template_folder='../templates')
