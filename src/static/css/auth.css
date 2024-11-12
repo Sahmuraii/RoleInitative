@@ -132,6 +132,7 @@ label {
     position: relative;
     font-size: 0.9em;
     color: var(--primary-color);
+    gap: 7px;
     /* Necessary to ensure checkbox doesn't get pushed down. Why default padding? */
     margin: 0;
     padding: 0;
