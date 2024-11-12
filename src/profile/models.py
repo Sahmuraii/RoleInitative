@@ -5,16 +5,11 @@ class Character(db.Model):
     __tablename__ = "character"
     char_id = db.Column(db.Integer, primary_key=True, nullable=False)
     owner_id = db.Column(db.Integer, db.ForeignKey(User.id), nullable=False)
-    class_id = db.Column(db.Integer, nullable=False)
-    subclass_id = db.Column(db.Integer, nullable=False)
-    campaign_id = db.Column(db.Integer, nullable=True)
     name = db.Column(db.String(250), nullable=False)
     alignment = db.Column(db.String(50), nullable=True)
     faith = db.Column(db.String(50), nullable=True)
     proficency_bonus = db.Column(db.Integer, nullable=True)
     total_level = db.Column(db.Integer, nullable=True)
-    level = db.Column(db.Integer, nullable=True)
-    race_id = db.Column(db.Integer, nullable=False)
 
 class DNDRace(db.Model):
     __tablename__ = "dnd_race"
