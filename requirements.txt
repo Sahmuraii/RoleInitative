@@ -20,4 +20,7 @@ Flask-Migrate~=4.0.7
 email-validator==1.2.1
 flask_mail==0.10.0
 flask_wtf==1.2.2
+flask_mail==0.10.0
+flask_wtf==1.2.2
+flask-cors==5.0.0
 flask_cors==5.0.0

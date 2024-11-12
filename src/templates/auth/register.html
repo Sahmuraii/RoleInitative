@@ -1,133 +1,168 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full-Screen Register Page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+</head>
+<body>
+    <div class="auth-container">
 
-{% block body_content %}
+        <div class="auth-form">
+            <img src="../../static/images/RILogoWithTextNoBorder.png" alt="Logo" class="auth-logo">
+            <h2>Create an Account</h2>
+            <form role="form" method="POST" action="" onsubmit="return validateForm()">
+                {{ form.csrf_token }}
+                <!-- Email input -->
+                <div class="form-group">
+                    <!-- Label -->
+                    <label for="email">{{ form.email.label }}</label>
 
-    <div class="row">
-      <div class="col-md-4"></div>
-      <div class="col-md-4">
-        <main class="form-signin w-100 m-auto">
-          <form role="form" method="post" action="", onsubmit="return validateForm()">
-            {{ form.csrf_token }}
-            <h1 class="h3 mb-3 fw-normal text-center">Please register</h1>
+                    <!-- Input field with class 'input-field' for bubble style -->
+                    {{ form.email(class="input-field", placeholder="YourEmail@SomeDomain") }}
 
-            {% with messages = get_flashed_messages(with_categories=True) %}
-              {% if messages %}
-                <div class="flashes">
-                  {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">{{ message }}</div>
-                  {% endfor %}
+                    <!-- Error handling: display errors below the input field -->
+                    {% if form.email.errors %}
+                        <div class="error-messages">
+                            {% for error in form.email.errors %}
+                                <div class="text-danger">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
-              {% endif %}
-            {% endwith %}
+                <!-- Username input -->
+                <div class="form-group">
+                    <!-- Label -->
+                    <label for="username">{{ form.username.label }}</label>
 
-            <div class="form-group">
-              {{ form.email.label }}
-              {{ form.email(placeholder="Email", class="form-control") }}
-                {% if form.email.errors %}
-                  {% for error in form.email.errors %}
-                    <div class="text-danger">
-                      {{ error }}
-                    </div>
-                  {% endfor %}
-                {% endif %}
-            </div>
-            <div class="form-group">
-              {{ form.username.label }}
-              {{ form.username(placeholder="Username", class="form-control") }}
-                {% if form.username.errors %}
-                  {% for error in form.username.errors %}
-                    <div class="text-danger">
-                      {{ error }}
-                    </div>
-                  {% endfor %}
-                {% endif %}
-            </div>
-            <div class="form-group">
-              {{ form.password.label }}
-              {{ form.password(placeholder="Password", class="form-control") }}
-                {% if form.password.errors %}
-                  {% for error in form.password.errors %}
-                    <div class="text-danger">
-                      {{ error }}
-                    </div>
-                  {% endfor %}
-                {% endif %}
-            </div>
-            <div class="form-group">
-              {{ form.confirm.label }}
-              {{ form.confirm(placeholder="Confirm Password", class="form-control", id="confirmPassword") }}
-                {% if form.confirm.errors %}
-                  {% for error in form.confirm.errors %}
-                    <div class="alert alert-danger" role="alert">
-                      {{ error }}
-                    </div>
-                  {% endfor %}
-                {% endif %}
-            </div>
-            <!-- Show Password Toggle -->
-            <label>
-                <input type="checkbox" onclick="togglePassword()"> Show Password
-            </label>
+                    <!-- Input field with class 'input-field' for bubble style -->
+                    {{ form.username(class="input-field", placeholder="CreativeUsername") }}
 
-            <p id="passwordError" style="color: red; display: none;">
-                Password must be at least 8 characters long, and include at least: one uppercase letter, one lowercase letter, one number, and one special character.
-            </p>
-            <p id="matchError" style="color: red; display: none;">
-                Passwords do not match.
-            </p>
-            <button class="btn btn-primary" type="submit">Sign up</button>
-            <p class="text-center mt-3">Already registered? <a href="{{ url_for('auth_bp.login') }}">Login now</a></p>
-          </form>
-        </main>
-      </div>
-      <div class="col-md-4"></div>
+                    <!-- Error handling: display errors below the input field -->
+                    {% if form.username.errors %}
+                       <div class="error-messages">
+                            {% for error in form.username.errors %}
+                                <div class="text-danger">{{ error }}</div>
+                            {% endfor %}
+                       </div>
+                    {% endif %}
+                </div>
+                <!-- Password input -->
+                <div class="form-group">
+                    <!-- Label -->
+                    <label for="password">{{ form.password.label }}</label>
+
+                    <!-- Password input field with class 'input-field' for bubble style -->
+                    {{ form.password(class="input-field", placeholder="YourPasswordHere!", id="password") }}
+
+                    <!-- Error handling: display errors below the input field -->
+                    {% if form.password.errors %}
+                        <div class="error-messages">
+                            {% for error in form.password.errors %}
+                                <div class="text-danger">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <!-- Confirm Password input with inline checkbox -->
+                <div class="form-group">
+                    <!-- Label -->
+                    <label for="confirm">{{ form.confirm.label }}</label>
+
+                    <!-- Input field and checkbox container -->
+                    {{ form.confirm(class="input-field", placeholder="ConfirmPassword", id="confirmPassword") }}
+
+                    <!-- Error handling for confirm password -->
+                    {% if form.confirm.errors %}
+                        <div class="error-messages">
+                            {% for error in form.confirm.errors %}
+                                <div class="text-danger">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <!-- Checkbox to show/hide password -->
+                <label class="checkbox-container">
+                    <input type="checkbox" onclick="togglePassword()"> Show
+                </label>
+
+                <!-- Password feedback list -->
+                <ul id="passwordFeedback" class="password-feedback" style="display: none;">
+                    <!-- Dynamic feedback items will appear here -->
+                </ul>
+
+                <!-- Password strength and match error -->
+                <p id="matchError" class="error-message" style="display: none;">
+                    Passwords do not match.
+                </p>
+                <button class="auth-button" type="submit">Sign up</button>
+                <div class="extra-links">
+                    <p class="link-text">Already Have an Account? <a href="{{ url_for('auth_bp.login') }}">Log In</a></p>
+                </div>
+            </form>
+        </div>
+        <script>
+             // Password validation function
+            function validateForm() {
+                const passwordFeedback = document.getElementById("passwordFeedback");
+                const matchError = document.getElementById("matchError");
+                const passwordField = document.getElementById("password");
+                const confirmPasswordField = document.getElementById("confirmPassword");
+                const password = passwordField.value;
+                const confirmPassword = confirmPasswordField.value;
+
+                // Initialize an array to store validation feedback messages
+                let feedbackMessages = [];
+
+                // Check for password length, uppercase, lowercase, number, and special character
+                if (password.length < 8) feedbackMessages.push("Minimum Length of 8");
+                if (!/[A-Z]/.test(password)) feedbackMessages.push("Contains Capital Letter");
+                if (!/[a-z]/.test(password)) feedbackMessages.push("Contains Lowercase Letter");
+                if (!/\d/.test(password)) feedbackMessages.push("Contains Number");
+                if (!/[~`!@#$%^&*()\-_\+={}[\]|\\;:"<>,./?]/.test(password)) feedbackMessages.push("Contains Special Character");
+
+                // Combine related feedback messages
+                let combinedMessage = "Password must meet: ";
+                if (feedbackMessages.length > 0) {
+                    combinedMessage += feedbackMessages.join(", ") + ".";
+                    passwordFeedback.style.display = "block";
+                    passwordFeedback.innerHTML = feedbackMessages.map(msg => `<li>${msg}</li>`).join("");
+                    passwordField.style.borderColor = "red";  // Invalid password
+                } else {
+                    passwordFeedback.style.display = "none";
+                    passwordField.style.borderColor = "green";  // Valid password
+                }
+
+                // Check if passwords match
+                if (password !== confirmPassword) {
+                    matchError.style.display = "block";
+                    confirmPasswordField.style.borderColor = "red";  // Invalid confirm password
+                    return false;
+                } else {
+                    matchError.style.display = "none";
+                    confirmPasswordField.style.borderColor = "green";  // Valid confirm password
+                }
+
+                return true; // Allow form submission if all checks pass
+            }
+            // Function to toggle password visibility
+            function togglePassword() {
+                const passwordField = document.getElementById("password");
+                const confirmPasswordField = document.getElementById("confirmPassword");
+
+                // Toggle password visibility for both password and confirm password fields
+                const type = passwordField.type === "password" ? "text" : "password";
+                passwordField.type = type;
+                confirmPasswordField.type = type;
+
+            }
+            // Dynamically update password and confirm password validation as user types
+            // Call validation function on input change
+            document.getElementById("password").addEventListener("input", validateForm);
+            document.getElementById("confirmPassword").addEventListener("input", validateForm);
+        </script>
     </div>
+</body>
+</html>
 
-
-	<script>
-	function validateForm() {
-	    const password = document.getElementById("password").value;
-	    const confirmPassword = document.getElementById("confirmPassword").value;
-	    const passwordError = document.getElementById("passwordError");
-	    const matchError = document.getElementById("matchError");
-
-	    // Regular expression for strong password criteria
-	    const strongPasswordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[~`!@#$%^&*()\-_\+={}[\]|\\;:"<>,./?])[A-Za-z\d~`!@#$%^&*()\-_\+={}[\]|\\;:"<>,./?]{8,}$/;
-
-
-	    // Check if password meets strength criteria
-	    if (!strongPasswordPattern.test(password)) {
-	        passwordError.style.display = "block";
-	        matchError.style.display = "none"; // Hide other errors if any
-	        return false;
-	    } else {
-	        passwordError.style.display = "none";
-	    }
-
-	    // Check if password and confirm password match
-	    if (password !== confirmPassword) {
-	        matchError.style.display = "block";
-	        return false;
-	    } else {
-	        matchError.style.display = "none";
-	    }
-
-	    return true; // Allow form submission if all checks pass
-	}
-
-	function togglePassword() {
-	    const passwordField = document.getElementById("password");
-	    const confirmPasswordField = document.getElementById("confirmPassword");
-
-	    // Toggle password visibility for both password and confirm password fields
-	    if (passwordField.type === "password") {
-	        passwordField.type = "text";
-	        confirmPasswordField.type = "text";
-	    } else {
-	        passwordField.type = "password";
-	        confirmPasswordField.type = "password";
-	    }
-	}
-	</script>
-
-{% endblock %}
