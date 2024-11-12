@@ -84,7 +84,7 @@
                 </div>
                 <!-- Checkbox to show/hide password -->
                 <label class="checkbox-container">
-                    <input type="checkbox" onclick="togglePassword()"> Show
+                    <input type="checkbox" onclick="togglePassword()"> Show Password
                 </label>
 
                 <!-- Password feedback list -->
@@ -127,7 +127,7 @@
                 if (feedbackMessages.length > 0) {
                     combinedMessage += feedbackMessages.join(", ") + ".";
                     passwordFeedback.style.display = "block";
-                    passwordFeedback.innerHTML = feedbackMessages.map(msg => `<li>${msg}</li>`).join("");
+                    passwordFeedback.innerHTML = combinedMessage;
                     passwordField.style.borderColor = "red";  // Invalid password
                 } else {
                     passwordFeedback.style.display = "none";
