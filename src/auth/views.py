@@ -88,16 +88,20 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
 
-        # Stored password is encoded, so if we have a match between the encoding of the
-        # entered password and the stored password, the user is valid.
-        password_match = bcrypt.checkpw(form.password.data.encode('utf-8'), user.password.encode('utf-8'))
+        if user :
+            # Stored password is encoded, so if we have a match between the encoding of the
+            # entered password and the stored password, the user is valid.
+            password_match = bcrypt.checkpw(form.password.data.encode('utf-8'), user.password.encode('utf-8'))
 
-        # if user is not none and they entered the correct password
-        if user and password_match:
-            login_user(user)
-            return redirect(url_for("core.home"))
+            # if user is not none and they entered the correct password
+            if password_match:
+                login_user(user)
+                return redirect(url_for("core.home"))
+            else:
+                flash("Invalid password. Please check your entered information, then try again", "danger")
+                return render_template("auth/login.html", form=form)
         else:
-            flash("Invalid email or password. Please check your entered information, then try again", "danger")
+            flash("Invalid email. Please check your entered information, then try again", "danger")
             return render_template("auth/login.html", form=form)
     return render_template("auth/login.html", form=form)
 
