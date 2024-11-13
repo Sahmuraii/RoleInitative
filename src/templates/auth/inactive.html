@@ -1,18 +1,27 @@
-{% extends "base.html" %}
-
-{% block body_content %}
-
-<div class="text-center">
-  <h1>Welcome!</h1>
-  <br />
-  <p>
-    You have not confirmed your account. Please check your inbox (and your spam
-    folder) - you should have received an email with a confirmation link.
-  </p>
-  <p>
-    Didn't get the email?
-    <a href="{{ url_for('auth_bp.send_confirmation') }}">Resend</a>.
-  </p>
-</div>
-
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full-Screen Login Page</title>
+    <link rel="stylesheet" type="text/css" href="../../static/css/auth.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-form">
+            <img src="../../static/images/RILogoWithTextNoBorder.png" alt="Logo" class="auth-logo">
+            <h2>Welcome! Confirm Your Account</h2>
+            <div class="text-center">
+              <br />
+              <p>
+                You have not confirmed your account. Please check your inbox (and your spam
+                folder) - you should have received an email with a confirmation link.
+              </p>
+              <div class="extra-links">
+                    <p class="link-text">Didn't get the email? <a href="{{ url_for('auth_bp.send_confirmation') }}">Resend</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
