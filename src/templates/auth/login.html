@@ -10,7 +10,9 @@
     <div class="auth-container">
 
         <div class="auth-form">
-            <img src="../../static/images/RILogoWithTextNoBorder.png" alt="Logo" class="auth-logo">
+            <a class="logoLink" href="{{ url_for('core.home') }}">
+        	    <img src="../../static/images/RILogoWithTextNoBorder.png" alt="Logo" class="auth-logo">
+            </a>
             <h2>Log Into Your Account</h2>
             <form role="form" method="POST" action="" onsubmit="return validateForm()">
                 {{ form.csrf_token }}

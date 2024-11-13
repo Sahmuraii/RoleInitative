@@ -18,7 +18,6 @@ data = {
 
 
 @core_bp.route("/")
-@login_required
 @check_is_confirmed
 def home():
     return render_template("core/home.html")

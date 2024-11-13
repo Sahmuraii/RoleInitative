@@ -119,11 +119,19 @@ label {
     color: var(--secondary-color);
 }
 
-.auth-logo {
-    max-width: 50%;
-    height: auto;
-    margin: 10px;
+.logoLink {
+    text-decoration: none;
+    display: inline-block;
+    padding: 0;
+    max-width: 300px;
 }
+
+.auth-logo {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+}
+
 
 /* Show Password Checkbox */
 .checkbox-container {

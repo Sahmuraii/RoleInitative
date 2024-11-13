@@ -17,9 +17,10 @@ def logout_required(func):
 def check_is_confirmed(func):
     @wraps(func)
     def decorated_function(*args, **kwargs):
-        if current_user.is_confirmed is False:
-            flash("Please confirm your account!", "warning")
-            return redirect(url_for("auth_bp.inactive"))
+        if current_user.is_authenticated: # Only ask for confirmation if the user is signed in
+            if current_user.is_confirmed is False:
+                flash("Please confirm your account!", "warning")
+                return redirect(url_for("auth_bp.inactive"))
         return func(*args, **kwargs)
 
     return decorated_function
