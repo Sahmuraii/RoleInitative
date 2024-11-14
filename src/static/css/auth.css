@@ -1,11 +1,9 @@
-/* Color Variables */
 :root {
-    --primary-color: #4a4a4a;       /* Dark gray for main elements */
-    --secondary-color: #8a8a8a;     /* Medium gray for accents */
-    --tertiary-color: rgba(217, 217, 217, 0.8);  /* Light gray with 80% opacity for backgrounds */
+    --primary-color: #4a4a4a;
+    --secondary-color: #8a8a8a;
+    --tertiary-color: rgba(217, 217, 217, 0.8); /* 80% opacity for login form */
 }
 
-/* Global Reset Styles */
 * {
     margin: 0;
     padding: 0;
@@ -13,7 +11,6 @@
     font-family: Arial, sans-serif;
 }
 
-/* Full Screen Layout */
 body, html {
     width: 100%;
     height: 100%;
@@ -22,27 +19,24 @@ body, html {
     justify-content: center;
     background: url('../../static/images/authBackground.png') no-repeat center center;
     background-size: cover;
-    overflow: hidden;
+    overflow: hidden; /* Keep as hidden. Do not want scroll bars here */
 }
 
-/* Authentication Container */
+/* Login Form on Background Image. Only on left bit of screen */
 .auth-container {
     position: absolute;
     top: 10%;
     left: 10%;
-    width: 40vw;   /* Spanning from 10% to 50% of the viewport width */
-    height: 80vh;  /* Spanning from 10% to 90% of the viewport height */
-    background-color: var(--tertiary-color);  /* Semi-transparent background */
+    width: 40vw;
+    height: 80vh;
+    background-color: var(--tertiary-color);
     display: flex;
     flex-direction: column;
-    align-items: center; /* Center the logo and other content horizontally */
-    justify-content: flex-start; /* Align content to the top */
-    padding-top: 0.5rem;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0.5rem;
 }
 
-/* Auth Form */
 .auth-form {
     width: 100%;
     padding: 60px;
@@ -55,26 +49,23 @@ body, html {
     font-size: 2em;
     color: var(--primary-color);
     margin-bottom: 30px;
-    width: 100%;
 }
 
-/* Input Fields */
 label, .input-field {
     width: 100%;
 }
 
-/* Adjust label spacing */
+/* Field Labels */
 label {
     font-size: 1em;
     color: var(--primary-color);
-    margin-top: 100px;  /* Add vertical spacing below the label */
+    margin-top: 100px;
 }
 
-/* Adjust input field spacing */
+/* Bubble Fields */
 .input-field {
     padding: 15px;
-    margin-bottom: 1rem;
-    margin-top: 10px;  /* Add vertical spacing above input */
+    margin: 10px;
     border: 1px solid var(--secondary-color);
     border-radius: 50px;
     font-size: 1em;
@@ -82,11 +73,11 @@ label {
     background-color: #ffffff;
     transition: border-color 0.3s;
 }
+
 .input-field:focus {
     border-color: var(--primary-color);
 }
 
-/* Auth Button */
 .auth-button {
     width: 100%;
     padding: 15px;
@@ -99,11 +90,11 @@ label {
     cursor: pointer;
     transition: background-color 0.3s;
 }
+
 .auth-button:hover {
     background-color: var(--secondary-color);
 }
 
-/* Extra Links */
 .extra-links {
     margin-top: 20px;
     font-size: 0.9em;
@@ -112,10 +103,10 @@ label {
 }
 
 .link-text {
-    font-size: 1em;          /* Adjust font size if needed */
-    color: black;  /* Match the primary color for text */
-    text-align: center;      /* Ensure text is centered if desired */
-    display: block;         /* Ensure the text is inline */
+    font-size: 1em;
+    color: black;
+    text-align: center;
+    display: block;
 }
 
 .link-text a {
@@ -123,39 +114,48 @@ label {
     text-decoration: none;
     transition: color 0.3s;
 }
+
 .link-text a:hover {
     color: var(--secondary-color);
 }
 
-/* Styling the logo */
-.auth-logo {
-    max-width: 50%; /* Resize the logo to a smaller size */
-    height: auto;   /* Maintain the aspect ratio */
-    margin-top: 0; /* Close the logo to the top */
-    margin-bottom: 17px; /* Add space below the logo */
+.logoLink {
+    text-decoration: none;
+    display: inline-block;
+    padding: 0;
+    max-width: 300px;
 }
 
-/* Style for the checkbox container to align with the input field */
+.auth-logo {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+}
+
+
+/* Show Password Checkbox */
 .checkbox-container {
     display: flex;
     align-items: center;
+    position: relative;
     font-size: 0.9em;
     color: var(--primary-color);
-    margin: 0; /* Ensure no extra margin */
-    padding: 0; /* Ensure no extra padding */
+    gap: 7px;
+    /* Necessary to ensure checkbox doesn't get pushed down. Why default padding? */
+    margin: 0;
+    padding: 0;
 }
 
 .checkbox-container input[type="checkbox"] {
-    width: 16px; /* Adjust size if needed to match design */
+    width: 16px;
     height: 16px;
-    margin: 0; /* Adjust spacing between checkbox and label text */
-    accent-color: var(--primary-color); /* Color of the checkbox */
+    margin: 0;
+    accent-color: var(--primary-color);
     position: relative;
-    top: 0;
     vertical-align: middle;
 }
 
-/* Password feedback styles */
+/* "Password must have:" text */
 .password-feedback {
     color: red;
     list-style: none;
@@ -163,7 +163,6 @@ label {
     margin-top: 10px;
 }
 
-/* Match error style */
 .error-message {
     color: red;
     margin-top: 10px;

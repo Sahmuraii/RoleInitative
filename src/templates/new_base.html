@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{% block title_content %}{% endblock %} - Role Initaitive</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+</head>
+<body>
+    <header>
+        <meta charset="UTF-8" />
+	    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/new_main.css') }}">
+        <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+    </header>
+    <nav class="nav_page_header">
+        <<div class="logo">RoleInitiative</div>
+        <div class="navbar-links">
+            <a href="#">Search (Not functional rn)</a>
+            <a href="#">Campaigns (Not functional rn)</a>
+            <a href="#">News (Not functional rn)</a>
+            <a href="#">Collection (Not functional rn)</a>
+            <a href="#">Forums (Not functional rn)</a>
+        </div>
+        {% if current_user.is_authenticated %}
+        	<div class="profile">
+        	    <span class="profile-name">{{current_user.username}}</span>
+        	    <div class="profile-dropdown">
+        	        <a href="/profile/{{current_user.username}}">Profile</a>
+        	        <a href="#">My Campaigns (Not functional rn)</a>
+        	        <a href="#">Settings (Not functional rn)</a>
+        	        <a href="{{ url_for('auth_bp.logout') }}">Log Out</a>
+        	    </div>
+        	</div>
+        {% else %}
+        	<div class="navbar-links">
+            	<a href="{{ url_for('auth_bp.login') }}">Log In</a>
+        		<a href="{{ url_for('auth_bp.register') }}">Register</a>
+        	</div>
+        {% endif %}
+    </nav>
+    <main>
+        {% block body_content %}{% endblock %}
+    </main>
+</body>
+</html>

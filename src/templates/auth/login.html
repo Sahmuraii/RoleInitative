@@ -4,13 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Full-Screen Login Page</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+    <link rel="stylesheet" type="text/css" href="../../static/css/auth.css">
 </head>
 <body>
     <div class="auth-container">
 
         <div class="auth-form">
-            <img src="../../static/images/RILogoWithTextNoBorder.png" alt="Logo" class="auth-logo">
+            <a class="logoLink" href="{{ url_for('core.home') }}">
+        	    <img src="../../static/images/RILogoWithTextNoBorder.png" alt="Logo" class="auth-logo">
+            </a>
             <h2>Log Into Your Account</h2>
             <form role="form" method="POST" action="" onsubmit="return validateForm()">
                 {{ form.csrf_token }}
