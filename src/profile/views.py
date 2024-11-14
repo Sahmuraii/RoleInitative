@@ -11,8 +11,7 @@ def profile(username):
     user = User.query.filter_by(username=username).first()
     if request.method == 'POST':
         requested_charname = request.form.get("charname")
-        char = Character(owner_id=user.id, campaign_id=None, name=requested_charname, class_id=[1], subclass_id=[1],
-                          level=[1], race_id=1)
+        char = Character(owner_id=user.id, name=requested_charname, alignment="Neutral", faith="None", proficency_bonus=2, total_level=1)
         db.session.add(char)
         db.session.commit()
 
@@ -33,7 +32,6 @@ def character_detail(username, character):
         return "Character not found", 404
 
     # Fetch the class using the class_id from the character
-    print(f"Character Class ID: {char.class_id}")
     #dnd_class = DnDClass.query.get(char.class_id)  # Ensure class_id is available in the character object
     # if not dnd_class:
     #     return "Class not found", 404  # Handle case where the class does not exist
