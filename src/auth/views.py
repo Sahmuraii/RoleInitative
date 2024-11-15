@@ -1,8 +1,9 @@
-from flask import render_template, request, redirect, url_for, Blueprint, flash
+from flask import render_template, request, redirect, url_for, Blueprint, flash, session
 from flask_login import login_user, logout_user, login_required, current_user
 
 import bcrypt
 from src.auth.models import User
+from datetime import timedelta
 
 from .forms import LoginForm, RegisterForm
 from src import db
@@ -12,6 +13,7 @@ from src.auth.token import generate_token, confirm_token
 from datetime import datetime
 
 from ..utils.email import send_email
+
 
 auth_bp = Blueprint("auth_bp", __name__, template_folder="templates")
 
@@ -112,3 +114,10 @@ def logout():
     logout_user()
     flash("You have been logged out.", "success")
     return redirect(url_for("auth_bp.login"))
+
+
+@auth_bp.before_request
+def before_request():
+    session.permanent = True
+    auth_bp.permanent_session_lifetime = timedelta(minutes=60)
+    session.modified = True
