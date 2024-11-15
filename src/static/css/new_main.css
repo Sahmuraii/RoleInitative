@@ -25,6 +25,11 @@
     --blackText: var(--black);
 
     --navbar-height: 80px;
+
+    /*Easing Speeds*/
+    --slow-transition: 300ms;
+    --medium-transition: 200ms;
+    --fast-transition: 80ms;
 }
 
 /* General Stylings and variable definitions*/
@@ -63,6 +68,12 @@ h1 {
     width: 100%;
     max-width: 170px;
     height: auto;
+    filter: drop-shadow(0px 0px 0px var(--primaryRed));
+    transition: filter var(--slow-transition);
+}
+
+.nav-logo:hover {
+    filter: drop-shadow(4px 5px 15px var(--accentColor));
 }
 
 .navbar-links {
@@ -75,6 +86,7 @@ h1 {
     margin: 0 1rem;
     color: #fff;
     text-decoration: none;
+    transition: color var(--fast-transition);
 }
 
 .navbar-links a:hover {
@@ -84,6 +96,7 @@ h1 {
 .profile {
     position: relative;
     padding-left: 1rem;
+    transition: color var(--fast-transition);
 }
 
 .profile:hover {
@@ -102,10 +115,13 @@ h1 {
     background-color: var(--black);
     padding: 0.5rem;
     border-radius: 4px;
+    opacity: 0;
+    transition: opacity var(--slow-transition);
 }
 
 .profile:hover .profile-dropdown {
     display: block;
+    opacity: 1;
 }
 
 .profile-dropdown a {
@@ -113,10 +129,11 @@ h1 {
     padding: 0.5rem;
     color: #fff;
     text-decoration: none;
+    transition: color var(--fast-transition);
 }
 
 .profile-dropdown a:hover {
-    color: var(--secondaryColor)
+    color: var(--secondaryColor);
 }
 
 /* Main Content Styling */
@@ -149,6 +166,7 @@ h1 {
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    transition: color var(--fast-transition);
 }
 
 .new-homebrew:hover, .my-campaigns:hover {
