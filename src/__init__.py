@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, session
 from flask_sqlalchemy import SQLAlchemy
 from os import getenv
 from dotenv import load_dotenv
@@ -8,6 +8,8 @@ from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
 from flask_mail import Mail
 from flask_cors import CORS
+
+from datetime import timedelta
 
 app = Flask(__name__)
 CORS(app)
@@ -65,3 +67,9 @@ with app.app_context():
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.filter(User.id == int(user_id)).first()
+
+@app.before_request
+def before_request():
+    session.permanent = True
+    app.permanent_session_lifetime = timedelta(minutes=60)
+    session.modified = True
