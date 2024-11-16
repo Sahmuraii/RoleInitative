@@ -3,30 +3,32 @@
 {% block title_content %}{{ character.name }}'s Details{% endblock %}
 
 {% block body_content %}
-    <h1>{{ character.name }}</h1> 
-    <p>Owner: {{ user.username }}</p>
+    <div class="main-content">
+        <h1>{{ character.name }}</h1>
+        <p>Owner: {{ user.username }}</p>
 
-    <form method="POST" action="{{ url_for('profile_bp.character_detail', username=user.username, character=character.name) }}">
-        <label for="class_id">Choose a Class:</label>
-        <select id="class_id" name="class_id">
-            {% for dnd_class in all_classes %}
-                <option value="{{ dnd_class.class_id }}" 
-                    {% if current_class and dnd_class.name == current_class %} selected {% endif %}>
-                    {{ dnd_class.name }}
-                </option>
-            {% endfor %}
-        </select>
-    
-        <label for="class_level">Set Class Level:</label>
-        <input type="number" id="class_level" name="class_level" min="1" value="{{ current_level if current_level else 1 }}">
-    
-        <button type="submit">Update</button>
-    </form>
+        <form method="POST" action="{{ url_for('profile_bp.character_detail', username=user.username, character=character.name) }}">
+            <label for="class_id">Choose a Class:</label>
+            <select id="class_id" name="class_id">
+                {% for dnd_class in all_classes %}
+                    <option value="{{ dnd_class.class_id }}"
+                        {% if current_class and dnd_class.name == current_class %} selected {% endif %}>
+                        {{ dnd_class.name }}
+                    </option>
+                {% endfor %}
+            </select>
 
-    <p>
-        Current Class: {{ current_class if current_class else "None" }} <br>
-        Current Level: {{ current_level if current_level else "N/A" }}
-    </p> 
+            <label for="class_level">Set Class Level:</label>
+            <input type="number" id="class_level" name="class_level" min="1" value="{{ current_level if current_level else 1 }}">
 
+            <button type="submit">Update</button>
+        </form>
 
+        <p>
+            Current Class: {{ current_class if current_class else "None" }} <br>
+            Current Level: {{ current_level if current_level else "N/A" }}
+        </p>
+
+            <a href="/profile/{{current_user.username}}">Back to Profile</a>
+    </div>
 {% endblock %}

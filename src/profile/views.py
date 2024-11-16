@@ -1,4 +1,5 @@
 from flask import render_template, Blueprint, request, redirect, url_for
+from flask_login import current_user
 from sqlalchemy import select
 from src.auth.models import User
 from src.profile.models import Character
@@ -10,10 +11,10 @@ profile_bp = Blueprint('profile_bp', __name__, template_folder='../templates')
 
 @profile_bp.route('/profile/<username>', methods=['GET', 'POST'])
 def profile(username):
-    user = User.query.filter_by(username=username).first()
+    user = current_user
     if request.method == 'POST':
         requested_charname = request.form.get("charname")
-        char = Character(owner_id=user .id, name=requested_charname, alignment="Neutral", faith="None", proficency_bonus=2, total_level=1)
+        char = Character(owner_id=user.id, name=requested_charname, alignment="Neutral", faith="None", proficency_bonus=2, total_level=1)
         db.session.add(char)
         db.session.commit()
 
