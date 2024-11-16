@@ -1,0 +1,10 @@
+{
+    "id": "defaultId",
+    "email": "defaultEmail",
+    "username": "defaultUsername",
+    "password": "defaultPassword",
+    "created_on": "1/1/24",
+    "is_admin": false,
+    "is_confirmed": false,
+    "confirmed_on": "no date"
+}

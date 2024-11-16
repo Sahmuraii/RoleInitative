@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Role Initiative Home Page</title>
+    <link rel="stylesheet" type="text/css" href="../../static/css/new_main.css">
+</head>
+<body>
+
+    <!-- Top Navigation Bar -->
+    <div class="navbar">
+        <a class="logoLink" href="{{ url_for('core.home') }}">
+        	<img src="../../static/images/RILogoWithTextNoBorder.png" alt="Logo" class="nav-logo">
+        </a>
+        <div class="navbar-links">
+            <a href="#">Search (Not functional rn)</a>
+            <a href="#">Campaigns (Not functional rn)</a>
+            <a href="#">News (Not functional rn)</a>
+            <a href="#">Collection (Not functional rn)</a>
+            <a href="#">Forums (Not functional rn)</a>
+        </div>
+        {% if current_user.is_authenticated %}
+        	<div class="profile">
+        	    <span class="profile-name">{{current_user.username}}</span>
+        	    <div class="profile-dropdown">
+        	        <a href="/profile/{{current_user.username}}">Profile</a>
+        	        <a href="#">My Campaigns (Not functional rn)</a>
+        	        <a href="#">Settings (Not functional rn)</a>
+        	        <a href="{{ url_for('auth_bp.logout') }}">Log Out</a>
+        	    </div>
+        	</div>
+        {% else %}
+        	<div class="navbar-links">
+            	<a href="{{ url_for('auth_bp.login') }}">Log In</a>
+        		<a href="{{ url_for('auth_bp.register') }}">Register</a>
+        	</div>
+        {% endif %}
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Search Bar and Buttons -->
+        <div class="search-bar">
+            <input type="text" placeholder="Search Campaigns, Homebrews, Characters, and Users">
+            <button class="new-homebrew">New Homebrew</button>
+            <button class="my-campaigns">My Campaigns</button>
+        </div>
+
+        <!-- Tabs for My Stuff and Community Stuff -->
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('myStuff')">My Stuff</button>
+            <button class="tab" onclick="showTab('communityStuff')">Community Stuff</button>
+        </div>
+
+        <!-- Content for My Stuff and Community Stuff -->
+        <div id="myStuff" class="tab-content active">
+            <h2>My Characters</h2>
+            <div class="character-card">Character Name #1</div>
+            <div class="character-card">Character Name #2</div>
+        </div>
+
+        <div id="communityStuff" class="tab-content">
+            <h2>Community Characters</h2>
+            <div class="character-card">Community Character #1</div>
+            <div class="character-card">Community Character #2</div>
+        </div>
+    </div>
+
+    <script src="../../static/js/main.js"></script>
+</body>
+</html>

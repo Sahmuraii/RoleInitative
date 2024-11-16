@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full-Screen Register Page</title>
+    <link rel="stylesheet" type="text/css" href="../../static/css/auth.css">
+</head>
+<body>
+    <div class="auth-container">
+
+        <div class="auth-form">
+            <a class="logoLink" href="{{ url_for('core.home') }}">
+        	    <img src="../../static/images/RILogoWithTextNoBorder.png" alt="Logo" class="auth-logo">
+            </a>
+            <h2>Create an Account</h2>
+            <form role="form" method="POST" action="" onsubmit="return validateForm()">
+                {{ form.csrf_token }}
+                <!-- Email input -->
+                <div class="form-group">
+                    <!-- Label -->
+                    <label for="email">{{ form.email.label }}</label>
+
+                    <!-- Input field with class 'input-field' for bubble style -->
+                    {{ form.email(class="input-field", placeholder="YourEmail@SomeDomain") }}
+
+                    <!-- Error handling: display errors below the input field -->
+                    {% if form.email.errors %}
+                        <div class="error-messages">
+                            {% for error in form.email.errors %}
+                                <div class="text-danger">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <!-- Username input -->
+                <div class="form-group">
+                    <!-- Label -->
+                    <label for="username">{{ form.username.label }}</label>
+
+                    <!-- Input field with class 'input-field' for bubble style -->
+                    {{ form.username(class="input-field", placeholder="CreativeUsername") }}
+
+                    <!-- Error handling: display errors below the input field -->
+                    {% if form.username.errors %}
+                       <div class="error-messages">
+                            {% for error in form.username.errors %}
+                                <div class="text-danger">{{ error }}</div>
+                            {% endfor %}
+                       </div>
+                    {% endif %}
+                </div>
+                <!-- Password input -->
+                <div class="form-group">
+                    <!-- Label -->
+                    <label for="password">{{ form.password.label }}</label>
+
+                    <!-- Password input field with class 'input-field' for bubble style -->
+                    {{ form.password(class="input-field", placeholder="YourPasswordHere!", id="password") }}
+
+                    <!-- Error handling: display errors below the input field -->
+                    {% if form.password.errors %}
+                        <div class="error-messages">
+                            {% for error in form.password.errors %}
+                                <div class="text-danger">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <!-- Confirm Password input with inline checkbox -->
+                <div class="form-group">
+                    <!-- Label -->
+                    <label for="confirm">{{ form.confirm.label }}</label>
+
+                    <!-- Input field and checkbox container -->
+                    {{ form.confirm(class="input-field", placeholder="ConfirmPassword", id="confirmPassword") }}
+
+                    <!-- Error handling for confirm password -->
+                    {% if form.confirm.errors %}
+                        <div class="error-messages">
+                            {% for error in form.confirm.errors %}
+                                <div class="text-danger">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <!-- Checkbox to show/hide password -->
+                <label class="checkbox-container">
+                    <input type="checkbox" onclick="togglePassword()"> Show Password
+                </label>
+
+                <!-- Password feedback list -->
+                <ul id="passwordFeedback" class="password-feedback" style="display: none;">
+                    <!-- Dynamic feedback items will appear here -->
+                </ul>
+
+                <!-- Password strength and match error -->
+                <p id="matchError" class="error-message" style="display: none;">
+                    Passwords do not match.
+                </p>
+                <button class="auth-button" type="submit">Sign up</button>
+                <div class="extra-links">
+                    <p class="link-text">Already Have an Account? <a href="{{ url_for('auth_bp.login') }}">Log In</a></p>
+                </div>
+            </form>
+        </div>
+        <script>
+             // Password validation function
+            function validateForm() {
+                const passwordFeedback = document.getElementById("passwordFeedback");
+                const matchError = document.getElementById("matchError");
+                const passwordField = document.getElementById("password");
+                const confirmPasswordField = document.getElementById("confirmPassword");
+                const password = passwordField.value;
+                const confirmPassword = confirmPasswordField.value;
+
+                // Initialize an array to store validation feedback messages
+                let feedbackMessages = [];
+
+                // Check for password length, uppercase, lowercase, number, and special character
+                if (password.length < 8) feedbackMessages.push("Minimum Length of 8");
+                if (!/[A-Z]/.test(password)) feedbackMessages.push("Contains Capital Letter");
+                if (!/[a-z]/.test(password)) feedbackMessages.push("Contains Lowercase Letter");
+                if (!/\d/.test(password)) feedbackMessages.push("Contains Number");
+                if (!/[~`!@#$%^&*()\-_\+={}[\]|\\;:"<>,./?]/.test(password)) feedbackMessages.push("Contains Special Character");
+
+                // Combine related feedback messages
+                let combinedMessage = "Password must meet: ";
+                if (feedbackMessages.length > 0) {
+                    combinedMessage += feedbackMessages.join(", ") + ".";
+                    passwordFeedback.style.display = "block";
+                    passwordFeedback.innerHTML = combinedMessage;
+                    passwordField.style.borderColor = "red";  // Invalid password
+                } else {
+                    passwordFeedback.style.display = "none";
+                    passwordField.style.borderColor = "green";  // Valid password
+                }
+
+                // Check if passwords match
+                if (password !== confirmPassword) {
+                    matchError.style.display = "block";
+                    confirmPasswordField.style.borderColor = "red";  // Invalid confirm password
+                    return false;
+                } else {
+                    matchError.style.display = "none";
+                    confirmPasswordField.style.borderColor = "green";  // Valid confirm password
+                }
+
+                return true; // Allow form submission if all checks pass
+            }
+            // Function to toggle password visibility
+            function togglePassword() {
+                const passwordField = document.getElementById("password");
+                const confirmPasswordField = document.getElementById("confirmPassword");
+
+                // Toggle password visibility for both password and confirm password fields
+                const type = passwordField.type === "password" ? "text" : "password";
+                passwordField.type = type;
+                confirmPasswordField.type = type;
+
+            }
+            // Dynamically update password and confirm password validation as user types
+            // Call validation function on input change
+            document.getElementById("password").addEventListener("input", validateForm);
+            document.getElementById("confirmPassword").addEventListener("input", validateForm);
+        </script>
+    </div>
+</body>
+</html>
+

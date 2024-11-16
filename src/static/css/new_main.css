@@ -1,0 +1,210 @@
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Main Stylings and variable definitions*/
+:root {
+    /*color-scheme: light dark;*/
+
+    --accentColor: rgb(240, 240, 229 );
+    --primaryRed: rgb(146, 12, 16);
+    --darkRed: rgb(26, 15, 15);
+    --secondaryColor: rgb(195, 152, 60);
+    --lightText: rgb(235, 232, 230);
+    --darkText: rgb(8, 0, 0);
+    --white: rgb(255, 255, 255);
+    --black: rgb(0, 0, 0);
+    --transparent: rgba(250, 23, 23, 0);
+
+    /*Light theme colors*/
+    --mainBackgroundColor: var(--accentColor);
+    --whiteText: var(--white);
+    --blackText: var(--black);
+
+    --navbar-height: 80px;
+
+    /*Easing Speeds*/
+    --slow-transition: 300ms;
+    --medium-transition: 200ms;
+    --fast-transition: 80ms;
+}
+
+/* General Stylings and variable definitions*/
+body {
+    background: var(--mainBackgroundColor) url('../images/BackgroundOverlay.png') repeat left top;
+    color: var(--black);
+    overflow: auto;
+}
+
+h1 {
+    color: var(--darkRed);
+}
+
+/* Navbar Styling */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: var(--primaryRed);
+    color: #fff;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+.logoLink {
+    text-decoration: none;
+    display: inline-block;
+    padding: 0;
+    max-width: 170px;
+}
+
+.nav-logo {
+    width: 100%;
+    max-width: 170px;
+    height: auto;
+    filter: drop-shadow(0px 0px 0px var(--primaryRed));
+    transition: filter var(--slow-transition);
+}
+
+.nav-logo:hover {
+    filter: drop-shadow(4px 5px 15px var(--accentColor));
+}
+
+.navbar-links {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.navbar-links a {
+    margin: 0 1rem;
+    color: #fff;
+    text-decoration: none;
+    transition: color var(--fast-transition);
+}
+
+.navbar-links a:hover {
+    color: var(--secondaryColor);
+}
+
+.profile {
+    position: relative;
+    padding-left: 1rem;
+    transition: color var(--fast-transition);
+}
+
+.profile:hover {
+    color: var(--secondaryColor);
+}
+
+.profile-name {
+    cursor: pointer;
+}
+
+.profile-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: var(--black);
+    padding: 0.5rem;
+    border-radius: 4px;
+    opacity: 0;
+    transition: opacity var(--slow-transition);
+}
+
+.profile:hover .profile-dropdown {
+    display: block;
+    opacity: 1;
+}
+
+.profile-dropdown a {
+    display: block;
+    padding: 0.5rem;
+    color: #fff;
+    text-decoration: none;
+    transition: color var(--fast-transition);
+}
+
+.profile-dropdown a:hover {
+    color: var(--secondaryColor);
+}
+
+/* Main Content Styling */
+.main-content {
+    padding: calc(var(--navbar-height) + 1rem) 2rem 2rem;
+    max-width: 800px;
+    margin: auto;
+}
+
+/* Search Bar and Buttons */
+.search-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.search-bar input[type="text"] {
+    width: 60%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.new-homebrew, .my-campaigns {
+    padding: 0.5rem 1rem;
+    background-color: var(--black);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: color var(--fast-transition);
+}
+
+.new-homebrew:hover, .my-campaigns:hover {
+    color: var(--secondaryColor);
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.tab {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-weight: bold;
+}
+
+.tab.active {
+    border-bottom: 2px solid var(--secondaryColor);
+}
+
+/* Tab Content */
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.character-card {
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    background-color: #f9f9f9;
+}

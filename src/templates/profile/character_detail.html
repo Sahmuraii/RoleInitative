@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title_content %}{{ character.name }}'s Details{% endblock %}
+
+{% block body_content %}
+    <h1>{{ character.name }}</h1>  <!-- Access class through relationship -->
+    <p>Level: {{ character.level }}</p>
+    <p>Owner: {{ user.username }}</p>
+    
+    <!-- Link to change class -->
+    <a href="{{ url_for('profile_bp.character_detail', username=user.username, character=character.name) }}" class="btn btn-primary">Change Class</a>
+
+    <!-- Other character details -->
+    <h2>Character Stats</h2>
+    <ul>
+        <li>Hit Points: {{ character.hit_points }}</li>
+        <li>Abilities: {{ character.abilities }}</li>
+        <!-- Add more character details as needed -->
+    </ul>
+    
+    <a href="{{ url_for('profile_bp.profile', username=user.username) }}">Back to Profile</a>
+{% endblock %}
