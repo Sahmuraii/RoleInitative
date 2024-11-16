@@ -13,7 +13,7 @@ class User(db.Model, UserMixin):
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
     is_confirmed = db.Column(db.Boolean, nullable=False, default=False)
     confirmed_on = db.Column(db.TIMESTAMP, nullable=True)
-    chars = db.relationship("Character", backref="owner", lazy="dynamic")
+    chars = db.relationship("Character", backref="owner", lazy="write_only")
 
     def __init__(self, email, username, password, is_admin=False, is_confirmed=False, confirmed_on=None):
         self.email = email
