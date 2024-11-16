@@ -3,7 +3,8 @@
 {% block title_content %}{{ user.username }}'s Profile{% endblock %}
 
 {% block body_content %}
-    <nav>
+    <div class="main-content">
+        <nav>
         <ul>
             <a href="{{url_for('auth_bp.logout')}}">Logout</a>
              |
@@ -25,5 +26,6 @@
         <input type="text" name="charname" required />
         <button type="submit">create character</button>
     </form>
+    </div>
 
 {% endblock %}
