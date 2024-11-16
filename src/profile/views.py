@@ -1,4 +1,5 @@
 from flask import render_template, Blueprint, request, redirect, url_for
+from sqlalchemy import select
 from src.auth.models import User
 from src.profile.models import Character, DNDRace
 from src import db
@@ -11,12 +12,13 @@ def profile(username):
     user = User.query.filter_by(username=username).first()
     if request.method == 'POST':
         requested_charname = request.form.get("charname")
-        char = Character(owner_id=user.id, name=requested_charname, alignment="Neutral", faith="None", proficency_bonus=2, total_level=1)
+        char = Character(owner_id=user .id, name=requested_charname, alignment="Neutral", faith="None", proficency_bonus=2, total_level=1)
         db.session.add(char)
         db.session.commit()
 
     if user:
-        return render_template('profile/account.html', user=user, userChars=user.chars)
+        userChars = db.session.execute(select(Character).where(Character.owner_id == user.id)).scalars().all()
+        return render_template('profile/account.html', user=user, userChars=userChars)
     else:
         return "User not found", 404
 
