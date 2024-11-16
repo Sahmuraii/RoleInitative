@@ -19,8 +19,7 @@ def profile(username):
         db.session.commit()
 
     if user:
-        userChars = db.session.execute(select(Character).where(Character.owner_id == user.id)).scalars().all()
-        return render_template('profile/account.html', user=user, userChars=userChars)
+        return render_template('profile/account.html', user=user, userChars=user.chars)
     else:
         return "User not found", 404
 

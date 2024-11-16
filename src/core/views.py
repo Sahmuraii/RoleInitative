@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template
-from flask_login import login_required
-
+from flask_login import login_required, current_user
+from src.auth.models import User
 from src.utils.decorators import check_is_confirmed
 
 core_bp = Blueprint("core", __name__, template_folder="templates")
@@ -20,4 +20,8 @@ data = {
 @core_bp.route("/")
 @check_is_confirmed
 def home():
-    return render_template("core/home.html")
+    user = current_user
+    if user:
+        return render_template("core/home.html", user=user)
+    else:
+        return "User not found", 404

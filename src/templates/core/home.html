@@ -19,12 +19,23 @@
         </div>
 
         <!-- Content for My Stuff and Community Stuff -->
+         {%if current_user.is_authenticated %}
         <div id="myStuff" class="tab-content active">
             <h2>My Characters</h2>
-            <div class="character-card">Character Name #1</div>
-            <div class="character-card">Character Name #2</div>
+            {% for entry in user.chars %}
+            <div class="character-card">
+                <a href="{{ url_for('profile_bp.character_detail', username=user.username, character=entry.name) }}">{{ entry.name }}</a>
+            </div>
+            {%endfor%}
         </div>
-
+        {% else %}
+        <div id="myStuff" class="tab-content active">
+            <h2 id = "notLoggedIn">You are not logged in.</h2>
+            <a href="{{ url_for('auth_bp.login') }}">Want to create a character? Click here to log in!<br></a>
+            <a href="{{ url_for('auth_bp.register') }}">Or, you can click here to create a new account!</a>
+        </div>
+        
+        {% endif %}
         <div id="communityStuff" class="tab-content">
             <h2>Community Characters</h2>
             <div class="character-card">Community Character #1</div>
