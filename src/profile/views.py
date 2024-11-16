@@ -1,7 +1,8 @@
 from flask import render_template, Blueprint, request, redirect, url_for
 from sqlalchemy import select
 from src.auth.models import User
-from src.profile.models import Character, DNDRace
+from src.profile.models import Character
+from src.profile.models import Character_Class, DND_Class
 from src import db
 
 profile_bp = Blueprint('profile_bp', __name__, template_folder='../templates')
@@ -22,7 +23,7 @@ def profile(username):
     else:
         return "User not found", 404
 
-@profile_bp.route('/profile/<username>/<character>', methods=['GET'])
+@profile_bp.route('/profile/<username>/<character>', methods=['GET', 'POST'])
 def character_detail(username, character):
     user = User.query.filter_by(username=username).first()
     if not user:
@@ -33,13 +34,45 @@ def character_detail(username, character):
     if not char:
         return "Character not found", 404
 
-    # Fetch the class using the class_id from the character
-    #dnd_class = DnDClass.query.get(char.class_id)  # Ensure class_id is available in the character object
-    # if not dnd_class:
-    #     return "Class not found", 404  # Handle case where the class does not exist
+    # Get the current class and level of the character
+    current_class_info = (
+        db.session.execute(
+            select(Character_Class.class_id, Character_Class.class_level, DND_Class.name)
+            .join(DND_Class, DND_Class.class_id == Character_Class.class_id)
+            .where(Character_Class.char_id == char.char_id)
+        ).first()
+    )
+
+    current_class = current_class_info[2] if current_class_info else None  # Class name 
+    current_level = current_class_info[1] if current_class_info else None  # Class level
+
+    all_classes = DND_Class.query.all()
+
+    if request.method == 'POST':
+        # Get the selected class ID and class level from the form
+        new_class_id = request.form.get('class_id')
+        new_class_level = int(request.form.get('class_level', 1))  # Default level is 1
+
+        # Update or insert the Character_Class entry
+        char_class_entry = Character_Class.query.filter_by(char_id=char.char_id).first()
+        if char_class_entry:
+            # Update the existing entry
+            char_class_entry.class_id = new_class_id
+            char_class_entry.class_level = new_class_level
+        else:
+            # Create a new entry
+            new_char_class = Character_Class(
+                char_id=char.char_id,
+                class_id=new_class_id,
+                class_level=new_class_level
+            )
+            db.session.add(new_char_class)
+
+        db.session.commit()  # Save the changes
+        return redirect(url_for('profile_bp.character_detail', username=username, character=character))
 
     # Render the template with character and dnd_class
-    return render_template('profile/character_detail.html', user=user, character=char)
+    return render_template('profile/character_detail.html',user=user,character=char, current_class=current_class, current_level=current_level,all_classes=all_classes)
 
 
 

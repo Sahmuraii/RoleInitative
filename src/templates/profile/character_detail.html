@@ -3,23 +3,30 @@
 {% block title_content %}{{ character.name }}'s Details{% endblock %}
 
 {% block body_content %}
-    <div class="main-content">
-            <h1>{{ character.name }}</h1>  <!-- Access class through relationship -->
-        <p>Level: {{ character.level }}</p>
-        <p>Owner: {{ user.username }}</p>
+    <h1>{{ character.name }}</h1> 
+    <p>Owner: {{ user.username }}</p>
 
-        <!-- Link to change class -->
-        <a href="{{ url_for('profile_bp.character_detail', username=user.username, character=character.name) }}" class="btn btn-primary">Change Class</a>
+    <form method="POST" action="{{ url_for('profile_bp.character_detail', username=user.username, character=character.name) }}">
+        <label for="class_id">Choose a Class:</label>
+        <select id="class_id" name="class_id">
+            {% for dnd_class in all_classes %}
+                <option value="{{ dnd_class.class_id }}" 
+                    {% if current_class and dnd_class.name == current_class %} selected {% endif %}>
+                    {{ dnd_class.name }}
+                </option>
+            {% endfor %}
+        </select>
+    
+        <label for="class_level">Set Class Level:</label>
+        <input type="number" id="class_level" name="class_level" min="1" value="{{ current_level if current_level else 1 }}">
+    
+        <button type="submit">Update</button>
+    </form>
 
-        <!-- Other character details -->
-        <h2>Character Stats</h2>
-        <ul>
-            <li>Hit Points: {{ character.hit_points }}</li>
-            <li>Abilities: {{ character.abilities }}</li>
-            <!-- Add more character details as needed -->
-        </ul>
+    <p>
+        Current Class: {{ current_class if current_class else "None" }} <br>
+        Current Level: {{ current_level if current_level else "N/A" }}
+    </p> 
 
-        <a href="{{ url_for('profile_bp.profile', username=user.username) }}">Back to Profile</a>
-    </div>
 
 {% endblock %}
