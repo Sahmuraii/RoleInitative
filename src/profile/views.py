@@ -23,14 +23,14 @@ def profile(username):
     else:
         return "User not found", 404
 
-@profile_bp.route('/profile/<username>/<character>', methods=['GET', 'POST'])
-def character_detail(username, character):
+@profile_bp.route('/profile/<username>/<int:character_id>', methods=['GET', 'POST'])
+def character_detail(username, character_id):
     user = User.query.filter_by(username=username).first()
     if not user:
         return "User not found", 404
 
-    # Get the character by owner ID and name
-    char = Character.query.filter_by(owner_id=user.id, name=character).first()
+    # Get the character by owner ID and character ID
+    char = Character.query.filter_by(owner_id=user.id, char_id=character_id).first()
     if not char:
         return "Character not found", 404
 
@@ -69,10 +69,10 @@ def character_detail(username, character):
             db.session.add(new_char_class)
 
         db.session.commit()  # Save the changes
-        return redirect(url_for('profile_bp.character_detail', username=username, character=character))
+        return redirect(url_for('profile_bp.character_detail', username=username, character_id=character_id))
 
     # Render the template with character and dnd_class
-    return render_template('profile/character_detail.html',user=user,character=char, current_class=current_class, current_level=current_level,all_classes=all_classes)
+    return render_template('profile/character_detail.html', user=user, character=char, current_class=current_class, current_level=current_level, all_classes=all_classes)
 
 
 

@@ -7,7 +7,7 @@
         <h1>{{ character.name }}</h1>
         <p>Owner: {{ user.username }}</p>
 
-        <form method="POST" action="{{ url_for('profile_bp.character_detail', username=user.username, character=character.name) }}">
+        <form method="POST" action="{{ url_for('profile_bp.character_detail', username=user.username, character_id=character.char_id) }}">
             <label for="class_id">Choose a Class:</label>
             <select id="class_id" name="class_id">
                 {% for dnd_class in all_classes %}

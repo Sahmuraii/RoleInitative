@@ -24,7 +24,7 @@
             <h2>My Characters</h2>
             {% for entry in user.chars %}
             <div class="character-card">
-                <a href="{{ url_for('profile_bp.character_detail', username=user.username, character=entry.name) }}">{{ entry.name }}</a>
+                <a href="{{ url_for('profile_bp.character_detail', username=user.username, character_id=entry.char_id) }}">{{ entry.name }}</a>
             </div>
             {%endfor%}
         </div>
