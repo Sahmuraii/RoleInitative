@@ -24,12 +24,12 @@ class DNDRace(db.Model):
     speed = db.Column(db.Integer, nullable=False)
     size = db.Column(db.String(50), nullable=False)
     age = db.Column(db.String(50), nullable=False)
+    is_offical = db.Column(db.Boolean, nullable=True) 
     characters = db.relationship("Character_Race") #Characters that are this race
 
 class Character_Race(db.Model):
     __tablename__ = "character_race"
     char_id = db.Column(db.Integer, db.ForeignKey(Character.char_id), primary_key=True, nullable=False)
-    is_offical = db.Column(db.Boolean, nullable=True) 
     race_id = db.Column(db.Integer, db.ForeignKey(DNDRace.race_id), nullable=False)
 
 #class Race_Proficiency_Option(db.Model):

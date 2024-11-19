@@ -17,7 +17,7 @@
     <p>Your characters:</p>
     {% for entry in userChars %}
     <ul>
-        <li><a href="{{ url_for('profile_bp.character_detail', username=user.username, character_id=entry.char_id) }}">{{ entry.name }}</a></li>
+        <li><a href="{{ url_for('character_bp.character', character_id=entry.char_id) }}">{{ entry.name }}</a></li>
     </ul>
     {%endfor%}
     <form method="post">

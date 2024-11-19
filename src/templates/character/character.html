@@ -1,13 +1,14 @@
 {% extends "base.html" %}
 
-{% block title_content %}{{ character.name }}'s Details{% endblock %}
+{% block title_content %}{{ character_id }}'s Profile{% endblock %}
 
 {% block body_content %}
     <div class="main-content">
+        {% if current_user.is_authenticated %}
         <h1>{{ character.name }}</h1>
         <p>Owner: {{ user.username }}</p>
 
-        <form method="POST" action="{{ url_for('profile_bp.character_detail', username=user.username, character_id=character.char_id) }}">
+        <form method="POST" action="{{ url_for('character_bp.character', character_id=character.char_id) }}">
             <label for="class_id">Choose a Class:</label>
             <select id="class_id" name="class_id">
                 {% for dnd_class in all_classes %}
@@ -30,5 +31,14 @@
         </p>
 
             <a href="/profile/{{current_user.username}}">Back to Profile</a>
+
+        {% else %}
+        <h1>You're not logged in!</h1>
+        <a href="{{ url_for('auth_bp.login') }}">Click here to log in.<br></a>
+        <a href="{{ url_for('auth_bp.register') }}">Or, you can click here to create a new account!</a>
+
+        {%endif%}
     </div>
+
+    
 {% endblock %}
