@@ -9,26 +9,38 @@
         <meta charset="UTF-8" />
 	    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/new_main.css') }}">
         <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
     </header>
-    <nav class="nav_page_header">
-        <ul>
-            {% if not current_user.is_authenticated %}
-            <li><a href="{{ url_for('auth_bp.login') }}">Login</a></li>
-            {% endif %}
-            <li><a href="{{ url_for('core.home') }}">Home</a>
-            {% if current_user.is_authenticated %}
-                <ul>
-                    <li><a href="{{ url_for('core.home') }}">Home</a></li>
-                    <li><a href="{{ url_for('profile_bp.profile', username=current_user.username)}}">Profile</a></li>
-                </ul>
-            </li>
-            <li><a href="{{ url_for('profile_bp.profile', username=current_user.username)}}">Create Charater</a></li>
-            <li><a href="{{ url_for('auth_bp.logout') }}">Logout</a></li>
-            {% endif %}
-        </ul>
-    </nav>
+        <!-- Top Navigation Bar -->
+    <div class="navbar">
+        <a class="logoLink" href="{{ url_for('core.home') }}">
+        	<img src="../../static/images/RILogoWithTextNoBorder.png" alt="Logo" class="nav-logo">
+        </a>
+        <div class="navbar-links">
+            <a href="#">Search (Not functional rn)</a>
+            <a href="#">Campaigns (Not functional rn)</a>
+            <a href="#">News (Not functional rn)</a>
+            <a href="#">Collection (Not functional rn)</a>
+            <a href="#">Forums (Not functional rn)</a>
+        </div>
+        {% if current_user.is_authenticated %}
+        	<div class="profile">
+        	    <span class="profile-name">{{current_user.username}}</span>
+        	    <div class="profile-dropdown">
+        	        <a href="/profile/{{current_user.username}}">Profile</a>
+        	        <a href="#">My Campaigns (Not functional rn)</a>
+        	        <a href="#">Settings (Not functional rn)</a>
+        	        <a href="{{ url_for('auth_bp.logout') }}">Log Out</a>
+        	    </div>
+        	</div>
+        {% else %}
+        	<div class="navbar-links">
+            	<a href="{{ url_for('auth_bp.login') }}">Log In</a>
+        		<a href="{{ url_for('auth_bp.register') }}">Register</a>
+        	</div>
+        {% endif %}
+    </div>
     <main>
         {% block body_content %}{% endblock %}
     </main>

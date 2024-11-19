@@ -3,7 +3,8 @@
 {% block title_content %}{{ user.username }}'s Profile{% endblock %}
 
 {% block body_content %}
-    <nav>
+    <div class="main-content">
+        <nav>
         <ul>
             <a href="{{url_for('auth_bp.logout')}}">Logout</a>
              |
@@ -13,11 +14,10 @@
     </nav>
     <h1>{{ user.username }}'s Profile</h1>
     <p>Email: {{ user.email }}</p>
-    <a href="/profile/test">test</a>
     <p>Your characters:</p>
     {% for entry in userChars %}
     <ul>
-        <li><a href="{{ url_for('profile_bp.character_detail', username=user.username, character=entry.name) }}">{{ entry.name }}</a></li>
+        <li><a href="{{ url_for('character_bp.character', character_id=entry.char_id) }}">{{ entry.name }}</a></li>
     </ul>
     {%endfor%}
     <form method="post">
@@ -25,5 +25,6 @@
         <input type="text" name="charname" required />
         <button type="submit">create character</button>
     </form>
+    </div>
 
 {% endblock %}
