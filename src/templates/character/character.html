@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title_content %}{{ character_id }}'s Profile{% endblock %}
+
+{% block body_content %}
+
+
+{% if current_user.is_authenticated %}
+
+<h1>character page: {{ character_id }}</h1>
+{% else %}
+<h1>current user not found</h1>
+
+{%endif%}
+{% endblock %}

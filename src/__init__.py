@@ -51,10 +51,12 @@ mail = Mail(app)
 from src.auth.views import auth_bp
 from src.core.views import core_bp
 from src.profile.views import profile_bp
+from src.character.views import character_bp
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(core_bp)
 app.register_blueprint(profile_bp)
+app.register_blueprint(character_bp)
 
 from src.auth.models import User
 
