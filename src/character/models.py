@@ -169,7 +169,7 @@ class Character_Proficiency_Choices(db.Model):
 class Character_Condition(db.Model):
     __tablename__ = "character_condition"
     char_id = db.Column(db.Integer, db.ForeignKey(Character.char_id), primary_key=True, nullable=False)
-    condition_id = char_id = db.Column(db.Integer, db.ForeignKey(DND_Condition.condition_id), primary_key=True, nullable=False)
+    condition_id = db.Column(db.Integer, db.ForeignKey(DND_Condition.condition_id), primary_key=True, nullable=False)
     duration_rounds = db.Column(db.Integer, nullable=False, default=-1)
 
 
