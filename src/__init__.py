@@ -70,6 +70,22 @@ login_manager.login_message_category = "danger"
 
 def fetch_and_populate_classes():
     # Fetch all classes from the D&D API
+
+    class_descriptions = {
+        "Barbarian": "A fierce warrior of primitive background who can enter a battle rage",
+        "Bard": "An inspiring magician whose power echoes the music of creation",
+        "Cleric": "A priestly champion who wields divine magic in service of a higher power",
+        "Druid": "A priest of the Old Faith, wielding the powers of nature — moonlight and plant growth, fire and lightning — and adopting animal forms",
+        "Fighter": "A master of martial combat, skilled with a variety of weapons and armor",
+        "Monk": "A master of martial arts, harnessing the power of the body in pursuit of physical and spiritual perfection",
+        "Paladin": "A holy warrior bound to a sacred oath",
+        "Ranger": "A warrior who uses martial prowess and nature magic to combat threats on the edges of civilization",
+        "Rogue": "A scoundrel who uses stealth and trickery to overcome obstacles and enemies",
+        "Sorcerer": "A spellcaster who draws on inherent magic from a gift or bloodline",
+        "Warlock": "A wielder of magic that is derived from a bargain with an extraplanar entity",
+        "Wizard": "A scholarly magic-user capable of manipulating the structures of reality"
+    }
+
     response = requests.get(API_BASE_URL, headers={"Accept": "application/json"})
     
     # Check if the request was successful
@@ -97,7 +113,7 @@ def fetch_and_populate_classes():
         # Prepare the DND_Class object to be added to the database
         new_class = DND_Class(
             name=class_details["name"],
-            description=class_details.get("desc", ["No description available"])[0],
+            description=class_descriptions.get(class_details["name"]),
             hit_die=class_details["hit_die"],
             is_offical=True
         )
