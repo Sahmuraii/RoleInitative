@@ -11,6 +11,8 @@ from flask_cors import CORS
 
 from datetime import timedelta
 
+import requests
+
 app = Flask(__name__)
 CORS(app)
 
@@ -36,6 +38,8 @@ app.config["MAIL_DEBUG"] = False
 app.config["MAIL_USERNAME"] = getenv("EMAIL_USER")
 app.config["MAIL_PASSWORD"] = getenv("EMAIL_PASSWORD")
 
+API_BASE_URL = "https://www.dnd5eapi.co/api/classes"
+
 login_manager = LoginManager()
 login_manager.init_app(app)
 db = SQLAlchemy(app)
@@ -59,12 +63,60 @@ app.register_blueprint(profile_bp)
 app.register_blueprint(character_bp)
 
 from src.auth.models import User
+from src.character.models import DND_Class
 
 login_manager.login_view = "auth_bp.login"
 login_manager.login_message_category = "danger"
 
+def fetch_and_populate_classes():
+    # Fetch all classes from the D&D API
+    response = requests.get(API_BASE_URL, headers={"Accept": "application/json"})
+    
+    # Check if the request was successful
+    if response.status_code != 200:
+        print(f"Failed to fetch data. Status Code: {response.status_code}")
+        return
+    
+    # Extract the classes from the response
+    classes = response.json().get("results", [])
+    
+    # Iterate over each class
+    for cls in classes:
+        class_index = cls["index"]  # Extract the class index (e.g., "barbarian")
+        class_details_url = f"{API_BASE_URL}/{class_index}" # Construct the URL to fetch detailed information
+        
+        # Fetch detailed information for each class
+        class_details_response = requests.get(class_details_url, headers={"Accept": "application/json"}) # Make the request
+        
+        if class_details_response.status_code != 200: # Check if the request was successful
+            print(f"Failed to fetch details for {cls['name']}. Status Code: {class_details_response.status_code}") # Log the error
+            continue # Skip to the next class
+        
+        class_details = class_details_response.json() # Extract the class details
+        
+        # Prepare the DND_Class object to be added to the database
+        new_class = DND_Class(
+            name=class_details["name"],
+            description=class_details.get("desc", ["No description available"])[0],
+            hit_die=class_details["hit_die"],
+            is_offical=True
+        )
+        
+        # Add to the session
+        db.session.add(new_class)
+    
+    # Commit all changes to the database
+    try:
+        db.session.commit()
+        print("Classes successfully populated!")
+    except Exception as e:
+        db.session.rollback()
+        print(f"An error occurred: {e}")
+
 with app.app_context():
     db.create_all()
+    fetch_and_populate_classes()
+
 
 @login_manager.user_loader
 def load_user(user_id):
