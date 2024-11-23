@@ -59,4 +59,10 @@ def character(character_id):
 
 @character_bp.route("/character/create", methods=['GET', 'POST'])
 def create():
-    return "unfinished"
+    if request.method == 'POST':
+        
+
+
+
+
+    return render_template("character/character_creator.html")
