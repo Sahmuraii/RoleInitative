@@ -7,32 +7,195 @@
         <h1>Character Creator</h1>
         <p>Welcome to the character creator! Here you can design your own Dungeons and Dragons character.</p>
 
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('basicInfo')">Basic Info</button>
+            <button class="tab" onclick="showTab('attributes')">Attributes</button>
+            <button class="tab" onclick="showTab('abilities')">Abilities</button>
+            <button class="tab" onclick="showTab('equipment')">Equipment</button>
+            {% if current_user.is_authenticated %}
+                <button class="tab" onclick="showTab('notAlwaysHere')">Special Tab</button>
+            {% else %}
+                <p>User is NOT authenticated.</p>
+            {% endif %}
+        </div>
+
         <form method="POST" action="{{ url_for('character_bp.create') }}">
-            <label for="charname">Enter your character's name:</label><br>
-            <input type="text" id="charname" name="charname" onkeyup="showLevel()" on><br>
+            <div id="basicInfo" class="tab-content active">
+                <h2>Basic Info</h2>
+                <p>Brendan's Stuff</p>
+                <label for="charname">Enter your character's name:</label><br>
+                <input type="text" id="charname" name="charname" onkeyup="showLevel()" on><br>
 
-            <!-- Make sure to add an option to decide between rulesets somehow (2014 vs 2024) -->
-            <label for="charrace">Choose your character's race:</label><br>
-            <select id="charrace" name="charrace">
-                {% for dnd_race in all_races %}
-                    <option value="{{ dnd_class.race_id }}">
-                        {{ dnd_race.name }}
-                    </option>
-                {% endfor %}
-            </select><br>
+                <!-- Make sure to add an option to decide between rulesets somehow (2014 vs 2024) -->
+                <label for="charrace">Choose your character's race:</label><br>
+                <select id="charrace" name="charrace">
+                    {% for dnd_race in all_races %}
+                        <option value="{{ dnd_race.race_id }}">
+                            {{ dnd_race.name }}
+                        </option>
+                    {% endfor %}
+                </select><br>
 
-            <label for="startlevel">Enter your character's starting level:</label><br>
-            <input type="number" id="startlevel" name="startlevel" min="1" max="20" value="1"><br>
+                <label for="startlevel">Enter your character's starting level:</label><br>
+                <input type="number" id="startlevel" name="startlevel" min="1" max="20" value="1"><br>
 
-            <label for="multiclass">Enter how many classes you would like to use (Cannot exceed starting level):</label><br>
-            <input type="number" id="multiclass" name="multiclass" min="1" max="20" value="1"><br>
+                <label for="multiclass">Enter how many classes you would like to use (Cannot exceed starting level):</label><br>
+                <input type="number" id="multiclass" name="multiclass" min="1" max="20" value="1"><br>
 
-            <p id="test">test</p>
-            <script>
-                function showLevel() {
-                    document.getElementById("test").innerHTML = document.getElementById('charname').value;
-                }
-            </script>
+                <p id="test">test</p>
+                <p>Aiden's Stuff. I don't know what needs to be added; will worry about css later</p>
+                <div class="form-section">
+                    <label for="name">Character Name</label>
+                    <input type="text" id="name" name="name" placeholder="Enter character name">
+                </div>
+                <div class="form-section">
+                    <label for="class_id">Class</label>
+                    <select id="class_id" name="class_id" required>
+                        {% for dnd_class in all_classes %}
+                            <option value="{{ dnd_class.class_id }}"
+                                {% if current_class and dnd_class.name == current_class %} selected {% endif %}>
+                                {{ dnd_class.name }}
+                            </option>
+                        {% endfor %}
+                        <!-- Add more classes as needed -->
+                    </select>
+                </div>
+                <div class="form-section">
+                    <label for="characterRace">Race</label>
+                    <select id="characterRace">
+                        <option value="human">Human</option>
+                        <option value="elf">Elf</option>
+                        <option value="dwarf">Dwarf</option>
+                        <option value="halfling">Halfling</option>
+                        <!-- Add more races as needed -->
+                    </select>
+                </div>
+                <label for="class_level">Set Class Level:</label>
+                <input type="number" id="class_level" name="class_level" min="1" value="{{ current_level if current_level else 1 }}" required>
+
+            </div>
+
+            <div id="attributes" class="tab-content">
+                <!-- TODO: Implement Dice Rolling, Point-Buy, and Standard Array Solutions -->
+                <h2>Attributes</h2>
+                <div class="form-section">
+                    <label for="strength">Strength</label>
+                    <div class="input-group">
+                        <button type="button" onclick="decrementValue('strength')">-</button>
+                        <input type="number" id="strength" value="10" min="1" max="20">
+                        <button type="button" onclick="incrementValue('strength')">+</button>
+                    </div>
+                </div>
+                <div class="form-section">
+                    <label for="dexterity">Dexterity</label>
+                    <div class="input-group">
+                        <button type="button" onclick="decrementValue('dexterity')">-</button>
+                        <input type="number" id="dexterity" value="10" min="1" max="20">
+                        <button type="button" onclick="incrementValue('dexterity')">+</button>
+                    </div>
+                </div>
+                <div class="form-section">
+                    <label for="constitution">Constitution</label>
+                    <div class="input-group">
+                        <button type="button" onclick="decrementValue('constitution')">-</button>
+                        <input type="number" id="constitution" value="10" min="1" max="20">
+                        <button type="button" onclick="incrementValue('constitution')">+</button>
+                    </div>
+                </div>
+                <div class="form-section">
+                    <label for="intelligence">Intelligence</label>
+                    <div class="input-group">
+                        <button type="button" onclick="decrementValue('intelligence')">-</button>
+                        <input type="number" id="intelligence" value="10" min="1" max="20">
+                        <button type="button" onclick="incrementValue('intelligence')">+</button>
+                    </div>
+                </div>
+                <div class="form-section">
+                    <label for="wisdom">Wisdom</label>
+                    <div class="input-group">
+                        <button type="button" onclick="decrementValue('wisdom')">-</button>
+                        <input type="number" id="wisdom" value="10" min="1" max="20">
+                        <button type="button" onclick="incrementValue('wisdom')">+</button>
+                    </div>
+                </div>
+                <div class="form-section">
+                    <label for="charisma">Charisma</label>
+                    <div class="input-group">
+                        <button type="button" onclick="decrementValue('charisma')">-</button>
+                        <input type="number" id="charisma" value="10" min="1" max="20">
+                        <button type="button" onclick="incrementValue('charisma')">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="abilities" class="tab-content">
+                <h2>Abilities</h2>
+                <div class="form-section">
+                    <label for="specialAbilities">Special Abilities</label>
+                    <textarea id="specialAbilities" rows="4" placeholder="Describe special abilities"></textarea>
+                </div>
+            </div>
+
+            <div id="equipment" class="tab-content">
+                <h2>Equipment</h2>
+                <div class="form-section">
+                    <label for="equipmentList">Equipment List</label>
+                    <textarea id="equipmentList" rows="4" placeholder="List your character's equipment"></textarea>
+                </div>
+            </div>
+
+            <div id="notAlwaysHere" class="tab-content">
+                <h2>Information from the Database</h2>
+
+                <p>Character Class: {{ current_class if current_class else "None" }}</p>
+                <p>Current Level: {{ current_level if current_level else "N/A" }}</p>
+                <p>All Classes: {{ all_classes }}</p>
+                <p>All Classes: {% for dnd_class in all_classes %}
+                    {{ dnd_class.class_id }} <br>
+                    {{ dnd_class.name }} <br>
+                    {{ dnd_class.description }} <br>
+                    {{ dnd_class.hit_die }} <br>
+                    {{ dnd_class.is_official }} <br>
+                    {% endfor %}
+                </p>
+            </div>
+            <div class="button-group">
+                <button type="submit">Save Character</button>
+            </div>
         </form>
     </div>
+    <script>
+        function showLevel() {
+            document.getElementById("test").innerHTML = document.getElementById('charname').value;
+        }
+
+        function showTab(tabId) {
+            // Remove 'active' class from all tabs and tab contents
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            // Add 'active' class to selected tab and corresponding content
+            document.querySelector(`button[onclick="showTab('${tabId}')"]`).classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        function incrementValue(id) {
+            const input = document.getElementById(id);
+            const max = parseInt(input.max);
+            const value = parseInt(input.value);
+            if (value < max) {
+                input.value = value + 1;
+            }
+        }
+
+        function decrementValue(id) {
+            const input = document.getElementById(id);
+            const min = parseInt(input.min);
+            const value = parseInt(input.value);
+            if (value > min) {
+                input.value = value - 1;
+            }
+        }
+    </script>
+
 {% endblock %}
