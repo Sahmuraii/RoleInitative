@@ -22,13 +22,20 @@ class Character(db.Model):
 class DND_Race(db.Model):
     __tablename__ = "dnd_race"
     race_id = db.Column(db.Integer, primary_key=True, nullable=False)
-    #features_id = db.Column(db.Integer, db.ForeignKey('DND_Race_Features.features_id'), nullable=True)
     name = db.Column(db.String(50), nullable=False)
-    description = db.Column(db.String(250), nullable=False)
+    description = db.Column(db.String(250), nullable=True)
     speed = db.Column(db.Integer, nullable=False)
     size = db.Column(db.String(50), nullable=False)
     is_offical = db.Column(db.Boolean, nullable=True) 
-    characters = db.relationship("Character_Race") #Characters that are this race
+    alignment_description = db.Column(db.String(500), nullable=True)
+    age_description = db.Column(db.String(500), nullable=True)
+    size_description = db.Column(db.String(500), nullable=True)
+    language_description = db.Column(db.String(500), nullable=True)
+    languages = db.Column(db.ARRAY(db.String(500)), nullable=True)
+    traits = db.Column(db.ARRAY(db.String(50)), nullable=True)
+    ability_bonuses = db.Column(db.ARRAY(db.String(50)), nullable=True)
+    starting_proficiencies = db.Column(db.ARRAY(db.String(50)), nullable=True)
+    subraces = db.Column(db.ARRAY(db.String(50)), nullable=True)
 
 class DND_Class(db.Model):
     __tablename__ = "dnd_class"
