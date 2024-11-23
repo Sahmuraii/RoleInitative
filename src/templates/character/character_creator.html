@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title_content %}{{ character_id }}'s Profile{% endblock %}
+
+{% block body_content %}
+    <div class="main-content">
+        <h1>Character Creator</h1>
+        <p>Welcome to the character creator! Here you can design your own Dungeons and Dragons character.</p>
+
+        <form method="POST" action="{{ url_for('character_bp.create') }}">
+            <label for="charname">Enter your character's name:</label><br>
+            <input type="text" id="charname" name="charname" onkeyup="showLevel()" on><br>
+
+            <!-- Make sure to add an option to decide between rulesets somehow (2014 vs 2024) -->
+            <label for="charrace">Choose your character's race:</label><br>
+            <select id="charrace" name="charrace">
+                {% for dnd_race in all_races %}
+                    <option value="{{ dnd_class.race_id }}">
+                        {{ dnd_race.name }}
+                    </option>
+                {% endfor %}
+            </select><br>
+
+            <label for="startlevel">Enter your character's starting level:</label><br>
+            <input type="number" id="startlevel" name="startlevel" min="1" max="20" value="1"><br>
+
+            <label for="multiclass">Enter how many classes you would like to use (Cannot exceed starting level):</label><br>
+            <input type="number" id="multiclass" name="multiclass" min="1" max="20" value="1"><br>
+
+            <p id="test">test</p>
+            <script>
+                function showLevel() {
+                    document.getElementById("test").innerHTML = document.getElementById('charname').value;
+                }
+            </script>
+        </form>
+    </div>
+{% endblock %}

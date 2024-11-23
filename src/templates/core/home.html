@@ -27,6 +27,7 @@
                 <a href="{{ url_for('character_bp.character', character_id=entry.char_id) }}">{{ entry.name }}</a>
             </div>
             {%endfor%}
+            <a href="{{ url_for('character_bp.create') }}">Create a New Character!</a>
         </div>
         {% else %}
         <div id="myStuff" class="tab-content active">
