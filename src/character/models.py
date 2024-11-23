@@ -141,6 +141,21 @@ class Character_Stats(db.Model):
     wisdom = db.Column(db.Integer, nullable=False)
     charisma = db.Column(db.Integer, nullable=False)
 
+class Character_Details(db.Model):
+    __tablename__ = "character_details"
+    char_id = db.Column(db.Integer, db.ForeignKey(Character.char_id), primary_key=True, nullable=False)
+    height=db.Column(db.String(20))
+    weight=db.Column(db.Float)
+    alignment=db.Column(db.String(50))
+    skin_color=db.Column(db.String(50)) 
+    hair_color=db.Column(db.String(50))
+    eye_color=db.Column(db.String(50))
+    age=db.Column(db.Integer)
+    backstory=db.Column(db.String(500)) #description of the character's story, shown as "Character Backstory" on the sheet
+    appearance=db.Column(db.String(500)) #simple description for the character's appearance
+    bonds=db.Column(db.String(500)) #shown as "Alliances and Organizations" on the official character sheet
+    misc=db.Column(db.String(500)) #any other info the player wants to enter
+
 #   >>> HP / Death Saves
 class Character_Hit_Points(db.Model):
     __tablename__ = "character_hit_points"
