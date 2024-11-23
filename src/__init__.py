@@ -118,8 +118,13 @@ def fetch_and_populate_classes():
             is_offical=True
         )
         
-        # Add to the session
-        db.session.add(new_class)
+        existing_class = DND_Class.query.filter_by(name=class_details["name"]).first()  # Check if the class already exists
+
+        if existing_class:
+            continue
+        else:
+            db.session.add(new_class)
+            continue
     
     # Commit all changes to the database
     try:
