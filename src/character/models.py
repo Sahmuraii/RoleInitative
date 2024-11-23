@@ -141,9 +141,9 @@ class Character_Stats(db.Model):
     wisdom = db.Column(db.Integer, nullable=False)
     charisma = db.Column(db.Integer, nullable=False)
 
-class Character_Details(db.model):
+class Character_Details(db.Model):
     __tablename__ = "character_details"
-    char_id = db.Column(db.Integer, db,ForeignKey(Character.char_id), primary_key=True, nullable=False)
+    char_id = db.Column(db.Integer, db.ForeignKey(Character.char_id), primary_key=True, nullable=False)
     height=db.Column(db.String(20))
     weight=db.Column(db.Float)
     alignment=db.Column(db.String(50))

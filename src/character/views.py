@@ -2,7 +2,7 @@ from flask import render_template, Blueprint, request, redirect, url_for
 from flask_login import current_user
 from sqlalchemy import select
 from src.auth.models import User
-from src.character.models import Character, Character_Class, DND_Class
+from src.character.models import Character, Character_Class, DND_Class, DND_Race
 from src import db
 
 character_bp = Blueprint('character_bp', __name__, template_folder='../templates')
@@ -59,10 +59,9 @@ def character(character_id):
 
 @character_bp.route("/character/create", methods=['GET', 'POST'])
 def create():
-    if request.method == 'POST':
+    
+    all_races = DND_Race.query.all()
+    #if request.method == 'POST':
         
-
-
-
-
-    return render_template("character/character_creator.html")
+    
+    return render_template("character/character_creator.html", all_races=all_races)
