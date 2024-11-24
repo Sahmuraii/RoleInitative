@@ -61,7 +61,8 @@ def character(character_id):
 def create():
     
     all_races = DND_Race.query.all()
+    all_classes = DND_Class.query.all()
     #if request.method == 'POST':
         
     
-    return render_template("character/character_creator.html", all_races=all_races)
+    return render_template("character/character_creator.html", all_races=all_races, all_classes=all_classes)

@@ -9,28 +9,82 @@
 
         <form method="POST" action="{{ url_for('character_bp.create') }}">
             <label for="charname">Enter your character's name:</label><br>
-            <input type="text" id="charname" name="charname" onkeyup="showLevel()" on><br>
+            <input type="text" id="charname" name="charname"><br>
 
             <!-- Make sure to add an option to decide between rulesets somehow (2014 vs 2024) -->
             <label for="charrace">Choose your character's race:</label><br>
             <select id="charrace" name="charrace">
                 {% for dnd_race in all_races %}
-                    <option value="{{ dnd_class.race_id }}">
+                    <option value="{{ dnd_race.race_id }}">
                         {{ dnd_race.name }}
                     </option>
                 {% endfor %}
             </select><br>
 
             <label for="startlevel">Enter your character's starting level:</label><br>
-            <input type="number" id="startlevel" name="startlevel" min="1" max="20" value="1"><br>
+            <input type="number" id="startlevel" name="startlevel" min="1" max="20" value="1" onchange="setMulticlassMax(startlevel.value)"><br>
 
             <label for="multiclass">Enter how many classes you would like to use (Cannot exceed starting level):</label><br>
-            <input type="number" id="multiclass" name="multiclass" min="1" max="20" value="1"><br>
+            <input type="number" id="multiclass" name="multiclass" min="1" max="1" value="1" onchange="updateClasses(multiclass.value)"><br>
 
-            <p id="test">test</p>
+            <label for="classdisplay">Choose your class or classes:</label>
+            <div id="classdisplay">
+                <label for="class1">Class: </label>
+                <select id="class_id" name="class_id">
+                    {% for dnd_class in all_classes %}
+                        <option value="{{ dnd_class.class_id }}">
+                            {{ dnd_class.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
             <script>
-                function showLevel() {
-                    document.getElementById("test").innerHTML = document.getElementById('charname').value;
+                
+
+
+                function setMulticlassMax(inputValue) {
+                    element = document.getElementById("multiclass");
+                    element.setAttribute("max", inputValue);
+                    if(parseInt(element.value) > inputValue) {
+                        element.value = inputValue;
+                        updateClasses(inputValue);
+                    }
+                }
+
+
+                function updateClasses(value) {
+                    document.getElementById("classdisplay").innerHTML = "";
+                    if(value==1) {
+                        document.getElementById("classdisplay").innerHTML += `
+                            <div id="classdisplay">
+                                <label for="class1">Class: </label>
+                                <select id="class_id" name="class_id">
+                                    {% for dnd_class in all_classes %}
+                                        <option value="{{ dnd_class.class_id }}">
+                                            {{ dnd_class.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        `
+                    }
+                    else {
+                        for(var i = 0; i < value; i++) {
+                        document.getElementById("classdisplay").innerHTML += `
+                            <div id="classdisplay">
+                                <label for="class${i + 1}">Class ${i + 1}: </label>
+                                <select id="class_id" name="class_id">
+                                    {% for dnd_class in all_classes %}
+                                        <option value="{{ dnd_class.class_id }}">
+                                            {{ dnd_class.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        `;
+                    }
+                    }
+                    
                 }
             </script>
         </form>
