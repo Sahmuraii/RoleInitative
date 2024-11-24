@@ -15,6 +15,11 @@
             <button class="tab" onclick="showTab('attributes')">Attributes</button>
             <button class="tab" onclick="showTab('details')">Character Details</button>
             <button class="tab" onclick="showTab('equipment')">Equipment</button>
+            {% if current_user.is_admin %}
+                <button class="tab" onclick="showTab('debug')">Admin Tab</button>
+            {% else %}
+                <p>User is NOT authenticated.</p>
+            {% endif %}
         </div>
 
         <form method="POST" action="{{ url_for('character_bp.create') }}">
@@ -181,7 +186,21 @@
                     <textarea id="equipmentList" rows="4" placeholder="List your character's equipment"></textarea>
                 </div>
             </div>
+            <div id="debug" class="tab-content">
+                <h2>Information from the Database</h2>
 
+                <p>Character Class: {{ current_class if current_class else "None" }}</p>
+                <p>Current Level: {{ current_level if current_level else "N/A" }}</p>
+                <p>All Classes: {{ all_classes }}</p>
+                <p>All Classes: {% for dnd_class in all_classes %}
+                    {{ dnd_class.class_id }} <br>
+                    {{ dnd_class.name }} <br>
+                    {{ dnd_class.description }} <br>
+                    {{ dnd_class.hit_die }} <br>
+                    {{ dnd_class.is_official }} <br>
+                    {% endfor %}
+                </p>
+            </div>
             <div class="button-group">
                 <button type="submit">Save Character</button>
             </div>
