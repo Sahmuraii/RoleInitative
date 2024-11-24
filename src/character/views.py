@@ -65,4 +65,6 @@ def create():
     #if request.method == 'POST':
         
     
+
     return render_template("character/character_creator.html", all_classes=all_classes, all_races=all_races)
+
