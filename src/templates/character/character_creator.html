@@ -46,6 +46,7 @@
 
             <!-- Race -->
             <div id="race" class="tab-content">
+                <!-- Make sure to add an option to decide between rulesets somehow (2014 vs 2024) -->
                 <h2>Choose Your Race</h2>
                 <label for="charrace">Choose your character's race:</label>
                 <select id="charrace" name="charrace">
@@ -63,48 +64,22 @@
             <div id="class" class="tab-content">
                 <h2>Choose Your Class</h2>
                 <label for="startlevel">Enter your character's starting level:</label>
-                <input type="number" id="startlevel" onkeyup=validateMulticlass() name="startlevel" min="1" max="20" value="1"><br>
+                <input type="number" id="startlevel" name="startlevel" min="1" max="20" value="1" onchange="setMulticlassMax(startlevel.value)"><br>
 
-                <label for="class_id">Choose your class:</label>
+                <label for="multiclass">Enter how many classes you would like to use (Cannot exceed starting level):</label><br>
+                <input type="number" id="multiclass" name="multiclass" min="1" max="1" value="1" onchange="updateClasses(multiclass.value)"><br>
 
-              
-              <p>Brendan's Stuff</p>
-            <label for="charname">Enter your character's name:</label><br>
-            <input type="text" id="charname" name="charname"><br>
-
-            <!-- Make sure to add an option to decide between rulesets somehow (2014 vs 2024) -->
-            <label for="charrace">Choose your character's race:</label><br>
-            <select id="charrace" name="charrace">
-                {% for dnd_race in all_races %}
-                    <option value="{{ dnd_race.race_id }}">
-                        {{ dnd_race.name }}
-                    </option>
-                {% endfor %}
-            </select><br>
-
-            <label for="startlevel">Enter your character's starting level:</label><br>
-            <input type="number" id="startlevel" name="startlevel" min="1" max="20" value="1" onchange="setMulticlassMax(startlevel.value)"><br>
-
-            <label for="multiclass">Enter how many classes you would like to use (Cannot exceed starting level):</label><br>
-            <input type="number" id="multiclass" name="multiclass" min="1" max="1" value="1" onchange="updateClasses(multiclass.value)"><br>
-
-            <label for="classdisplay">Choose your class or classes:</label>
-            <div id="classdisplay">
-                <label for="class1">Class: </label>
-
-                <select id="class_id" name="class_id">
-                    {% for dnd_class in all_classes %}
-                        <option value="{{ dnd_class.class_id }}">
-                            {{ dnd_class.name }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
-
-                </select><br>
-
-                <label for="multiclass">Number of multiclasses (optional):</label>
-                <input type="number" id="multiclass" name="multiclass" min="1" max="20" value="1"><br>
+                <label for="classdisplay">Choose your class or classes:</label>
+                <div id="classdisplay">
+                    <label for="class_1">Class: </label>
+                    <select id="class_id" name="class_id">
+                        {% for dnd_class in all_classes %}
+                            <option value="{{ dnd_class.class_id }}">
+                                {{ dnd_class.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
 
                 <button type="button" onclick="window.location.href='/homebrew/classes'">Browse Homebrew Classes</button>
             </div>
