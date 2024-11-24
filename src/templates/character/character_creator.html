@@ -6,28 +6,47 @@
     <div class="main-content">
         <h1>Character Creator</h1>
         <p>Welcome to the character creator! Here you can design your own Dungeons and Dragons character.</p>
+        <p>Follow the steps below to build your character:</p>
 
         <div class="tabs">
             <button class="tab active" onclick="showTab('basicInfo')">Basic Info</button>
+            <button class="tab" onclick="showTab('race')">Race</button>
+            <button class="tab" onclick="showTab('class')">Class</button>
             <button class="tab" onclick="showTab('attributes')">Attributes</button>
-            <button class="tab" onclick="showTab('abilities')">Abilities</button>
+            <button class="tab" onclick="showTab('details')">Character Details</button>
             <button class="tab" onclick="showTab('equipment')">Equipment</button>
-            {% if current_user.is_authenticated %}
-                <button class="tab" onclick="showTab('notAlwaysHere')">Special Tab</button>
-            {% else %}
-                <p>User is NOT authenticated.</p>
-            {% endif %}
         </div>
 
         <form method="POST" action="{{ url_for('character_bp.create') }}">
+            <!-- Basic Info -->
             <div id="basicInfo" class="tab-content active">
                 <h2>Basic Info</h2>
-                <p>Brendan's Stuff</p>
-                <label for="charname">Enter your character's name:</label><br>
-                <input type="text" id="charname" name="charname" onkeyup="showLevel()" on><br>
+                <label for="charname">Enter your character's name:</label>
+                <input type="text" id="charname" name="charname" placeholder="Enter character name"><br>
 
-                <!-- Make sure to add an option to decide between rulesets somehow (2014 vs 2024) -->
-                <label for="charrace">Choose your character's race:</label><br>
+                <label for="ruleset">Choose your ruleset:</label>
+                <select id="ruleset" name="ruleset">
+                    <option value="2014">2014 (Original)</option>
+                    <option value="2024">2024 (Updated)</option>
+                </select><br>
+
+                <label for="xp_method">Experience Method:</label>
+                <select id="xp_method" name="xp_method">
+                    <option value="xp">XP</option>
+                    <option value="milestone">Milestone</option>
+                </select><br>
+
+                <label for="encumbrance">Encumbrance Rules:</label>
+                <select id="encumbrance" name="encumbrance">
+                    <option value="yes">Use Encumbrance</option>
+                    <option value="no">No Encumbrance</option>
+                </select>
+            </div>
+
+            <!-- Race -->
+            <div id="race" class="tab-content">
+                <h2>Choose Your Race</h2>
+                <label for="charrace">Choose your character's race:</label>
                 <select id="charrace" name="charrace">
                     {% for dnd_race in all_races %}
                         <option value="{{ dnd_race.race_id }}">
@@ -36,135 +55,178 @@
                     {% endfor %}
                 </select><br>
 
-                <label for="startlevel">Enter your character's starting level:</label><br>
-                <input type="number" id="startlevel" name="startlevel" min="1" max="20" value="1"><br>
+                <button type="button" onclick="window.location.href='/homebrew/races'">Browse Homebrew Races</button>
+            </div>
 
-                <label for="multiclass">Enter how many classes you would like to use (Cannot exceed starting level):</label><br>
+            <!-- Class -->
+            <div id="class" class="tab-content">
+                <h2>Choose Your Class</h2>
+                <label for="startlevel">Enter your character's starting level:</label>
+                <input type="number" id="startlevel" onkeyup=validateMulticlass() name="startlevel" min="1" max="20" value="1"><br>
+
+                <label for="class_id">Choose your class:</label>
+                <select id="class_id" name="class_id">
+                    {% for dnd_class in all_classes %}
+                        <option value="{{ dnd_class.class_id }}">
+                            {{ dnd_class.name }}
+                        </option>
+                    {% endfor %}
+                </select><br>
+
+                <label for="multiclass">Number of multiclasses (optional):</label>
                 <input type="number" id="multiclass" name="multiclass" min="1" max="20" value="1"><br>
 
-                <p id="test">test</p>
-                <p>Aiden's Stuff. I don't know what needs to be added; will worry about css later</p>
-                <div class="form-section">
-                    <label for="name">Character Name</label>
-                    <input type="text" id="name" name="name" placeholder="Enter character name">
-                </div>
-                <div class="form-section">
-                    <label for="class_id">Class</label>
-                    <select id="class_id" name="class_id" required>
-                        {% for dnd_class in all_classes %}
-                            <option value="{{ dnd_class.class_id }}"
-                                {% if current_class and dnd_class.name == current_class %} selected {% endif %}>
-                                {{ dnd_class.name }}
-                            </option>
-                        {% endfor %}
-                        <!-- Add more classes as needed -->
-                    </select>
-                </div>
-                <div class="form-section">
-                    <label for="characterRace">Race</label>
-                    <select id="characterRace">
-                        <option value="human">Human</option>
-                        <option value="elf">Elf</option>
-                        <option value="dwarf">Dwarf</option>
-                        <option value="halfling">Halfling</option>
-                        <!-- Add more races as needed -->
-                    </select>
-                </div>
-                <label for="class_level">Set Class Level:</label>
-                <input type="number" id="class_level" name="class_level" min="1" value="{{ current_level if current_level else 1 }}" required>
-
+                <button type="button" onclick="window.location.href='/homebrew/classes'">Browse Homebrew Classes</button>
             </div>
 
+            <!-- Attributes -->
             <div id="attributes" class="tab-content">
-                <!-- TODO: Implement Dice Rolling, Point-Buy, and Standard Array Solutions -->
-                <h2>Attributes</h2>
-                <div class="form-section">
-                    <label for="strength">Strength</label>
-                    <div class="input-group">
-                        <button type="button" onclick="decrementValue('strength')">-</button>
-                        <input type="number" id="strength" value="10" min="1" max="20">
-                        <button type="button" onclick="incrementValue('strength')">+</button>
-                    </div>
+                <h2>Set Your Attributes</h2>
+                <p>Choose a method to determine your stats:</p>
+                <label for="stat_method">Stat Allocation Method:</label>
+                <select id="stat_method" name="stat_method">
+                    <option value="array">Standard Array</option>
+                    <option value="point_buy">Point Buy</option>
+                    <option value="roll">Roll</option>
+                    <option value="manual">Manual</option>
+                </select><br>
+
+                <div id="manualRollPast" style="display: none;">
+                    <label>Roll for stats:</label>
+                    <button type="button" onclick="rollStats()">Roll 4 Dice</button><br>
+                    <textarea id="rollResults" readonly rows="4" placeholder="Your rolls will appear here"></textarea>
                 </div>
-                <div class="form-section">
-                    <label for="dexterity">Dexterity</label>
-                    <div class="input-group">
-                        <button type="button" onclick="decrementValue('dexterity')">-</button>
-                        <input type="number" id="dexterity" value="10" min="1" max="20">
-                        <button type="button" onclick="incrementValue('dexterity')">+</button>
-                    </div>
+
+                <div id="standard_array" style="display: block;"> <!-- Default view -->
+                    <p>Click the value you want for strength:</p>
+                    <button type="button" id="assignAttribute">Assign strength</button>
+                    <!-- More of them. Don't know how we will make this look good but eh -->
                 </div>
-                <div class="form-section">
-                    <label for="constitution">Constitution</label>
-                    <div class="input-group">
-                        <button type="button" onclick="decrementValue('constitution')">-</button>
-                        <input type="number" id="constitution" value="10" min="1" max="20">
-                        <button type="button" onclick="incrementValue('constitution')">+</button>
-                    </div>
+
+                <div id="point_buy" style="display: none;">
+                    <p>Increase or decrease attributes until you have used all 27 points.</p>
                 </div>
-                <div class="form-section">
-                    <label for="intelligence">Intelligence</label>
-                    <div class="input-group">
-                        <button type="button" onclick="decrementValue('intelligence')">-</button>
-                        <input type="number" id="intelligence" value="10" min="1" max="20">
-                        <button type="button" onclick="incrementValue('intelligence')">+</button>
-                    </div>
+
+                <div id="roll" style="display: none;">
+                    <p>Roll 4d6 and drop the lowest roll for each stat:</p>
+                    <button type="button" id="rollStatsButton">Roll Stats</button>
+                    <!-- TODO: Make fields to choose the number of, type of, and num of dropped dice" -->
                 </div>
-                <div class="form-section">
-                    <label for="wisdom">Wisdom</label>
-                    <div class="input-group">
-                        <button type="button" onclick="decrementValue('wisdom')">-</button>
-                        <input type="number" id="wisdom" value="10" min="1" max="20">
-                        <button type="button" onclick="incrementValue('wisdom')">+</button>
-                    </div>
+
+                <div id="manual" style="display: none;">
+                    <p>Insert the values of stats that you want.</p>
                 </div>
-                <div class="form-section">
-                    <label for="charisma">Charisma</label>
-                    <div class="input-group">
-                        <button type="button" onclick="decrementValue('charisma')">-</button>
-                        <input type="number" id="charisma" value="10" min="1" max="20">
-                        <button type="button" onclick="incrementValue('charisma')">+</button>
-                    </div>
+
+                <div class="attribute-section">
+                    <label for="strength">Strength:</label>
+                    <input type="number" id="strength" name="strength" value="10" min="1" max="20">
+                </div>
+                <div class="attribute-section">
+                    <label for="dexterity">Dexterity:</label>
+                    <input type="number" id="dexterity" name="dexterity" value="10" min="1" max="20">
+                </div>
+                <div class="attribute-section">
+                    <label for="constitution">Constitution:</label>
+                    <input type="number" id="constitution" name="constitution" value="10" min="1" max="20">
+                </div>
+                <div class="attribute-section">
+                    <label for="intelligence">Intelligence:</label>
+                    <input type="number" id="intelligence" name="intelligence" value="10" min="1" max="20">
+                </div>
+                <div class="attribute-section">
+                    <label for="wisdom">Wisdom:</label>
+                    <input type="number" id="wisdom" name="wisdom" value="10" min="1" max="20">
+                </div>
+                <div class="attribute-section">
+                    <label for="charisma">Charisma:</label>
+                    <input type="number" id="charisma" name="charisma" value="10" min="1" max="20">
                 </div>
             </div>
 
-            <div id="abilities" class="tab-content">
-                <h2>Abilities</h2>
-                <div class="form-section">
-                    <label for="specialAbilities">Special Abilities</label>
-                    <textarea id="specialAbilities" rows="4" placeholder="Describe special abilities"></textarea>
-                </div>
+            <!-- Character Details -->
+            <div id="details" class="tab-content">
+                <h2>Character Details</h2>
+                <label for="background">Choose your character's background:</label>
+                <select id="background" name="background">
+                    {% for background in all_backgrounds %}
+                        <option value="{{ background.id }}">{{ background.name }}</option>
+                    {% endfor %}
+                </select><br>
+
+                <label for="description">Character Description:</label>
+                <textarea id="description" name="description" rows="4"></textarea>
             </div>
 
+            <!-- Equipment -->
             <div id="equipment" class="tab-content">
-                <h2>Equipment</h2>
+                <h2>Starting Equipment</h2>
+                <p>Select starting equipment based on your background, class, and race:</p>
+                <!-- Generate dynamically based on above-mentioned -->
+                <div id="equipment-options">
+                    {% for item in starting_equipment %}
+                        <label>
+                            <input type="checkbox" name="equipment" value="{{ item.id }}">
+                            {{ item.name }}
+                        </label><br>
+                    {% endfor %}
+                </div>
+                <p>Manual fill in for now</p>
                 <div class="form-section">
                     <label for="equipmentList">Equipment List</label>
                     <textarea id="equipmentList" rows="4" placeholder="List your character's equipment"></textarea>
                 </div>
             </div>
 
-            <div id="notAlwaysHere" class="tab-content">
-                <h2>Information from the Database</h2>
-
-                <p>Character Class: {{ current_class if current_class else "None" }}</p>
-                <p>Current Level: {{ current_level if current_level else "N/A" }}</p>
-                <p>All Classes: {{ all_classes }}</p>
-                <p>All Classes: {% for dnd_class in all_classes %}
-                    {{ dnd_class.class_id }} <br>
-                    {{ dnd_class.name }} <br>
-                    {{ dnd_class.description }} <br>
-                    {{ dnd_class.hit_die }} <br>
-                    {{ dnd_class.is_official }} <br>
-                    {% endfor %}
-                </p>
-            </div>
             <div class="button-group">
                 <button type="submit">Save Character</button>
             </div>
         </form>
     </div>
     <script>
+        // Function to ensure multiclass value doesn't exceed starting level
+        function validateMulticlass() {
+            const startLevel = parseInt(document.getElementById('startlevel').value) || 1;
+            const multiclass = document.getElementById('multiclass');
+
+            // If multiclass exceeds starting level, adjust it
+            if (parseInt(multiclass.value) > startLevel) {
+                multiclass.value = startLevel;
+            }
+        }
+
+        // Toggle rolling section visibility
+        document.getElementById('stat_method').addEventListener('change', function() {
+            document.getElementById('standard_array').style.display = this.value === 'array' ? 'block' : 'none';
+            document.getElementById('point_buy').style.display = this.value === 'point_buy' ? 'block' : 'none';
+            document.getElementById('roll').style.display = this.value === 'roll' ? 'block' : 'none';
+            document.getElementById('manual').style.display = this.value === 'manual' ? 'block' : 'none';
+        });
+
+        function rollStats(numDice = 4, diceType = 6, dropLowest = 1) {
+            const attributes = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'];
+            attributes.forEach(attribute => {
+                let rolls = [];
+
+                // Roll the dice
+                for (let i = 0; i < numDice; i++) {
+                    rolls.push(Math.floor(Math.random() * diceType) + 1);
+                }
+
+                // Sort rolls and drop the lowest Z
+                rolls.sort((a, b) => a - b);
+                const keptRolls = rolls.slice(dropLowest);
+
+                // Calculate the total and update the field
+                const total = keptRolls.reduce((sum, roll) => sum + roll, 0);
+                document.getElementById(attribute).value = total;
+            });
+        }
+
+        // Example usage: roll 4d6 and drop the lowest 1 TODO: Make it versatile to user definition
+        document.getElementById('rollStatsButton').addEventListener('click', function() {
+            rollStats(4, 6, 1);
+        });
+
         function showLevel() {
             document.getElementById("test").innerHTML = document.getElementById('charname').value;
         }
