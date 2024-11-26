@@ -63,7 +63,10 @@ def create():
     all_races = DND_Race.query.all()
     all_classes = DND_Class.query.all()
     #if request.method == 'POST':
-        
+    #    
+    #    classes = request.form.getlist("multiclass_id")
+    #    levels = request.form.getlist("multiclass_level")
+    #    return render_template("character/test_display.html", classes=classes, levels=levels)
     
 
     return render_template("character/character_creator.html", all_classes=all_classes, all_races=all_races)
