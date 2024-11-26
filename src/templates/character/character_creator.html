@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title_content %}{{ character_id }}'s Profile{% endblock %}
+{% block title_content %}Character Creator{% endblock %}
 
 {% block body_content %}
     <div class="main-content">
@@ -68,25 +68,28 @@
             <!-- Class -->
             <div id="class" class="tab-content">
                 <h2>Choose Your Class</h2>
-                <label for="startlevel">Enter your character's starting level:</label>
-                <input type="number" id="startlevel" name="startlevel" min="1" max="20" value="1" onchange="setMulticlassMax(startlevel.value)"><br>
+                <label for="startlevel">Enter your character's starting level:</label><br>
+                <input type="number" id="startlevel" name="startlevel" min="1" max="20" value="1" onchange="setMulticlassMax(startlevel.value)"><br><br>
 
-                <label for="multiclass">Enter how many classes you would like to use (Cannot exceed starting level):</label><br>
-                <input type="number" id="multiclass" name="multiclass" min="1" max="1" value="1" onchange="updateClasses(multiclass.value)"><br>
+                <label for="multiclass">Enter how many classes you would like to use:</label><br>
+                <input type="number" id="multiclass" name="multiclass" min="1" max="1" value="1" onchange="updateClasses(multiclass.value)"><label for="multiclass">(Cannot exceed starting level)</label><br><br>
 
-                <label for="classdisplay">Choose your class or classes:</label>
+                <label for="classdisplay">Choose your class or classes and their level:</label>
                 <div id="classdisplay">
-                    <label for="class_1">Class: </label>
-                    <select id="class_id" name="class_id">
+                    <label for="multiclass_id">Class: </label>
+                    <select id="multiclass_id" name="multiclass_id" onload="">
                         {% for dnd_class in all_classes %}
                             <option value="{{ dnd_class.class_id }}">
                                 {{ dnd_class.name }}
                             </option>
                         {% endfor %}
-                    </select>
+                    </select><input type="number" id="multiclass_level" name="multiclass_level" class="multiclass_level" min="1" max="20" value="1" onchange="setCollectiveMax()">
+                    
                 </div>
-
-                <button type="button" onclick="window.location.href='/homebrew/classes'">Browse Homebrew Classes</button>
+                
+                <p id="classtest">test</p>
+                
+                <br><button type="button" onclick="window.location.href='/homebrew/classes'">Browse Homebrew Classes</button>
             </div>
 
             <!-- Attributes -->
@@ -202,15 +205,31 @@
                 </p>
             </div>
             <div class="button-group">
-                <button type="submit">Save Character</button>
+                <br><button type="submit">Save Character</button>
             </div>
 
         </form>
     </div>
     <script>
+        function setCollectiveMax() {
+            levels = document.getElementsByClassName("multiclass_level")
+            starting_Level = document.getElementById("startlevel");
+            spare_levels = starting_Level.value;
+            for(var levelobj of levels) {
+                spare_levels -= levelobj.value
+            }
+
+            for(var levelobj of levels) {
+                levelobj.setAttribute("max", parseInt(levelobj.value) + spare_levels);
+            }
+            
+        }
+
         function setMulticlassMax(inputValue) {
                     element = document.getElementById("multiclass");
+                    
                     element.setAttribute("max", inputValue);
+                    
                     if(parseInt(element.value) > inputValue) {
                         element.value = inputValue;
                         updateClasses(inputValue);
@@ -223,14 +242,14 @@
             if(value==1) {
                 document.getElementById("classdisplay").innerHTML += `
                     <div id="classdisplay">
-                        <label for="class1">Class: </label>
-                        <select id="class_id" name="class_id">
+                        <label for="multiclass_id">Class: </label>
+                        <select id="multiclass_id" name="multiclass_id">
                             {% for dnd_class in all_classes %}
                                 <option value="{{ dnd_class.class_id }}">
                                     {{ dnd_class.name }}
                                 </option>
                             {% endfor %}
-                        </select>
+                        </select><input type="number" id="multiclass_level" name="multiclass_level" class="multiclass_level" min="1" max="20" value="1" onchange="setCollectiveMax()">
                     </div>
                 `
             }
@@ -238,14 +257,14 @@
                 for(var i = 0; i < value; i++) {
                 document.getElementById("classdisplay").innerHTML += `
                         <div id="classdisplay">
-                            <label for="class${i + 1}">Class ${i + 1}: </label>
-                            <select id="class_id" name="class_id">
+                            <label for="multiclass_id">Class ${i + 1}: </label>
+                            <select id="multiclass_id" name="multiclass_id">
                                 {% for dnd_class in all_classes %}
                                     <option value="{{ dnd_class.class_id }}">
                                         {{ dnd_class.name }}
                                     </option>
                                 {% endfor %}
-                            </select>
+                            </select><input type="number" id="multiclass_level" name="multiclass_level" class="multiclass_level" min="1" max="20" value="1" onchange="setCollectiveMax()">
                         </div>
                     `;
                 }
