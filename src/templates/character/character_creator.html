@@ -98,61 +98,74 @@
                 <p>Choose a method to determine your stats:</p>
                 <label for="stat_method">Stat Allocation Method:</label>
                 <select id="stat_method" name="stat_method">
-                    <option value="array">Standard Array</option>
+                    <option value="standard_array">Standard Array</option>
                     <option value="point_buy">Point Buy</option>
                     <option value="roll">Roll</option>
                     <option value="manual">Manual</option>
                 </select><br>
 
-                <div id="manualRollPast" style="display: none;">
-                    <label>Roll for stats:</label>
-                    <button type="button" onclick="rollStats()">Roll 4 Dice</button><br>
-                    <textarea id="rollResults" readonly rows="4" placeholder="Your rolls will appear here"></textarea>
+                <!-- Standard Array -->
+                <div id="standard_array" style="display: block;">
+                    <p>Assign values from the standard array [15, 14, 13, 12, 10, 8]:</p>
+                    <button type="button" id="assignAttribute">Assign Next Attribute</button>
                 </div>
 
-                <div id="standard_array" style="display: block;"> <!-- Default view -->
-                    <p>Click the value you want for strength:</p>
-                    <button type="button" id="assignAttribute">Assign strength</button>
-                    <!-- More of them. Don't know how we will make this look good but eh -->
-                </div>
-
+                <!-- Point Buy -->
                 <div id="point_buy" style="display: none;">
-                    <p>Increase or decrease attributes until you have used all 27 points.</p>
+                    <p>Allocate points (Max 27)<span id="remainingPoints">27</span></p>
+
                 </div>
 
+                <!-- Roll -->
                 <div id="roll" style="display: none;">
                     <p>Roll 4d6 and drop the lowest roll for each stat:</p>
                     <button type="button" id="rollStatsButton">Roll Stats</button>
                     <!-- TODO: Make fields to choose the number of, type of, and num of dropped dice" -->
                 </div>
 
+                <!-- Manual -->
                 <div id="manual" style="display: none;">
-                    <p>Insert the values of stats that you want.</p>
+                    <p>Manually set stats (1-20):</p>
                 </div>
 
-                <div class="attribute-section">
-                    <label for="strength">Strength:</label>
-                    <input type="number" id="strength" name="strength" value="10" min="1" max="20">
-                </div>
-                <div class="attribute-section">
-                    <label for="dexterity">Dexterity:</label>
-                    <input type="number" id="dexterity" name="dexterity" value="10" min="1" max="20">
-                </div>
-                <div class="attribute-section">
-                    <label for="constitution">Constitution:</label>
-                    <input type="number" id="constitution" name="constitution" value="10" min="1" max="20">
-                </div>
-                <div class="attribute-section">
-                    <label for="intelligence">Intelligence:</label>
-                    <input type="number" id="intelligence" name="intelligence" value="10" min="1" max="20">
-                </div>
-                <div class="attribute-section">
-                    <label for="wisdom">Wisdom:</label>
-                    <input type="number" id="wisdom" name="wisdom" value="10" min="1" max="20">
-                </div>
-                <div class="attribute-section">
-                    <label for="charisma">Charisma:</label>
-                    <input type="number" id="charisma" name="charisma" value="10" min="1" max="20">
+                <!-- Manual or Point Buy (Both should have arrows), Rolling and Array should not -->
+                <div id="attribute_fields" style="display: block">
+                    <div class="attribute-section">
+                        <label for="strength">Strength:</label>
+                        <button type="button" onclick="adjustStat('strength', -1)">-</button>
+                        <input type="number" id="strength" name="strength" value="8" min="1" max="20" readonly>
+                        <button type="button" onclick="adjustStat('strength', 1)">+</button>
+                    </div>
+                    <div class="attribute-section">
+                        <label for="dexterity">Dexterity:</label>
+                        <button type="button" onclick="adjustStat('dexterity', -1)">-</button>
+                        <input type="number" id="dexterity" name="dexterity" value="8" min="1" max="20" readonly>
+                        <button type="button" onclick="adjustStat('dexterity', 1)">+</button>
+                    </div>
+                    <div class="attribute-section">
+                        <label for="constitution">Constitution:</label>
+                        <button type="button" onclick="adjustStat('constitution', -1)">-</button>
+                        <input type="number" id="constitution" name="constitution" value="8" min="1" max="20" readonly>
+                        <button type="button" onclick="adjustStat('constitution', 1)">+</button>
+                    </div>
+                    <div class="attribute-section">
+                        <label for="intelligence">Intelligence:</label>
+                        <button type="button" onclick="adjustStat('intelligence', -1)">-</button>
+                        <input type="number" id="intelligence" name="intelligence" value="8" min="1" max="20" readonly>
+                        <button type="button" onclick="adjustStat('intelligence', 1)">+</button>
+                    </div>
+                    <div class="attribute-section">
+                        <label for="wisdom">Wisdom:</label>
+                        <button type="button" onclick="adjustStat('wisdom', -1)">-</button>
+                        <input type="number" id="wisdom" name="wisdom" value="8" min="1" max="20" readonly>
+                        <button type="button" onclick="adjustStat('wisdom', 1)">+</button>
+                    </div>
+                    <div class="attribute-section">
+                        <label for="charisma">Charisma:</label>
+                        <button type="button" onclick="adjustStat('charisma', -1)">-</button>
+                        <input type="number" id="charisma" name="charisma" value="8" min="1" max="20" readonly>
+                        <button type="button" onclick="adjustStat('charisma', 1)">+</button>
+                    </div>
                 </div>
             </div>
 
@@ -271,29 +284,121 @@
             }
 
         }
-      
-      
-      
-      
-        // Function to ensure multiclass value doesn't exceed starting level
-        function validateMulticlass() {
-            const startLevel = parseInt(document.getElementById('startlevel').value) || 1;
-            const multiclass = document.getElementById('multiclass');
 
-            // If multiclass exceeds starting level, adjust it
-            if (parseInt(multiclass.value) > startLevel) {
-                multiclass.value = startLevel;
+        // Show and hide attribute sections based on selected method
+        document.getElementById('stat_method').addEventListener('change', function () {
+            const method = this.value;
+            // Hide all sections
+            document.getElementById('standard_array').style.display = 'none';
+            document.getElementById('point_buy').style.display = 'none';
+            document.getElementById('roll').style.display = 'none';
+            document.getElementById('manual').style.display = 'none';
+
+            // Show the selected section
+            document.getElementById(method).style.display = 'block';
+
+            // Reset remaining points if switching to Point Buy
+            if (method === 'point_buy') {
+                remainingPoints = maxPoints;
+                document.getElementById('remainingPoints').innerText = `Points left: ${remainingPoints}`;
+                document.getElementById('remainingPoints').style.display = 'block';
+            } else {
+                document.getElementById('remainingPoints').style.display = 'none';
+            }
+
+            // Reset all attribute stats to default value
+            if (method === 'point_buy' || method === 'manual') {
+                document.querySelectorAll('#attribute_fields input[type="number"]').forEach(input => {
+                    input.value = method === 'point_buy' ? 8 : 10; // Reset to Point Buy or Manual defaults
+                });
+            } else {
+                document.querySelectorAll('#attribute_fields input[type="number"]').forEach(input => {
+                    input.value = ' '; // Reset to Point Buy or Manual defaults
+                });
+            }
+            updateAllButtonsVisibility();
+        });
+
+        // This is unfortunately necessary because loading the page will otherwise not be considered a "change" (dumb)
+        // Effectively calls the above on load
+        document.getElementById('stat_method').dispatchEvent(new Event('change'));
+
+        // Point Buy implementation
+        const maxPoints = 27;
+        let remainingPoints = maxPoints;
+
+        function adjustStat(statId, change) {
+            const statInput = document.getElementById(statId);
+            let currentValue = parseInt(statInput.value);
+            // Assuming buttons being available to be pressed logic works, this is always true, but safeguard
+            if (currentValue + change >= statInput.min && currentValue + change <= statInput.max) {
+
+                // Handle Point Buy logic if applicable
+                if (document.getElementById('point_buy').style.display !== 'none') {
+                    if (change == 1) {
+                        // + button hit going to 14 or 15
+                        if (currentValue + change >= 14) {
+                            remainingPoints -= 2;
+                        } else {
+                            remainingPoints -= 1;
+                        }
+                    } else {
+                        // - button hit going to 14 or 13
+                        if (currentValue + change >= 13) {
+                            remainingPoints += 2;
+                        } else {
+                            remainingPoints += 1;
+                        }
+                    }
+                    // Actually update the value
+                    statInput.value = currentValue + change;
+                } else {
+                    // Manual Adjustment
+                    statInput.value = currentValue + change;
+                }
+
+                // Update remaining points display if using Point Buy
+                const remainingPointsDisplay = document.getElementById('remainingPoints');
+                if (remainingPointsDisplay.style.display !== 'none') {
+                    remainingPointsDisplay.innerText = `Points left: ${remainingPoints}`;
+                }
+                updateAllButtonsVisibility();
             }
         }
 
-        // Toggle rolling section visibility
-        document.getElementById('stat_method').addEventListener('change', function() {
-            document.getElementById('standard_array').style.display = this.value === 'array' ? 'block' : 'none';
-            document.getElementById('point_buy').style.display = this.value === 'point_buy' ? 'block' : 'none';
-            document.getElementById('roll').style.display = this.value === 'roll' ? 'block' : 'none';
-            document.getElementById('manual').style.display = this.value === 'manual' ? 'block' : 'none';
-        });
+        // Handles + and - button visibility. TODO: Change this to control disabled vs enabled rather than visibility. How?
+        function updateAllButtonsVisibility() {
+            const isPointBuy = document.getElementById('stat_method').value === 'point_buy';
+            const isManual = document.getElementById('stat_method').value === 'manual';
 
+            document.querySelectorAll('#attribute_fields input[type="number"]').forEach(statInput => {
+                const statId = statInput.id;
+                const increaseButton = statInput.nextElementSibling; // Assumes + button follows the input in DOM
+                const decreaseButton = statInput.previousElementSibling;
+                if (isPointBuy || isManual) {
+                    const currentValue = parseInt(statInput.value);
+
+                    // Maximum and minimum limits for Point Buy and Manual modes
+                    const maxLimit = isPointBuy ? 15 : 20;
+                    const minLimit = isPointBuy ? 8 : 1;
+
+                    // Determine if there are sufficient points for Point Buy
+                    const canIncrease = isPointBuy
+                    ? remainingPoints >= 2 || (remainingPoints >= 1 && currentValue <= 12)
+                    : true;
+
+                    // Show/hide buttons based on conditions
+                    increaseButton.style.visibility = (currentValue < maxLimit && canIncrease) ? 'visible' : 'hidden';
+                    decreaseButton.style.visibility = (currentValue > minLimit) ? 'visible' : 'hidden'; // No need to check remaining points on decrease
+                } else {
+                    increaseButton.style.visibility = 'hidden';
+                    decreaseButton.style.visibility = 'hidden';
+                }
+            });
+        }
+
+
+        // Roll stats with 3 inputs. Not configurable yet by user
         function rollStats(numDice = 4, diceType = 6, dropLowest = 1) {
             const attributes = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'];
             attributes.forEach(attribute => {
@@ -319,10 +424,12 @@
             rollStats(4, 6, 1);
         });
 
+        // Are we still using this?
         function showLevel() {
             document.getElementById("test").innerHTML = document.getElementById('charname').value;
         }
 
+        // For the big tabs at top but can reuse for my class implementation idea
         function showTab(tabId) {
             // Remove 'active' class from all tabs and tab contents
             document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
@@ -333,23 +440,6 @@
             document.getElementById(tabId).classList.add('active');
         }
 
-        function incrementValue(id) {
-            const input = document.getElementById(id);
-            const max = parseInt(input.max);
-            const value = parseInt(input.value);
-            if (value < max) {
-                input.value = value + 1;
-            }
-        }
-
-        function decrementValue(id) {
-            const input = document.getElementById(id);
-            const min = parseInt(input.min);
-            const value = parseInt(input.value);
-            if (value > min) {
-                input.value = value - 1;
-            }
-        }
     </script>
 
 {% endblock %}
