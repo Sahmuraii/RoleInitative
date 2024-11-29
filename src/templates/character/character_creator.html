@@ -67,27 +67,19 @@
 
             <!-- Class -->
             <div id="class" class="tab-content">
-                <h2>Choose Your Class</h2>
-                <label for="startlevel">Enter your character's starting level:</label><br>
-                <input type="number" id="startlevel" name="startlevel" min="1" max="20" value="1" onchange="setMulticlassMax(startlevel.value)"><br><br>
+                {% for dnd_class in all_classes %}
+                <label for="{{dnd_class.name}}">{{ dnd_class.name }}: </label>
+                <button type="button" onclick="adjustStat('{{dnd_class.name}}', -1)">-</button>
+                <input type="number" id="{{dnd_class.name}}" name="multiclass_level" value="0" min="0" max="20" readonly>
+                <button type="button" onclick="adjustStat('{{dnd_class.name}}', 1)">+</button><br>
+                {% endfor %}
 
-                <label for="multiclass">Enter how many classes you would like to use:</label><br>
-                <input type="number" id="multiclass" name="multiclass" min="1" max="1" value="1" onchange="updateClasses(multiclass.value)"><label for="multiclass">(Cannot exceed starting level)</label><br><br>
 
-                <label for="classdisplay">Choose your class or classes and their level:</label>
-                <div id="classdisplay">
-                    <label for="multiclass_id">Class: </label>
-                    <select id="multiclass_id" name="multiclass_id" onload="">
-                        {% for dnd_class in all_classes %}
-                            <option value="{{ dnd_class.class_id }}">
-                                {{ dnd_class.name }}
-                            </option>
-                        {% endfor %}
-                    </select><input type="number" id="multiclass_level" name="multiclass_level" class="multiclass_level" min="1" max="20" value="1" onchange="setCollectiveMax()">
-                    
-                </div>
+
+
                 
-                <p id="classtest">test</p>
+                
+                
                 
                 <br><button type="button" onclick="window.location.href='/homebrew/classes'">Browse Homebrew Classes</button>
             </div>
@@ -222,11 +214,32 @@
             </div>
 
         </form>
+
+        
     </div>
     <script>
+        function generateClassPage(inputClass) {
+            parentObject = document.getElementById("class");
+            parentObject.innerHTML += `
+                <div id="${inputClass}" class="tab-content">
+                    <p>This is class ${inputClass}.</p>
+                </div>
+            `
+        }
+        
+        
+        function generateClassTabs(inputClass) {
+            
+            tabObject = document.getElementById("classtabs");
+            tabObject.innerHTML += `<button class="tab" onclick="generateClassPage('${inputClass}'); showTab('${inputClass}')">${inputClass}</button>`
+            
+        }
+
+
         function setCollectiveMax() {
             levels = document.getElementsByClassName("multiclass_level")
             starting_Level = document.getElementById("startlevel");
+            
             spare_levels = starting_Level.value;
             for(var levelobj of levels) {
                 spare_levels -= levelobj.value

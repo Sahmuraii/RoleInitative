@@ -62,12 +62,16 @@ def create():
     
     all_races = DND_Race.query.all()
     all_classes = DND_Class.query.all()
-    #if request.method == 'POST':
-    #    
-    #    classes = request.form.getlist("multiclass_id")
-    #    levels = request.form.getlist("multiclass_level")
-    #    return render_template("character/test_display.html", classes=classes, levels=levels)
+    if request.method == 'POST':
+        #returns list of levels where the class is the index. will have to be changed in the future for homebrew content
+        #in the future we will need to keep track of the indexes and associate them with the user's chosen homebrew classes
+        levels = request.form.getlist("multiclass_level")
+        classes = []
+        for i in range(len(levels)):
+            if levels[i] != "0":
+                classes.append(i+1)
+        #just a dummy html page that displays two arrays
+        return render_template("character/test_display.html", classes=classes, levels=levels)
     
 
     return render_template("character/character_creator.html", all_classes=all_classes, all_races=all_races)
-
