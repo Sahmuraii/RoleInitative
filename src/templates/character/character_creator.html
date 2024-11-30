@@ -98,20 +98,19 @@
 
                 <!-- Standard Array -->
                 <div id="standard_array" style="display: block;">
-                    <p>Assign values from the standard array [15, 14, 13, 12, 10, 8]:</p>
-                    <button type="button" id="assignAttribute">Assign Next Attribute</button>
+                    <p>Assign values from the standard array <span id="attribute_array">[15, 14, 13, 12, 10, 8]</span>:</p>
                 </div>
 
                 <!-- Point Buy -->
                 <div id="point_buy" style="display: none;">
                     <p>Allocate points (Max 27)<span id="remainingPoints">27</span></p>
-
                 </div>
 
                 <!-- Roll -->
                 <div id="roll" style="display: none;">
                     <p>Roll 4d6 and drop the lowest roll for each stat:</p>
                     <button type="button" id="rollStatsButton">Roll Stats</button>
+                    <p>Assign values from the standard array <span id="roll_attribute_array">Press the roll button to get your values</span>:</p>
                     <!-- TODO: Make fields to choose the number of, type of, and num of dropped dice" -->
                 </div>
 
@@ -157,6 +156,80 @@
                         <button type="button" onclick="adjustStat('charisma', -1)">-</button>
                         <input type="number" id="charisma" name="charisma" value="8" min="1" max="20" readonly>
                         <button type="button" onclick="adjustStat('charisma', 1)">+</button>
+                    </div>
+                </div>
+                <div id="attribute_fields_dropdown" style="display: block">
+                    <div class="attribute-section">
+                        <label for="strength">Strength:</label>
+                        <select id="strength_dd" name="stat_method" onchange="checkAvailability(this.id, this.value)">
+                            <option value="-1">—</option>
+                            <option value="0">value 0</option>
+                            <option value="1">value 1</option>
+                            <option value="2">value 2</option>
+                            <option value="3">value 3</option>
+                            <option value="4">value 4</option>
+                            <option value="5">value 5</option>
+                        </select>
+                    </div>
+                    <div class="attribute-section">
+                        <label for="dexterity">Dexterity:</label>
+                        <select id="dexterity_dd" name="stat_method" onchange="checkAvailability(this.id, this.value)">
+                            <option value="-1">—</option>
+                            <option value="0">value 0</option>
+                            <option value="1">value 1</option>
+                            <option value="2">value 2</option>
+                            <option value="3">value 3</option>
+                            <option value="4">value 4</option>
+                            <option value="5">value 5</option>
+                        </select>
+                    </div>
+                    <div class="attribute-section">
+                        <label for="constitution">Constitution:</label>
+                        <select id="constitution_dd" name="stat_method" onchange="checkAvailability(this.id, this.value)">
+                            <option value="-1">—</option>
+                            <option value="0">value 0</option>
+                            <option value="1">value 1</option>
+                            <option value="2">value 2</option>
+                            <option value="3">value 3</option>
+                            <option value="4">value 4</option>
+                            <option value="5">value 5</option>
+                        </select>
+                    </div>
+                    <div class="attribute-section">
+                        <label for="intelligence">Intelligence:</label>
+                        <select id="intelligence_dd" name="stat_method" onchange="checkAvailability(this.id, this.value)">
+                            <option value="-1">—</option>
+                            <option value="0">value 0</option>
+                            <option value="1">value 1</option>
+                            <option value="2">value 2</option>
+                            <option value="3">value 3</option>
+                            <option value="4">value 4</option>
+                            <option value="5">value 5</option>
+                        </select>
+                    </div>
+                    <div class="attribute-section">
+                        <label for="wisdom">Wisdom:</label>
+                        <select id="wisdom_dd" name="stat_method" onchange="checkAvailability(this.id, this.value)">
+                            <option value="-1">—</option>
+                            <option value="0">value 0</option>
+                            <option value="1">value 1</option>
+                            <option value="2">value 2</option>
+                            <option value="3">value 3</option>
+                            <option value="4">value 4</option>
+                            <option value="5">value 5</option>
+                        </select>
+                    </div>
+                    <div class="attribute-section">
+                        <label for="charisma">Charisma:</label>
+                        <select id="charisma_dd" name="stat_method" onchange="checkAvailability(this.id, this.value)">
+                            <option value="-1">—</option>
+                            <option value="0">value 0</option>
+                            <option value="1">value 1</option>
+                            <option value="2">value 2</option>
+                            <option value="3">value 3</option>
+                            <option value="4">value 4</option>
+                            <option value="5">value 5</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -325,8 +398,32 @@
                     input.value = method === 'point_buy' ? 8 : 10; // Reset to Point Buy or Manual defaults
                 });
             } else {
-                document.querySelectorAll('#attribute_fields input[type="number"]').forEach(input => {
-                    input.value = ' '; // Reset to Point Buy or Manual defaults
+                // Hide initial values
+                const dropdowns = document.querySelectorAll('#attribute_fields_dropdown select');
+                dropdowns.forEach(dropdown => {
+                    const options = dropdown.querySelectorAll('option');
+
+                    options.forEach(option => {
+                        const value = parseInt(option.getAttribute('value'), 10); // Check the value attribute
+                        option.text = "—";
+                        if (method === 'standard_array') {
+                            option.style.display = '';
+                            option.text = (() => {
+                                switch (value) {
+                                    case 0: return 15;
+                                    case 1: return 14;
+                                    case 2: return 13;
+                                    case 3: return 12;
+                                    case 4: return 10;
+                                    case 5: return 8;
+                                    default: return "—";
+                                }
+                            })();
+                        } else if (value >= 0) {
+                            option.style.display = 'none'; // Hide the option
+                        }
+                    });
+                    dropdown.value = -1;
                 });
             }
             updateAllButtonsVisibility();
@@ -335,6 +432,63 @@
         // This is unfortunately necessary because loading the page will otherwise not be considered a "change" (dumb)
         // Effectively calls the above on load
         document.getElementById('stat_method').dispatchEvent(new Event('change'));
+
+        function checkAvailability(statId, optionValue) {
+            if (optionValue == -1) {
+                return;
+            }
+            const isStandardArray = document.getElementById('stat_method').value === 'standard_array';
+            // We want to check that the optionValue being chosen either does not match the optionValue for any other stat (dropdown) or there are enough of that value to go around
+            const currentDropdown = document.getElementById(statId);
+            // Get all dropdowns in the attribute fields container
+            const dropdowns = document.querySelectorAll('#attribute_fields_dropdown select');
+
+            if (isStandardArray) {
+                dropdowns.forEach(dropdown => {
+                    if (dropdown.value == optionValue && currentDropdown != dropdown) {
+                        dropdown.value = -1;
+                        const event = new Event('change');
+                        dropdown.dispatchEvent(event);
+                    }
+                });
+            } else { // Is Rolls
+                const spanText = document.getElementById('roll_attribute_array').textContent;
+                // Split text into array
+                const valuesArray = spanText.split(', ').map(value => value.trim());
+
+                // Create a dictionary from the array of values
+                let valueDict = {};
+                valuesArray.forEach(value => {
+                    if (!isNaN(value)) { // Check if the value is a valid number. Keep this
+                        if (valueDict[value] === undefined) {
+                            valueDict[value] = 1; // Initialize count as 1 if it is the first occurrence
+                        } else {
+                            valueDict[value]++; // Increment the count if the value already exists
+                        }
+                    }
+                });
+                console.log(valueDict);
+
+                let occurrences = 0;
+                dropdowns.forEach(dropdown => {
+                    const selectedOption = dropdown.querySelector(`option[value="${dropdown.value}"]`);
+                    console.log("selected option: " + selectedOption);
+                    // Check for the actual text value of our option (is a number. DON'T PARSEINT. didn't work when I did)
+                    const optionText = selectedOption.textContent;
+                    if (dropdown.value == optionValue && currentDropdown != dropdown) {
+                        occurrences++;
+                        console.log("occurrences: " + occurrences);
+                        if (occurrences >= (valueDict[optionText])) {
+                            // admittedly, this feels like it removes at random so
+                            //it's a tiny bit janky but it isn't random. Don't know
+                            //what alternative there'd be with this implementation
+                            dropdown.value = -1;
+                            console.log("success???")
+                        }
+                    }
+                });
+            }
+        }
 
         // Point Buy implementation
         const maxPoints = 27;
@@ -386,7 +540,7 @@
 
             document.querySelectorAll('#attribute_fields input[type="number"]').forEach(statInput => {
                 const statId = statInput.id;
-                const increaseButton = statInput.nextElementSibling; // Assumes + button follows the input in DOM
+                const increaseButton = statInput.nextElementSibling;
                 const decreaseButton = statInput.previousElementSibling;
                 if (isPointBuy || isManual) {
                     const currentValue = parseInt(statInput.value);
@@ -414,7 +568,8 @@
         // Roll stats with 3 inputs. Not configurable yet by user
         function rollStats(numDice = 4, diceType = 6, dropLowest = 1) {
             const attributes = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'];
-            attributes.forEach(attribute => {
+            let results = [];
+            attributes.forEach(attribute => { // Now that self assign, technically no point in this but still iterates correct number of times
                 let rolls = [];
 
                 // Roll the dice
@@ -428,7 +583,44 @@
 
                 // Calculate the total and update the field
                 const total = keptRolls.reduce((sum, roll) => sum + roll, 0);
-                document.getElementById(attribute).value = total;
+                results.push(total);
+            });
+            results.sort((a, b) => b - a);
+            // Hide initial values
+            const dropdowns = document.querySelectorAll('#attribute_fields_dropdown select');
+            dropdowns.forEach(dropdown => {
+                let seenValues = []
+                const options = dropdown.querySelectorAll('option');
+
+                options.forEach(option => {
+                    const value = parseInt(option.getAttribute('value'), 10); // Check the value attribute
+                    option.text = "—";
+                    option.style.display = '';
+                    prospectiveText = (() => {
+                        switch (value) {
+                            case 0: return results[0];
+                            case 1: return results[1];
+                            case 2: return results[2];
+                            case 3: return results[3];
+                            case 4: return results[4];
+                            case 5: return results[5];
+                            default: return "—";
+                        }
+                    })();
+                    option.text = prospectiveText;
+                    if (seenValues.includes(prospectiveText)) {
+                        option.style.display = 'none'; // Hide the option if there's a duplicate
+                    }
+                    seenValues.push(prospectiveText);
+                });
+                // Remove "—" from seenValues and sort
+                seenValues = seenValues.filter(value => value !== "—").sort((a, b) => b - a);
+                // Display seenValues in the roll_attribute_array span
+                const seenValuesSpan = document.getElementById('roll_attribute_array');
+                if (seenValuesSpan) {
+                    seenValuesSpan.textContent = seenValues.join(', '); // Update span with comma-separated list of seenValues
+                }
+                dropdown.value = -1;
             });
         }
 
