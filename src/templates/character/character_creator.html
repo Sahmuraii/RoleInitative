@@ -236,16 +236,52 @@
 
             <!-- Character Details -->
             <div id="details" class="tab-content">
-                <h2>Character Details</h2>
+                <h2>Character Details</h2><br>
+                <h3>Personality Traits:</h3>
                 <label for="background">Choose your character's background:</label>
                 <select id="background" name="background">
                     {% for background in all_backgrounds %}
                         <option value="{{ background.id }}">{{ background.name }}</option>
                     {% endfor %}
                 </select><br>
+                <label for="alignment">Choose your character's alignment:</label>
+                <select>
+                    <option value="Lawful Good">Lawful Good</option>
+                    <option value="Neutral Good">Neutral Good</option>
+                    <option value="Chaotic Good">Chaotic Good</option>
+                    <option value="Lawful Neutral">Lawful Neutral</option>
+                    <option value="True Neutral">True Neutral</option>
+                    <option value="Chaotic Neutral">Chaotic Neutral</option>
+                    <option value="Lawful Evil">Lawful Evil</option>
+                    <option value="Neutral Evil">Neutral Evil</option>
+                    <option value="Chaotic Evil">Chaotic Evil</option>
+                </select><br>
+                <label for="personality">Personality:</label><br>
+                <textarea id="personality" name="personality" rows="4" cols="50"></textarea><br>
 
-                <label for="description">Character Description:</label>
-                <textarea id="description" name="description" rows="4"></textarea>
+                <h3>Physical Traits:</h3>
+                <label for="height">Height:</label>
+                <input type="text" id="height" name="height"><br>
+                <label for="weight">Weight:</label>
+                <input type="text" id="weight" name="weight"><br>
+                <label for="skin_color">Skin Color:</label>
+                <input type="text" id="skin_color" name="skin_color"><br>
+                <label for="hair_color">Hair Color:</label>
+                <input type="text" id="hair_color" name="hair_color"><br>
+                <label for="eye_color">Eye Color:</label>
+                <input type="text" id="eye_color" name="eye_color"><br>
+                <label for="age">Age:</label>
+                <input type="text" id="age" name="age"><br>
+                <label for="appearance">General Appearance:</label><br>
+                <textarea id="appearance" name="appearance" rows="4" cols="50"></textarea><br>
+
+                <h3>Other Details:</h3>
+                <label for="backstory">Backstory:</label><br>
+                <textarea id="backstory" name="backstory" rows="4" cols="50"></textarea><br>
+                <label for="bonds">Alliances and Organizations:</label><br>
+                <textarea id="bonds" name="bonds" rows="4" cols="50"></textarea><br>
+                <label for="misc_description">Anything else you'd like to add:</label><br>
+                <textarea id="misc_description" name="misc_description" rows="4" cols="50"></textarea>
             </div>
 
             <!-- Equipment -->
