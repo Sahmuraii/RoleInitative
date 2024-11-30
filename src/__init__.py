@@ -58,11 +58,13 @@ from src.auth.views import auth_bp
 from src.core.views import core_bp
 from src.profile.views import profile_bp
 from src.character.views import character_bp
+from src.homebrew.views import homebrew_bp
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(core_bp)
 app.register_blueprint(profile_bp)
 app.register_blueprint(character_bp)
+app.register_blueprint(homebrew_bp)
 
 from src.auth.models import User
 from src.character.models import DND_Class, DND_Race
@@ -192,7 +194,7 @@ def fetch_and_populate_races():
 
 with app.app_context():
     db.create_all()
-    #fetch_and_populate_classes()
+    fetch_and_populate_classes()
     fetch_and_populate_races()
 
 

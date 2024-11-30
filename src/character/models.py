@@ -46,6 +46,20 @@ class DND_Class(db.Model):
     is_offical = db.Column(db.Boolean)
     characters = db.relationship("Character_Class") #Characters that have this class
 
+class DND_Background(db.Model):
+    __tablename__ = 'dnd_background'
+    background_id = db.Column(db.Integer, primary_key=True, nullable=False)
+    background_name = db.Column(db.String(100), nullable=False, unique=True)  
+    background_description = db.Column(db.Text, nullable=False)  
+    skill_proficiencies =  db.Column(db.ARRAY(db.String(50)), nullable=True)
+    tool_proficiencies =  db.Column(db.ARRAY(db.String(50)), nullable=True)
+    language_proficiencies =  db.Column(db.ARRAY(db.String(50)), nullable=True)
+    equipment = db.Column(db.ARRAY(db.String(50)), nullable=True)
+    feature_name = db.Column(db.String(50), nullable=False)
+    feature_effect = db.Column(db.Text, nullable=False)
+    suggested_characteristics = db.Column(db.JSON, nullable=True)
+    specialty_table = db.Column(db.JSON, nullable=True)
+
 
 #----------------------------------------------------------
 #   D&D relation tables
