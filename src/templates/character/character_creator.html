@@ -250,7 +250,7 @@
                 <label for="background">Choose your character's background:</label>
                 <select id="background" name="background">
                     {% for background in all_backgrounds %}
-                        <option value="{{ background.id }}">{{ background.name }}</option>
+                        <option value="{{ background.background_id }}">{{ background.background_name }}</option>
                     {% endfor %}
                 </select><br>
                 <label for="alignment">Choose your character's alignment:</label>

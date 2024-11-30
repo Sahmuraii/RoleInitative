@@ -2,7 +2,7 @@ from flask import render_template, Blueprint, request, redirect, url_for
 from flask_login import current_user
 from sqlalchemy import select
 from src.auth.models import User
-from src.character.models import Character, Character_Class, DND_Class, DND_Race
+from src.character.models import Character, Character_Class, DND_Class, DND_Race, DND_Background
 from src import db
 
 character_bp = Blueprint('character_bp', __name__, template_folder='../templates')
@@ -62,6 +62,7 @@ def create():
     
     all_races = DND_Race.query.all()
     all_classes = DND_Class.query.all()
+    all_backgrounds = DND_Background.query.all()
     if request.method == 'POST':
         #returns list of levels where the class is the index. will have to be changed in the future for homebrew content
         #in the future we will need to keep track of the indexes and associate them with the user's chosen homebrew classes
@@ -74,4 +75,4 @@ def create():
         return render_template("character/test_display.html", classes=classes, levels=levels)
     
 
-    return render_template("character/character_creator.html", all_classes=all_classes, all_races=all_races)
+    return render_template("character/character_creator.html", all_backgrounds=all_backgrounds, all_classes=all_classes, all_races=all_races)
