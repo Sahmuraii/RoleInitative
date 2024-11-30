@@ -98,25 +98,34 @@
 
                 <!-- Standard Array -->
                 <div id="standard_array" style="display: block;">
-                    <p>Assign values from the standard array <span id="attribute_array">[15, 14, 13, 12, 10, 8]</span>:</p>
+                    <p><br>Assign values from the standard array <span id="attribute_array">[15, 14, 13, 12, 10, 8]<br></span>:</p>
                 </div>
 
                 <!-- Point Buy -->
                 <div id="point_buy" style="display: none;">
-                    <p>Allocate points (Max 27)<span id="remainingPoints">27</span></p>
+                    <p><br>Allocate points (Max 27)<span id="remainingPoints">27</span><br></p>
                 </div>
 
                 <!-- Roll -->
                 <div id="roll" style="display: none;">
-                    <p>Roll 4d6 and drop the lowest roll for each stat:</p>
-                    <button type="button" id="rollStatsButton">Roll Stats</button>
-                    <p>Assign values from the standard array <span id="roll_attribute_array">Press the roll button to get your values</span>:</p>
-                    <!-- TODO: Make fields to choose the number of, type of, and num of dropped dice" -->
+                    <br>
+                    <div style="display: flex; align-items: center; gap: 4px;">
+                        <span>Roll </span>
+                        <input type="number" id="numDice" style="width: 35px;" value=4 placeholder="e.g., 4"> <!-- 20 px is too small for width -->
+                        <span>d</span>
+                        <input type="number" id="typeDice" style="width: 35px;" value=6 placeholder="e.g., 6">
+                        <span> dice, then the drop lowest </span>
+                        <input type="number" id="dropDice" style="width: 35px;" value=1 placeholder="e.g., 1">
+                        <span> for each stat.</span>
+                    </div>
+                    <br>
+                    <button type="button" id="rollStatsButton">Roll Stats</button><br>
+                    <br><p>Assign values from the rolled values: <span id="roll_attribute_array">Press the roll button to get your values</span></p><br>
                 </div>
 
                 <!-- Manual -->
                 <div id="manual" style="display: none;">
-                    <p>Manually set stats (1-20):</p>
+                    <p><br>Manually set stats (1-20):<br><br></p>
                 </div>
 
                 <!-- Manual or Point Buy (Both should have arrows), Rolling and Array should not -->
@@ -415,6 +424,8 @@
             document.getElementById('point_buy').style.display = 'none';
             document.getElementById('roll').style.display = 'none';
             document.getElementById('manual').style.display = 'none';
+            document.getElementById('attribute_fields').style.display = 'none';
+            document.getElementById('attribute_fields_dropdown').style.display = 'none';
 
             // Show the selected section
             document.getElementById(method).style.display = 'block';
@@ -430,10 +441,12 @@
 
             // Reset all attribute stats to default value
             if (method === 'point_buy' || method === 'manual') {
+                document.getElementById('attribute_fields').style.display = '';
                 document.querySelectorAll('#attribute_fields input[type="number"]').forEach(input => {
                     input.value = method === 'point_buy' ? 8 : 10; // Reset to Point Buy or Manual defaults
                 });
             } else {
+                document.getElementById('attribute_fields_dropdown').style.display = '';
                 // Hide initial values
                 const dropdowns = document.querySelectorAll('#attribute_fields_dropdown select');
                 dropdowns.forEach(dropdown => {
@@ -601,7 +614,7 @@
         }
 
 
-        // Roll stats with 3 inputs. Not configurable yet by user
+        // Roll stats with 3 inputs
         function rollStats(numDice = 4, diceType = 6, dropLowest = 1) {
             const attributes = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'];
             let results = [];
@@ -660,9 +673,12 @@
             });
         }
 
-        // Example usage: roll 4d6 and drop the lowest 1 TODO: Make it versatile to user definition
+        // Example usage: roll 4d6 and drop the lowest 1, Now customizable pog
         document.getElementById('rollStatsButton').addEventListener('click', function() {
-            rollStats(4, 6, 1);
+            const numDice = document.getElementById('numDice').value;
+            const typeDice = document.getElementById('typeDice').value;
+            const dropDice = document.getElementById('dropDice').value;
+            rollStats(numDice, typeDice, dropDice);
         });
 
         // Are we still using this?
