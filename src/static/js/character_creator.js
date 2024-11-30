@@ -353,3 +353,110 @@ function showTab(tabId) {
     document.querySelector(`button[onclick="showTab('${tabId}')"]`).classList.add('active');
     document.getElementById(tabId).classList.add('active');
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    // Update summary values on input changes
+    const summaryElements = {
+        name: document.getElementById("summary-name"),
+        race: document.getElementById("summary-race"),
+        class: document.getElementById("summary-class"),
+        stats: {
+            strength: document.getElementById("summary-strength"),
+            dexterity: document.getElementById("summary-dexterity"),
+            constitution: document.getElementById("summary-constitution"),
+            intelligence: document.getElementById("summary-intelligence"),
+            wisdom: document.getElementById("summary-wisdom"),
+            charisma: document.getElementById("summary-charisma"),
+        },
+    };
+
+    // Update name
+    const charNameInput = document.getElementById("charname");
+    charNameInput.addEventListener("input", () => {
+        summaryElements.name.textContent = charNameInput.value || "None";
+    });
+
+    // Update race
+    const raceSelect = document.getElementById("charrace");
+    raceSelect.addEventListener("change", () => {
+        // Subtract 1 to account for no id's with value 0
+        summaryElements.race.textContent = raceSelect.options[raceSelect.value -1].text || "None";
+    });
+
+    // Update class
+    const classInputs = document.querySelectorAll('input[name="multiclass_level"]');
+    classInputs.forEach((input) => {
+        // No idea how to do this with dynamic html like that
+    });
+
+    // Update stats
+    const statInputs = [
+        { id: "strength", key: "strength" },
+        { id: "dexterity", key: "dexterity" },
+        { id: "constitution", key: "constitution" },
+        { id: "intelligence", key: "intelligence" },
+        { id: "wisdom", key: "wisdom" },
+        { id: "charisma", key: "charisma" },
+    ];
+
+    const updateDropdownStatDisplay = () => {
+        statInputs.forEach((stat) => {
+            const stat_id = stat.id + '_dd';
+            const dropdown = document.getElementById(stat_id);
+            //console.log("input value: " + dropdown.value);
+            //console.log("Dropdown element:", dropdown);
+            //console.log("Initial selected value:", dropdown.value);
+            //console.log("Selected Index:", dropdown.value);
+            // adding 1 because I was dumb about the dropdowns. will fix later I suppose
+            //attribute_value = dropdown.options[dropdown.value + 1].text;
+            // Or I do it like this. Also works
+            const attribute_value = dropdown.querySelector(`option[value="${dropdown.value}"]`)?.text;
+            //console.log("Selected Option Text:", attribute_value);
+            summaryElements.stats[stat.key].textContent = attribute_value || 8;
+        });
+    }
+
+
+    // Add an observer to update on stat changes triggered by the buttons
+    const updateStatDisplay = () => {
+        statInputs.forEach((stat) => {
+            const attrField = document.getElementById(stat.id);
+            console.log("attribute field " + attrField);
+            summaryElements.stats[stat.key].textContent = attrField.value || 8;
+        });
+    };
+
+    const updateOnChangeStatDisplay = () => {
+        const method = document.getElementById('stat_method').value;
+        const isDropdown = method === 'roll' || method === 'standard_array'
+        if (isDropdown) {
+            updateDropdownStatDisplay();
+        } else {
+            updateStatDisplay();
+        }
+    }
+
+    //console.log("method, isDropdown: " + method, isDropdown);
+    statInputs.forEach((stat) => {
+        // if isDropdown, strength_dd, else strength
+        const stat_id = stat.id + '_dd';
+        const dropdown = document.getElementById(stat_id);
+
+        // Must be change because input wil happen before the onchange=checkAvailability in the dropdowns
+        dropdown.addEventListener("change", () => {
+            updateDropdownStatDisplay();
+        });
+
+        // Attach the update function to the relevant buttons
+        document.querySelector(`[onclick="adjustStat('${stat.id}', -1)"]`).addEventListener("click", updateStatDisplay);
+        document.querySelector(`[onclick="adjustStat('${stat.id}', 1)"]`).addEventListener("click", updateStatDisplay);
+
+        // Ensure display is updated when stat method changes
+        document.getElementById('stat_method').addEventListener('change', function () {
+            updateOnChangeStatDisplay();
+        });
+    });
+
+    // Ensure the display is updated on page load
+    updateStatDisplay();
+});
