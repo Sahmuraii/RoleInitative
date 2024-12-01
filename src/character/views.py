@@ -153,6 +153,10 @@ def create():
             race_id = race
         )
 
+        #TODO: Save character class(es)
+        #TODO: Save Character HP
+        #TODO: Save Character Death Saves
+        
         db.session.add(new_character_race)
         db.session.commit()
     

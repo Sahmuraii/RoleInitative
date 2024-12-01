@@ -120,7 +120,7 @@ class DND_Condition(db.Model):
     __tablename__ = "dnd_condition"
     condition_id = db.Column(db.Integer, primary_key=True, nullable=False)
     condition_name = db.Column(db.String(50), nullable=False)
-    condition_description = db.Column(db.String(250), nullable=False)
+    condition_description = db.Column(db.String(1500), nullable=False)
 
 
 #   >>> Items / Equipment
