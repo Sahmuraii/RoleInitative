@@ -2,8 +2,9 @@ from flask import render_template, Blueprint, request, redirect, url_for
 from flask_login import current_user
 from sqlalchemy import select
 from src.auth.models import User
-from src.character.models import Character, Character_Class, DND_Class, DND_Race, DND_Background
+from src.character.models import Character, Character_Class, DND_Class, DND_Race, DND_Background, Character_Details, Character_Stats, Character_Race
 from src import db
+import math
 
 character_bp = Blueprint('character_bp', __name__, template_folder='../templates')
 
@@ -68,11 +69,91 @@ def create():
         #in the future we will need to keep track of the indexes and associate them with the user's chosen homebrew classes
         levels = request.form.getlist("multiclass_level")
         classes = []
+
+        char_name = request.form.get('charname')
+        #ruleset = request.form.get('ruleset')
+        #xp_method = request.form.get('xp_method')
+        #encumbrance = request.form.get('encumbrance')
+        
+
         for i in range(len(levels)):
             if levels[i] != "0":
                 classes.append(i+1)
         #just a dummy html page that displays two arrays
-        return render_template("character/test_display.html", classes=classes, levels=levels)
-    
 
+        strength = request.form.get('strength')
+        dexterity = request.form.get('dexterity')
+        constitution = request.form.get('constitution')
+        intelligence = request.form.get('intelligence')
+        wisdom = request.form.get('wisdom')
+        charisma = request.form.get('charisma')
+
+        #selected_background = request.form.get('background')
+        alignment = request.form.get('alignment')
+        #personality = request.form.get('personality')
+        height = request.form.get('height')
+        weight = request.form.get('weight')
+        skin_color = request.form.get('skin_color')
+        hair_color = request.form.get('hair_color')
+        eye_color = request.form.get('eye_color')
+        age = request.form.get('age')
+        appearance = request.form.get('appearance')
+        backstory = request.form.get('backstory')
+        bonds = request.form.get('bonds')
+        misc_description = request.form.get('misc_description')
+
+        race = request.form.get('charrace')
+
+        #equipment = request.form.getlist('equipment')
+
+        new_character = Character(
+            owner_id=current_user.id,
+            name=char_name,
+            faith=None,
+            proficiency_bonus=math.ceil(sum(map(int, levels)) / 4) + 1,
+            total_level=sum(map(int, levels)),)
+        
+        db.session.add(new_character)
+        db.session.commit()
+
+        new_character_details = Character_Details(
+            char_id = new_character.char_id,
+            height = height,
+            weight = weight,
+            alignment = alignment,
+            skin_color = skin_color,
+            hair_color = hair_color,
+            eye_color = eye_color,
+            age = age,
+            personality = None,
+            backstory = backstory,
+            appearance = appearance,
+            bonds = bonds,
+            misc = misc_description
+        )
+
+        db.session.add(new_character_details)
+        db.session.commit()
+
+        new_character_stats = Character_Stats(
+            char_id = new_character.char_id,
+            strength = strength,
+            dexterity = dexterity,
+            constitution = constitution,
+            intelligence = intelligence,
+            wisdom = wisdom,
+            charisma = charisma
+        )
+
+        db.session.add(new_character_stats)
+        db.session.commit()
+
+        new_character_race = Character_Race(
+            char_id = new_character.char_id,
+            race_id = race
+        )
+
+        db.session.add(new_character_race)
+        db.session.commit()
+    
     return render_template("character/character_creator.html", all_backgrounds=all_backgrounds, all_classes=all_classes, all_races=all_races)

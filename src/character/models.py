@@ -10,7 +10,7 @@ class Character(db.Model):
     owner_id = db.Column(db.Integer, db.ForeignKey(User.id), nullable=False)
     name = db.Column(db.String(250), nullable=False)
     faith = db.Column(db.String(50), nullable=True)
-    proficency_bonus = db.Column(db.Integer, nullable=True)
+    proficiency_bonus = db.Column(db.Integer, nullable=True)
     total_level = db.Column(db.Integer, nullable=True)
     charClass = db.relationship("Character_Class", backref="char")
     charRace = db.relationship("Character_Race", backref=backref("char", uselist=False))
