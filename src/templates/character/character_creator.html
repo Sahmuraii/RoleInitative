@@ -111,11 +111,11 @@
                     <br>
                     <div style="display: flex; align-items: center; gap: 4px;">
                         <span>Roll </span>
-                        <input type="number" id="numDice" style="width: 35px;" value=4 placeholder="e.g., 4"> <!-- 20 px is too small for width -->
+                        <input type="number" id="numDice" style="width: 40px;" value=4 min="0" max="100" placeholder="e.g., 4"> <!-- 40 px is to allow for 3 digits -->
                         <span>d</span>
-                        <input type="number" id="typeDice" style="width: 35px;" value=6 placeholder="e.g., 6">
+                        <input type="number" id="typeDice" style="width: 40px;" value=6 min="0" max="100" placeholder="e.g., 6">
                         <span> dice, then the drop lowest </span>
-                        <input type="number" id="dropDice" style="width: 35px;" value=1 placeholder="e.g., 1">
+                        <input type="number" id="dropDice" style="width: 40px;" value=1 min="0" max="100" placeholder="e.g., 1">
                         <span> for each stat.</span>
                     </div>
                     <br>

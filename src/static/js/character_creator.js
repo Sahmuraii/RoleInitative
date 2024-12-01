@@ -338,6 +338,43 @@ document.getElementById('rollStatsButton').addEventListener('click', function() 
     rollStats(numDice, typeDice, dropDice);
 });
 
+// Because my brother is a goblin. Hard enforce max and min so he can't break it
+document.getElementById("numDice").addEventListener("input", function() {
+    const value = parseInt(this.value, 10);
+    const min = parseInt(this.min, 10);
+    const max = parseInt(this.max, 10);
+
+    if (value < min) {
+        this.value = min;
+    } else if (value > max) {
+        this.value = max;
+    }
+});
+
+document.getElementById("typeDice").addEventListener("input", function() {
+    const value = parseInt(this.value, 10);
+    const min = parseInt(this.min, 10);
+    const max = parseInt(this.max, 10);
+
+    if (value < min) {
+        this.value = min;
+    } else if (value > max) {
+        this.value = max;
+    }
+});
+
+document.getElementById("dropDice").addEventListener("input", function() {
+    const value = parseInt(this.value, 10);
+    const min = parseInt(this.min, 10);
+    const max = parseInt(this.max, 10);
+
+    if (value < min) {
+        this.value = min;
+    } else if (value > max) {
+        this.value = max;
+    }
+});
+
 // Are we still using this?
 function showLevel() {
     document.getElementById("test").innerHTML = document.getElementById('charname').value;
