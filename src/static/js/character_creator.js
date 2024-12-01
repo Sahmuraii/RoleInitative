@@ -239,7 +239,7 @@ function adjustStat(statId, change) {
     }
 }
 
-// Handles + and - button visibility. TODO: Change this to control disabled vs enabled rather than visibility. How?
+// Handles + and - button visibility and disability
 function updateAllButtonsVisibility() {
     const isPointBuy = document.getElementById('stat_method').value === 'point_buy';
     const isManual = document.getElementById('stat_method').value === 'manual';
@@ -261,11 +261,24 @@ function updateAllButtonsVisibility() {
             : true;
 
             // Show/hide buttons based on conditions
-            increaseButton.style.visibility = (currentValue < maxLimit && canIncrease) ? 'visible' : 'hidden';
-            decreaseButton.style.visibility = (currentValue > minLimit) ? 'visible' : 'hidden'; // No need to check remaining points on decrease
+            increaseButton.style.visibility = "visible";
+            decreaseButton.style.visibility = "visible";
+            //increaseButton.style.visibility = (currentValue < maxLimit && canIncrease) ? 'visible' : 'hidden';
+            //decreaseButton.style.visibility = (currentValue > minLimit) ? 'visible' : 'hidden'; // No need to check remaining points on decrease
+            if (currentValue < maxLimit && canIncrease) {
+                increaseButton.removeAttribute("disabled");
+            } else {
+                increaseButton.setAttribute("disabled", "true");
+            }
+            if (currentValue > minLimit) {
+                decreaseButton.removeAttribute("disabled");
+            } else {
+                decreaseButton.setAttribute("disabled", "true");
+            }
         } else {
-            increaseButton.style.visibility = 'hidden';
-            decreaseButton.style.visibility = 'hidden';
+            increaseButton.style.visibility = "hidden";
+            decreaseButton.style.visibility = "hidden";
+
         }
     });
 }
