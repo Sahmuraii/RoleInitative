@@ -328,25 +328,33 @@
                 </p>
             </div>
             <div class="button-group">
-                <br><button type="submit">Save Character</button>
+                <br><button type="submit" onclick="setHiddenCharacterSummary()">Save Character</button>
+            </div>
+            <div style="display:none">
+                <input type="number" id="final-str" name="final-str" value="8" min="1" max="20" readonly><br>
+                <input type="number" id="final-dex" name="final-dex" value="8" min="1" max="20" readonly><br>
+                <input type="number" id="final-con" name="final-con" value="8" min="1" max="20" readonly><br>
+                <input type="number" id="final-int" name="final-int" value="8" min="1" max="20" readonly><br>
+                <input type="number" id="final-wis" name="final-wis" value="8" min="1" max="20" readonly><br>
+                <input type="number" id="final-cha" name="final-cha" value="8" min="1" max="20" readonly><br>
+            </div>
+            <!-- Right Panel -->
+            <div class="character-summary">
+                <h2>Character Summary</h2>
+                <p><strong>Name:</strong> <span id="summary-name">None</span></p>
+                <p><strong>Race:</strong> <span id="summary-race">None</span></p>
+                <p><strong>Class:</strong> <span id="summary-class">None</span></p>
+                <p><strong>Stats:</strong></p>
+                <ul>
+                    <li>Strength: <span id="summary-strength">8</span></li>
+                    <li>Dexterity: <span id="summary-dexterity">8</span></li>
+                    <li>Constitution: <span id="summary-constitution">8</span></li>
+                    <li>Intelligence: <span id="summary-intelligence">8</span></li>
+                    <li>Wisdom: <span id="summary-wisdom">8</span></li>
+                    <li>Charisma: <span id="summary-charisma">8</span></li>
+                </ul>
             </div>
         </form>
-        <!-- Right Panel -->
-        <div class="character-summary">
-            <h2>Character Summary</h2>
-            <p><strong>Name:</strong> <span id="summary-name">None</span></p>
-            <p><strong>Race:</strong> <span id="summary-race">None</span></p>
-            <p><strong>Class:</strong> <span id="summary-class">None</span></p>
-            <p><strong>Stats:</strong></p>
-            <ul>
-                <li>Strength: <span id="summary-strength">8</span></li>
-                <li>Dexterity: <span id="summary-dexterity">8</span></li>
-                <li>Constitution: <span id="summary-constitution">8</span></li>
-                <li>Intelligence: <span id="summary-intelligence">8</span></li>
-                <li>Wisdom: <span id="summary-wisdom">8</span></li>
-                <li>Charisma: <span id="summary-charisma">8</span></li>
-            </ul>
-        </div>
     </div>
     <script src="../../static/js/character_creator.js"></script>
 

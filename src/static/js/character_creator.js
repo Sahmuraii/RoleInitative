@@ -354,6 +354,15 @@ function showTab(tabId) {
     document.getElementById(tabId).classList.add('active');
 }
 
+function setHiddenCharacterSummary() {
+    document.getElementById("final-str").value = document.getElementById("summary-strength").textContent;
+    document.getElementById("final-dex").value = document.getElementById("summary-dexterity").textContent;
+    document.getElementById("final-con").value = document.getElementById("summary-constitution").textContent;
+    document.getElementById("final-int").value = document.getElementById("summary-intelligence").textContent;
+    document.getElementById("final-wis").value = document.getElementById("summary-wisdom").textContent;
+    document.getElementById("final-cha").value = document.getElementById("summary-charisma").textContent;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     // Update summary values on input changes
     const summaryElements = {

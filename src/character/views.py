@@ -81,12 +81,12 @@ def create():
                 classes.append(i+1)
         #just a dummy html page that displays two arrays
 
-        strength = request.form.get('strength')
-        dexterity = request.form.get('dexterity')
-        constitution = request.form.get('constitution')
-        intelligence = request.form.get('intelligence')
-        wisdom = request.form.get('wisdom')
-        charisma = request.form.get('charisma')
+        strength = request.form.get('final-str')
+        dexterity = request.form.get('final-dex')
+        constitution = request.form.get('final-con')
+        intelligence = request.form.get('final-int')
+        wisdom = request.form.get('final-wis')
+        charisma = request.form.get('final-cha')
 
         #selected_background = request.form.get('background')
         alignment = request.form.get('alignment')
