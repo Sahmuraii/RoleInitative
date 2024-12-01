@@ -1,5 +1,5 @@
-from flask import render_template, Blueprint, request, redirect, url_for
-from flask_login import current_user
+from flask import render_template, Blueprint, request, redirect, url_for, jsonify
+from flask_login import current_user, login_required
 from sqlalchemy import select
 from src.auth.models import User
 from src.character.models import Character, Character_Class, DND_Class, DND_Race, DND_Background, Character_Details, Character_Stats, Character_Race
@@ -157,3 +157,21 @@ def create():
         db.session.commit()
     
     return render_template("character/character_creator.html", all_backgrounds=all_backgrounds, all_classes=all_classes, all_races=all_races)
+
+@character_bp.route('/delete_character/<character_id>', methods=['POST'])
+@login_required
+def delete_character(character_id):
+    # Find the character by ID
+    character = Character.query.filter_by(char_id=character_id, owner_id=current_user.id).first()
+
+    # This technically worked. But it's ugly so need some kind of solution to make it less ugly
+    if not character:
+        return jsonify({"error": "Character not found or unauthorized"}), 404
+    try:
+        # Delete the character from the database
+        db.session.delete(character)
+        db.session.commit()
+        return jsonify({"message": "Character deleted successfully"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "An error occurred while deleting the character"}), 500
