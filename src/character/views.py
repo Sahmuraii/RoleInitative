@@ -90,7 +90,7 @@ def create():
 
         #selected_background = request.form.get('background')
         alignment = request.form.get('alignment')
-        #personality = request.form.get('personality')
+        personality = request.form.get('personality')
         height = request.form.get('height')
         weight = request.form.get('weight')
         skin_color = request.form.get('skin_color')
@@ -125,7 +125,7 @@ def create():
             hair_color = hair_color,
             eye_color = eye_color,
             age = age,
-            personality = None,
+            personality = personality,
             backstory = backstory,
             appearance = appearance,
             bonds = bonds,
