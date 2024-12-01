@@ -1,0 +1,784 @@
+
+
+.default_sheet_container {
+    height: 1100px;
+    width: 950px;
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+.character_viewer {
+    position: relative;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 12px;
+    height: 100%;
+    width: 100%;
+    min-height: 1100px;
+    min-width: 950px;
+}
+.character_viewer * {
+    font-family: "Playfair Display";
+}
+.title_block {
+    position: absolute;
+    border-style: solid;
+    border-width: 1px;
+    transform: translate(-50%, -50%);
+    width: 42%;
+    left: 21.75%;
+    height: 7.5%;
+    top: 4.5%;
+}
+.character_info_block {
+    position: absolute;
+    transform-origin: 50% 50% 0px;
+    border-style: solid;
+    border-width: 1px;
+    transform: translate(-50%, -50%);
+    height: 7.5%;
+    top: 4.5%;
+    width: 56%;
+    left: 71.5%;
+}
+.character_modifiers_block {
+    position: absolute;
+    transform-origin: 50% 50% 0px;
+    border-style: solid;
+    border-width: 1px;
+    transform: translate(-50%, -50%);
+    width: 60%;
+    left: 30.75%;
+    height: 9%;
+    top: 13.25%;
+}
+.character_hit_points_block {
+    position: absolute;
+    border-style: solid;
+    border-width: 1px;
+    height: 9%;
+    width: 38%;
+    transform: translate(-50%, -50%);
+    top: 13.25%;
+    left: 80.5%;
+}
+.character_skills_block {
+    position: absolute;
+    transform-origin: 50% 50% 0px;
+    border-style: solid;
+    border-width: 1px;
+    transform: translate(-50%, -50%);
+    left: 18.25%;
+    width: 35%;
+    height: 62%;
+    top: 49.5%;
+}
+.character_name_label {
+    position: absolute;
+    font-size: 20px;
+    transform-origin: 50% 50% 0px;
+    font-weight: bold;
+    left: 30%;
+    top: 5%;
+    width: 68%;
+    height: 28%;
+}
+.character_race_label {
+    position: absolute;
+    left: 30%;
+    height: 24%;
+    width: 68%;
+    top: 40%;
+}
+.character_profile_image {
+    position: absolute;
+    transform-origin: 50% 50% 0px;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 4px;
+    left: -0.29%;
+    top: -1.05%;
+    width: 27.38%;
+    height: 100%;
+}
+.character_level_label {
+    position: absolute;
+    left: 30%;
+    height: 24%;
+    top: 67%;
+    width: 68%;
+}
+.character_modifier_base {
+    transform: translate(0%, -50%);
+    background-image: none;
+    opacity: 1;
+    background-color: transparent;
+    width: 16.666%;
+    position: absolute;
+    left: 0px;
+    top: 50%;
+    height: 98%;
+}
+.hp_modifier_block {
+    position: absolute;
+    height: 100%;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 13%;
+    width: 24%;
+}
+.hit_points_block_label {
+    position: absolute;
+    height: 22.12%;
+    top: 100.05%;
+    transform: translate(-50%, -100%);
+    width: 35%;
+    text-align: center;
+    left: 50%;
+}
+.hp_damage_button {
+    display: block;
+    height: 25%;
+    position: absolute;
+    top: 83%;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+    background-color: transparent;
+    color: rgb(97, 8, 8);
+    border-width: 1px;
+    border-radius: 4px;
+    border-color: rgb(63, 3, 3);
+    border-style: solid;
+    width: 98%;
+    left: 50%;
+}
+.hp_change_field {
+    display: block;
+    height: 22%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    width: 88%;
+    padding-left: 3px;
+    padding-right: 2px;
+    text-align: center;
+    left: 50%;
+    top: 50%;
+    border-radius: 3px;
+    border-style: solid;
+    border-width: 1px;
+    background-color: transparent;
+}
+.hp_heal_button {
+    display: block;
+    height: 25%;
+    position: absolute;
+    color: rgb(4, 62, 13);
+    border-width: 1px;
+    background-color: transparent;
+    border-radius: 4px;
+    border-color: rgb(22, 83, 5);
+    border-style: solid;
+    top: 17%;
+    transform: translate(-50%, -50%);
+    width: 98%;
+    left: 50%;
+}
+.hp_display_block {
+    position: absolute;
+    transform-origin: 50% 50% 0px;
+    transform: translate(-50%, -50%);
+    width: 74%;
+    height: 100%;
+    left: 63.25%;
+    top: 50%;
+}
+.current_hp_label {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 26%;
+    height: 22%;
+    top: 22%;
+    left: 16%;
+}
+.current_hp_field {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    height: 38%;
+    padding: 0%;
+    line-height: 19px;
+    font-size: 26px;
+    width: 26%;
+    left: 16%;
+    top: 58%;
+}
+.max_hp_field {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    height: 38%;
+    padding: 0%;
+    line-height: 19px;
+    font-size: 26px;
+    width: 26%;
+    left: 50%;
+    top: 58%;
+}
+.temp_hp_field {
+    position: absolute;
+    text-align: center;
+    height: 38%;
+    padding: 0%;
+    line-height: 19px;
+    font-size: 26px;
+    width: 26%;
+    top: 58%;
+    left: 84%;
+    transform: translate(-50%, -50%);
+}
+.max_hp_label {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 26%;
+    height: 22%;
+    top: 22%;
+    left: 50%;
+}
+.temp_hp_label {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    top: 22.12%;
+    width: 26%;
+    text-align: center;
+    height: 22%;
+    left: 84%;
+}
+.hp_divider_label {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    padding: 0%;
+    line-height: 19px;
+    left: 33.11%;
+    width: 8.05%;
+    font-size: 29px;
+    height: 25.28%;
+    transform-origin: 50% 50% 0px;
+    top: 57.92%;
+    color: rgb(67, 67, 67);
+    font-weight: bold;
+}
+.character_combat_stats_block {
+    position: absolute;
+    border-style: solid;
+    border-width: 1px;
+    height: 9%;
+    top: 23%;
+    width: 63%;
+    left: 68%;
+    transform: translate(-50%, -50%);
+}
+.combat_skill_base {
+    position: absolute;
+    height: 100%;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    width: 16.666%;
+    left: 8.333%;
+}
+.armor_class_block {
+    left: 91.667%;
+}
+.initiative_label {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-size: 18px;
+    top: 27%;
+    height: 25%;
+    width: 90%;
+    left: 50%;
+}
+.initiative_field {
+    position: absolute;
+    background-color: transparent;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 5px;
+    top: 63%;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    width: 54%;
+    height: 38%;
+    border-color: rgb(160, 160, 160);
+}
+.inspiration_label {
+    position: absolute;
+    font-size: 18px;
+    transform: translate(-50%, -50%);
+    top: 71%;
+    text-align: center;
+    left: 50%;
+    height: 25%;
+    width: 90%;
+}
+.inspiration_field {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    border-color: rgb(95, 95, 95);
+    background-color: transparent;
+    border-width: 1px;
+    border-style: dotted;
+    left: 50%;
+    width: 70%;
+    height: 35%;
+    top: 38%;
+    border-radius: 5px;
+}
+.armor_class_field {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 40%;
+    text-align: center;
+    font-size: 26px;
+    line-height: 18px;
+    height: 26%;
+}
+.armor_class_top_label {
+    position: absolute;
+    text-align: center;
+    font-size: 15px;
+    transform: translate(-50%, -50%);
+    width: 70%;
+    height: 23%;
+    top: 24%;
+left: 50%;
+}
+.armor_class_bottom_label {
+    position: absolute;
+    text-align: center;
+    font-size: 15px;
+    transform: translate(-50%, -50%);
+    width: 70%;
+    height: 23%;
+    left: 50%;
+    top: 74%;
+}
+.character_modifier_name {
+    position: absolute;
+    font-size: 12px;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 85%;
+    top: 17%;
+    height: 18%;
+    left: 50%;
+}
+.character_modifier_field {
+    position: absolute;
+    background-image: none;
+    background-color: transparent;
+    transform: translate(-50%, -50%);
+    border-color: rgb(77, 77, 77);
+    border-style: solid;
+    border-radius: 4px;
+    font-size: 19px;
+    line-height: 21px;
+    width: 58%;
+    height: 34%;
+    left: 50%;
+    top: 47%;
+}
+.character_modifier_score_field {
+    position: absolute;
+    background-color: transparent;
+    border-color: rgb(77, 77, 77);
+    border-style: solid;
+    font-size: 13px;
+    border-radius: 10px;
+    line-height: 13px;
+    top: 82%;
+    left: 50%;
+    width: 34%;
+    height: 22%;
+    transform: translate(-50%, -50%);
+}
+.walking_speed_top_label {
+    position: absolute;
+    text-align: center;
+    font-size: 15px;
+    transform: translate(-50%, -50%);
+    width: 70%;
+    height: 23%;
+    top: 24%;
+    left: 50%;
+}
+.walking_speed_bottom_label {
+    position: absolute;
+    text-align: center;
+    font-size: 15px;
+    transform: translate(-50%, -50%);
+    width: 70%;
+    height: 23%;
+    left: 50%;
+    top: 74%;
+}
+.walking_speed_field {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 40%;
+    text-align: center;
+    font-size: 26px;
+    line-height: 18px;
+    height: 26%;
+}
+.proficiency_bonus_top_label {
+    position: absolute;
+    text-align: center;
+    font-size: 15px;
+    transform: translate(-50%, -50%);
+    height: 23%;
+    top: 24%;
+    left: 50%;
+    width: 80%;
+}
+.proficiency_bonus_field {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 40%;
+    text-align: center;
+    font-size: 26px;
+    line-height: 18px;
+    height: 26%;
+}
+.proficiency_bonus_bottom_label {
+    position: absolute;
+    text-align: center;
+    font-size: 15px;
+    transform: translate(-50%, -50%);
+    height: 23%;
+    left: 50%;
+    top: 74%;
+    width: 80%;
+}
+.character_skills_title_bar {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    background-image: none;
+    background-color: transparent;
+    width: 100%;
+    height: 3.5%;
+    top: 2.25%;
+}
+.character_skills_base_title {
+    position: absolute;
+    text-align: center;
+    height: 100%;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    width: 12%;
+    font-size: 13px;
+    left: 6.75%;
+}
+.character_skills_skill_title {
+    width: 14%;
+    left: 21%;
+    }
+.character_skills_modifier_title {
+    width: 12%;
+    left: 72%;
+}
+.character_skill_line {
+    width: 100%;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    height: 4.8%;
+    top: 6.6%;
+    position: relative;
+}
+.character_skill_line_proficient {
+    position: absolute;
+    text-align: center;
+    width: 6%;
+    transform: translate(-50%, -50%);
+    left: 7%;
+    top: 52%;
+    font-size: 18px;
+    line-height: 26px;
+    height: 90%;
+}
+.character_skill_line_skill_name {
+    position: absolute;
+    text-align: left;
+    width: 47%;
+    transform: translate(-50%, -50%);
+    left: 41%;
+    font-size: 17px;
+    top: 52%;
+    line-height: 26px;
+    height: 90%;
+}
+.character_skill_line_mod {
+    position: absolute;
+    text-align: center;
+    transform: translate(-50%, -50%);
+    width: 13%;
+    font-weight: 500;
+    color: rgb(129, 129, 129);
+    transform-origin: 50% 50% 0px;
+    left: 73%;
+    top: 52%;
+    line-height: 26px;
+    font-size: 17px;
+    height: 90%;
+}
+.character_skill_line_bonus {
+    position: absolute;
+    left: 92%;
+    background-color: transparent;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 4px;
+    border-color: rgb(134, 134, 134);
+    width: 12%;
+    font-size: 16px;
+    height: 78%;
+    line-height: 17px;
+    top: 54%;
+    transform: translate(-50%, -50%);
+}
+.character_skills_footer_bar {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    background-image: none;
+    background-color: transparent;
+    width: 100%;
+    top: 98%;
+    height: 4%;
+}
+.character_skills_block_label {
+    position: absolute;
+    text-align: center;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    height: 100%;
+    width: 20%;
+    font-size: 17px;
+    line-height: 19px;
+}
+.saving_throws_block {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    background-image: none;
+    background-color: transparent;
+    border-style: solid;
+    border-width: 1px;
+    width: 35%;
+    left: 18.25%;
+    height: 18%;
+    top: 90.5%;
+}
+.saving_throws_block_footer {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    background-image: none;
+    background-color: transparent;
+    width: 100%;
+    left: 50%;
+    height: 12%;
+    top: 93%;
+    text-align: start;
+}
+.saving_throws_block_label {
+    left: 50%;
+    transform: translate(-50%, -100%);
+    top: 95%;
+    height: 90%;
+    width: 50%;
+    position: absolute;
+    font-size: 17px;
+    line-height: 19px;
+    text-align: center;
+}
+.character_info_label {
+    position: absolute;
+    text-align: left;
+    font-size: 15px;
+    height: 95%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 97%;
+    top: 50%;
+}
+.saving_throw_modifier_base {
+    position: absolute;
+    width: 48%;
+    transform: translate(-50%, -50%);
+    left: 25%;
+    height: 23%;
+    top: 13%;
+}
+.saving_throw_abbreviation {
+    position: absolute;
+    text-align: center;
+    width: 37%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    height: 52%;
+    left: 42%;
+    font-size: 17px;
+    line-height: 24px;
+}
+.saving_throw_proficient {
+    position: absolute;
+    text-align: center;
+    top: 50%;
+    width: 10%;
+    transform: translate(-50%, -50%);
+    height: 52%;
+    left: 15%;
+    font-size: 17px;
+    line-height: 24px;
+}
+.saving_throw_field {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    height: 58%;
+    width: 28%;
+    border-width: 1px;
+    background-color: transparent;
+    border-style: solid;
+    border-radius: 4px;
+    font-size: 16px;
+    left: 77%;
+    border-color: rgb(137, 137, 137);
+}
+.character_modifier_2 {
+    left: 16.667%;
+}
+.character_modifier_3 {
+    left: 33.334%;
+}
+.character_modifier_4 {
+    left: 50%;
+}
+.character_modifier_5 {
+    left: 66.667%;
+}
+.character_modifier_6 {
+    left: 83.33%;
+}
+.saving_throw_2 {
+    left: 75%;
+    top: 13%;
+}
+.saving_throw_1 {
+    left: 25%;
+    top: 13%;
+}
+.saving_throw_3 {
+    left: 25%;
+    top: 36%;
+}
+.saving_throw_4 {
+    left: 75%;
+    top: 36%;
+}
+.saving_throw_5 {
+    left: 25%;
+    top: 59%;
+}
+.saving_throw_6 {
+    left: 75%;
+    top: 59%;
+}
+.character_skills_proficient_title {
+    left: 6.75%;
+    width: 12%;
+}
+.character_skills_title {
+    left: 21%;
+    width: 14%;
+}
+.character_skills_modifier {
+    left: 72%;
+    width: 12%;
+}
+.character_skills_bonus {
+    width: 14%;
+    left: 92%;
+}
+.character_skills_bonus_title {
+    left: 92%;
+    width: 14%;
+}
+.character_modifier_1 {
+    left: 0%;
+}
+.inspiration_block {
+    left: 8.333%;
+}
+.walking_speed_block {
+    left: 41.667%;
+}
+.proficiency_bonus_block {
+    left: 58.333%;
+}
+.initiative_block {
+    left: 75%;
+}
+.passive_perception_block {
+    left: 25%;
+}
+.passive_perception_field {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 40%;
+    text-align: center;
+    font-size: 26px;
+    line-height: 18px;
+    height: 26%;
+}
+.passive_perception_top_label {
+    position: absolute;
+    text-align: center;
+    font-size: 15px;
+    transform: translate(-50%, -50%);
+    width: 70%;
+    height: 23%;
+    top: 24%;
+    left: 50%;
+}
+.passive_perception_bottom_label {
+    position: absolute;
+    text-align: center;
+    font-size: 15px;
+    transform: translate(-50%, -50%);
+    width: 75%;
+    height: 23%;
+    left: 50%;
+    top: 74%;
+}
+.multiuse_character_info_switch_block {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    left: 68%;
+    width: 63%;
+    top: 64%;
+    border-style: solid;
+    border-width: 1px;
+    height: 71%;
+}

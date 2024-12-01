@@ -31,6 +31,12 @@
         </p>
 
             <a href="/profile/{{current_user.username}}">Back to Profile</a>
+        
+        <h1>Character Sheet</h1>
+        {% from "character/character_sheet_view.html" import insert_character_sheet with context %}
+        <div class="default_sheet_container">
+            {{ insert_character_sheet() }}
+        </div>
 
         {% else %}
         <h1>You're not logged in!</h1>
@@ -38,6 +44,7 @@
         <a href="{{ url_for('auth_bp.register') }}">Or, you can click here to create a new account!</a>
 
         {%endif%}
+
     </div>
 
     
