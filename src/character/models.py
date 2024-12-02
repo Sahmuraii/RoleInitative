@@ -9,7 +9,6 @@ class Character(db.Model):
     char_id = db.Column(db.Integer, primary_key=True, nullable=False)
     owner_id = db.Column(db.Integer, db.ForeignKey(User.id), nullable=False)
     name = db.Column(db.String(250), nullable=False)
-    faith = db.Column(db.String(50), nullable=True)
     proficiency_bonus = db.Column(db.Integer, nullable=True)
     total_level = db.Column(db.Integer, nullable=True)
 
@@ -184,6 +183,7 @@ class Character_Details(db.Model):
     appearance=db.Column(db.String(500)) #simple description for the character's appearance
     bonds=db.Column(db.String(500)) #shown as "Alliances and Organizations" on the official character sheet
     misc=db.Column(db.String(500)) #any other info the player wants to enter
+    faith = db.Column(db.String(50), nullable=True)
 
 #   >>> HP / Death Saves
 class Character_Hit_Points(db.Model):

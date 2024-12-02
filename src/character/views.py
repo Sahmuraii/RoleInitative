@@ -97,6 +97,7 @@ def create():
         hair_color = request.form.get('hair_color')
         eye_color = request.form.get('eye_color')
         age = request.form.get('age')
+        faith = request.form.get('faith')
         appearance = request.form.get('appearance')
         backstory = request.form.get('backstory')
         bonds = request.form.get('bonds')
@@ -109,7 +110,6 @@ def create():
         new_character = Character(
             owner_id=current_user.id,
             name=char_name,
-            faith=None,
             proficiency_bonus=math.ceil(sum(map(int, levels)) / 4) + 1,
             total_level=sum(map(int, levels)),)
         
@@ -129,7 +129,8 @@ def create():
             backstory = backstory,
             appearance = appearance,
             bonds = bonds,
-            misc = misc_description
+            misc = misc_description,
+            faith = faith
         )
 
         db.session.add(new_character_details)
