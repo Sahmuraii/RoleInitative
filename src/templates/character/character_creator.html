@@ -66,7 +66,7 @@
             </div>
 
             <!-- Class -->
-            <div id="class" class="tab-content">
+            <div id="class" class="tab-content" name="character_class_selections">
                 {% for dnd_class in all_classes %}
                 <label for="{{dnd_class.name}}">{{ dnd_class.name }}: </label>
                 <button type="button" onclick="adjustStat('{{dnd_class.name}}', -1)">-</button>
@@ -267,6 +267,8 @@
                 </select><br>
                 <label for="personality">Personality:</label><br>
                 <textarea id="personality" name="personality" rows="4" cols="50"></textarea><br>
+                <label for="faith">Faith:</label>
+                <input type="text" id="faith" name="faith"><br>
 
                 <h3>Physical Traits:</h3>
                 <label for="height">Height:</label>
@@ -281,8 +283,6 @@
                 <input type="text" id="eye_color" name="eye_color"><br>
                 <label for="age">Age:</label>
                 <input type="text" id="age" name="age"><br>
-                <label for="faith">faith:</label>
-                <input type="text" id="faith" name="faith"><br>
                 <label for="appearance">General Appearance:</label><br>
                 <textarea id="appearance" name="appearance" rows="4" cols="50"></textarea><br>
 

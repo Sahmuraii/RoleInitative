@@ -155,7 +155,7 @@ class Character_Race(db.Model):
 class Character_Class(db.Model):
     __tablename__ = "character_class"
     char_id = db.Column(db.Integer, db.ForeignKey(Character.char_id, ondelete='CASCADE'), primary_key=True, nullable=False)
-    class_id = db.Column(db.Integer, db.ForeignKey(DND_Class.class_id), nullable=False)
+    class_id = db.Column(db.Integer, db.ForeignKey(DND_Class.class_id), primary_key=True, nullable=False)
     class_level = db.Column(db.Integer, nullable=False)
 
 class Character_Stats(db.Model):
@@ -217,6 +217,7 @@ class Character_Condition(db.Model):
     char_id = db.Column(db.Integer, db.ForeignKey(Character.char_id, ondelete='CASCADE'), primary_key=True, nullable=False)
     condition_id = db.Column(db.Integer, db.ForeignKey(DND_Condition.condition_id), primary_key=True, nullable=False)
     duration_rounds = db.Column(db.Integer, nullable=False, default=-1)
+    condition_strength = db.Column(db.Integer, nullable=False, default=1)
 
 
 #   >>> Items / Equipment

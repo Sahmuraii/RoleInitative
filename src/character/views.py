@@ -2,7 +2,7 @@ from flask import render_template, Blueprint, request, redirect, url_for, jsonif
 from flask_login import current_user, login_required
 from sqlalchemy import select
 from src.auth.models import User
-from src.character.models import Character, Character_Class, DND_Class, DND_Race, DND_Background, Character_Details, Character_Stats, Character_Race
+from src.character.models import Character, Character_Class, DND_Class, DND_Race, DND_Background, Character_Details, Character_Stats, Character_Race, Character_Hit_Points, Character_Death_Saves
 from src import db
 import math
 
@@ -66,19 +66,18 @@ def create():
     all_backgrounds = DND_Background.query.all()
     if request.method == 'POST':
         #returns list of levels where the class is the index. will have to be changed in the future for homebrew content
-        #in the future we will need to keep track of the indexes and associate them with the user's chosen homebrew classes
+        #compare indexes of users choices with indexes of classes. save chosen level along with class_id to an array
         levels = request.form.getlist("multiclass_level")
         classes = []
+        for i in range(len(levels)):
+            if levels[i] != "0":
+                classes.append({'level':i+1, 'class_id':f'{all_classes[i].class_id}'})
 
         char_name = request.form.get('charname')
         #ruleset = request.form.get('ruleset')
         #xp_method = request.form.get('xp_method')
         #encumbrance = request.form.get('encumbrance')
         
-
-        for i in range(len(levels)):
-            if levels[i] != "0":
-                classes.append(i+1)
         #just a dummy html page that displays two arrays
 
         strength = request.form.get('final-str')
@@ -111,10 +110,11 @@ def create():
             owner_id=current_user.id,
             name=char_name,
             proficiency_bonus=math.ceil(sum(map(int, levels)) / 4) + 1,
-            total_level=sum(map(int, levels)),)
-        
+            total_level=sum(map(int, levels)),
+        )
         db.session.add(new_character)
-        db.session.commit()
+
+        db.session.commit() #Code below breaks without this, as it relies on having a valid character id
 
         new_character_details = Character_Details(
             char_id = new_character.char_id,
@@ -130,11 +130,9 @@ def create():
             appearance = appearance,
             bonds = bonds,
             misc = misc_description,
-            faith = faith
+            faith = faith,
         )
-
         db.session.add(new_character_details)
-        db.session.commit()
 
         new_character_stats = Character_Stats(
             char_id = new_character.char_id,
@@ -143,23 +141,45 @@ def create():
             constitution = constitution,
             intelligence = intelligence,
             wisdom = wisdom,
-            charisma = charisma
+            charisma = charisma,
         )
-
         db.session.add(new_character_stats)
-        db.session.commit()
 
         new_character_race = Character_Race(
             char_id = new_character.char_id,
-            race_id = race
+            race_id = race,
         )
-
-        #TODO: Save character class(es)
-        #TODO: Save Character HP
-        #TODO: Save Character Death Saves
-        
         db.session.add(new_character_race)
+
+        for new_class in classes:
+            new_character_class = Character_Class(
+                char_id = new_character.char_id,
+                class_id = new_class['class_id'],
+                class_level = new_class['class_id']
+            )
+            db.session.add(new_character_class)
+
+        #TODO: Save Characters Actual HP (not just temp values)
+        new_character_hp = Character_Hit_Points(
+            char_id = new_character.char_id,
+            hit_points = 0,
+            max_hit_points = 0,
+            temp_hit_points = 0
+        )
+        db.session.add(new_character_hp)
+
+        #TODO: Save Character Death Saves (not just temp values)
+        new_character_hp = Character_Death_Saves(
+            char_id = new_character.char_id,
+            success_throws = 0,
+            fail_throws = 0
+        )
+        db.session.add(new_character_hp)
+
+        # Only commit once all character data is ready to be entered
         db.session.commit()
+        
+        return redirect(url_for('character_bp.character', character_id=new_character.char_id))
     
     return render_template("character/character_creator.html", all_backgrounds=all_backgrounds, all_classes=all_classes, all_races=all_races)
 
@@ -178,5 +198,6 @@ def delete_character(character_id):
         db.session.commit()
         return jsonify({"message": "Character deleted successfully"}), 200
     except Exception as e:
+        print(e)
         db.session.rollback()
         return jsonify({"error": "An error occurred while deleting the character"}), 500
