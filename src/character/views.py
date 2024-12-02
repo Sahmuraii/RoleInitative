@@ -4,7 +4,7 @@ from sqlalchemy import select
 from src.auth.models import User
 from src.character.models import Character, Character_Class, DND_Class, DND_Race, DND_Background, Character_Details, Character_Stats, Character_Race, Character_Hit_Points, Character_Death_Saves
 from src import db
-import math
+import math, json
 
 character_bp = Blueprint('character_bp', __name__, template_folder='../templates')
 
@@ -56,6 +56,7 @@ def character(character_id):
         return redirect(url_for('character_bp.character', character_id=character_id))
 
     return render_template('character/character.html', user=user, character=char, current_class=current_class, current_level=current_level, all_classes=all_classes)
+
 
 
 @character_bp.route("/character/create", methods=['GET', 'POST'])

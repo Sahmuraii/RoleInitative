@@ -1,6 +1,8 @@
 from src import db
 from src.auth.models import User
 from sqlalchemy.orm import backref
+from flask import jsonify
+import json
 
 #----------------------------------------------------------
 #   Character table (Parent)
