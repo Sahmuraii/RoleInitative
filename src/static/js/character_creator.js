@@ -40,42 +40,6 @@ function setMulticlassMax(inputValue) {
     }
 }
 
-
-function updateClasses(value) {
-    document.getElementById("classdisplay").innerHTML = "";
-    if(value==1) {
-        document.getElementById("classdisplay").innerHTML += `
-            <div id="classdisplay">
-                <label for="multiclass_id">Class: </label>
-                <select id="multiclass_id" name="multiclass_id">
-                    {% for dnd_class in all_classes %}
-                        <option value="{{ dnd_class.class_id }}">
-                            {{ dnd_class.name }}
-                        </option>
-                    {% endfor %}
-                </select><input type="number" id="multiclass_level" name="multiclass_level" class="multiclass_level" min="1" max="20" value="1" onchange="setCollectiveMax()">
-            </div>
-        `
-    }
-    else {
-        for(var i = 0; i < value; i++) {
-        document.getElementById("classdisplay").innerHTML += `
-                <div id="classdisplay">
-                    <label for="multiclass_id">Class ${i + 1}: </label>
-                    <select id="multiclass_id" name="multiclass_id">
-                        {% for dnd_class in all_classes %}
-                            <option value="{{ dnd_class.class_id }}">
-                                {{ dnd_class.name }}
-                            </option>
-                        {% endfor %}
-                    </select><input type="number" id="multiclass_level" name="multiclass_level" class="multiclass_level" min="1" max="20" value="1" onchange="setCollectiveMax()">
-                </div>
-            `;
-        }
-    }
-
-}
-
 // Show and hide attribute sections based on selected method
 document.getElementById('stat_method').addEventListener('change', function () {
     const method = this.value;
@@ -388,11 +352,6 @@ document.getElementById("dropDice").addEventListener("input", function() {
     }
 });
 
-// Are we still using this?
-function showLevel() {
-    document.getElementById("test").innerHTML = document.getElementById('charname').value;
-}
-
 // For the big tabs at top but can reuse for my class implementation idea
 function showTab(tabId) {
     // Remove 'active' class from all tabs and tab contents
@@ -412,6 +371,9 @@ function setHiddenCharacterSummary() {
     document.getElementById("final-wis").value = document.getElementById("summary-wisdom").textContent;
     document.getElementById("final-cha").value = document.getElementById("summary-charisma").textContent;
 }
+
+
+
 
 document.addEventListener("DOMContentLoaded", () => {
     // Update summary values on input changes
@@ -443,9 +405,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Update class
-    const classInputs = document.querySelectorAll('input[name="multiclass_level"]');
-    classInputs.forEach((input) => {
-        // No idea how to do this with dynamic html like that
+    const classInputs = document.getElementsByName("multiclass_level");
+    classInputs.addEventListener("change", () => {
+        //summaryElements.class.textContent = {{all_classes[classInputs[0]]}};
     });
 
     // Update stats

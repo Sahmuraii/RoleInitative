@@ -69,11 +69,11 @@
             <div id="class" class="tab-content">
                 {% for dnd_class in all_classes %}
                 <label for="{{dnd_class.name}}">{{ dnd_class.name }}: </label>
-                <button type="button" onclick="adjustStat('{{dnd_class.name}}', -1)">-</button>
-                <input type="number" id="{{dnd_class.name}}" name="multiclass_level" value="0" min="0" max="20" readonly>
-                <button type="button" onclick="adjustStat('{{dnd_class.name}}', 1)">+</button><br>
+                
+                <input type="number" id="{{dnd_class.name}}" name="multiclass_level" value="0" min="0" max="20" onchange="summaryClassChange()"><br>
+                
                 {% endfor %}
-
+                <p id="test">test</p>
 
 
 
@@ -359,5 +359,18 @@
         </form>
     </div>
     <script src="../../static/js/character_creator.js"></script>
+    <script>
+        function summaryClassChange() {
+            // summaryClass = document.getElementById("summary-class");
+            // summaryClass.textContent = "change";
+            // levels = document.getElementsByName("multiclass_level");
+            // var classes = [];
+            // for(var i; i < levels.length; i++) {
+            //     classes.push(i+1);
+            // }
+            test = document.getElementById("test");
+            test.textContent = "{{ all_classes.name }}";
+        }
+    </script>
 
 {% endblock %}
