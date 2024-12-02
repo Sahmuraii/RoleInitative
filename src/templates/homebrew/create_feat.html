@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Feat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        label {
+            font-weight: bold;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .dropdown-container, .list-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+            text-align: left;
+        }
+        textarea {
+            width: 100%;
+            resize: none;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <h1>Create a New Feat</h1>
+    <form method="POST">
+        <!-- Feat Name and Description -->
+        <div class="form-group">
+            <label for="name">Feat Name:</label>
+            <input type="text" id="name" name="name" placeholder="Enter feat name" required>
+        </div>
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" placeholder="Enter feat description" rows="4" required></textarea>
+        </div>
+
+        <!-- Proficiencies -->
+        <div class="form-group">
+            <label>Skill Proficiencies:</label>
+            <div class="dropdown-container">
+                <select id="skill_proficiency_dropdown">
+                    <option value="Stealth">Stealth</option>
+                    <option value="Survival">Survival</option>
+                    <option value="Athletics">Athletics</option>
+                    <option value="Arcana">Arcana</option>
+                </select>
+                <button type="button" onclick="addToList('skill_proficiency_dropdown', 'skill_proficiency_list')">Add</button>
+            </div>
+            <ul id="skill_proficiency_list"></ul>
+        </div>
+
+        <div class="form-group">
+            <label>Tool Proficiencies:</label>
+            <div class="dropdown-container">
+                <select id="tool_proficiency_dropdown">
+                    <option value="Herbalism Kit">Herbalism Kit</option>
+                    <option value="Thieves' Tools">Thieves' Tools</option>
+                    <option value="Smith's Tools">Smith's Tools</option>
+                </select>
+                <button type="button" onclick="addToList('tool_proficiency_dropdown', 'tool_proficiency_list')">Add</button>
+            </div>
+            <ul id="tool_proficiency_list"></ul>
+        </div>
+
+        <div class="form-group">
+            <label>Language Proficiencies:</label>
+            <div class="dropdown-container">
+                <select id="language_proficiency_dropdown">
+                    <option value="Elvish">Elvish</option>
+                    <option value="Dwarvish">Dwarvish</option>
+                    <option value="Gnomish">Gnomish</option>
+                </select>
+                <button type="button" onclick="addToList('language_proficiency_dropdown', 'language_proficiency_list')">Add</button>
+            </div>
+            <ul id="language_proficiency_list"></ul>
+        </div>
+
+        <!-- Equipment -->
+        <div class="form-group">
+            <label>Equipment:</label>
+            <div class="dropdown-container">
+                <input type="text" id="equipment_input" placeholder="Enter equipment">
+                <button type="button" onclick="addToList('equipment_input', 'equipment_list', true)">Add</button>
+            </div>
+            <ul id="equipment_list"></ul>
+        </div>
+
+        <!-- Feature Name and Description -->
+        <div class="form-group">
+            <label for="feature_name">Feature Name:</label>
+            <input type="text" id="feature_name" name="feature_name" placeholder="Enter feature name" required>
+        </div>
+        <div class="form-group">
+            <label for="feature_description">Feature Description:</label>
+            <textarea id="feature_description" name="feature_description" placeholder="Enter feature description" rows="4" required></textarea>
+        </div>
+
+        <!-- Suggested Characteristics -->
+        <div class="form-group">
+            <label>Suggested Characteristics:</label>
+
+            <!-- Personality Traits -->
+            <table>
+                <thead>
+                    <tr>
+                        <th>Personality Traits (d8)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in range(1, 9) %}
+                    <tr>
+                        <td><input type="text" name="personality_traits" placeholder="Trait {{ i }}"></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- Ideals -->
+            <table>
+                <thead>
+                    <tr>
+                        <th>Ideals (d6)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in range(1, 7) %}
+                    <tr>
+                        <td><input type="text" name="ideals" placeholder="Ideal {{ i }}"></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- Bonds -->
+            <table>
+                <thead>
+                    <tr>
+                        <th>Bonds (d6)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in range(1, 7) %}
+                    <tr>
+                        <td><input type="text" name="bonds" placeholder="Bond {{ i }}"></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- Flaws -->
+            <table>
+                <thead>
+                    <tr>
+                        <th>Flaws (d6)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in range(1, 7) %}
+                    <tr>
+                        <td><input type="text" name="flaws" placeholder="Flaw {{ i }}"></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <button type="submit">Save Feat</button>
+    </form>
+
+    <script>
+        function addToList(inputId, listId, isInput = false) {
+            const input = document.getElementById(inputId);
+            const list = document.getElementById(listId);
+
+            // Get the value from the dropdown or input field
+            const value = isInput ? input.value : input.options[input.selectedIndex].value;
+
+            if (value) {
+                // Create a new list item
+                const li = document.createElement('li');
+                li.textContent = value;
+
+                // Create a hidden input for the list item
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = listId.replace('_list', '') + '[]'; // Convert listId to match field name and make it an array
+                hiddenInput.value = value;
+
+                // Append the hidden input and list item to the list
+                li.appendChild(hiddenInput);
+                list.appendChild(li);
+
+                // Clear the input if it's a text input
+                if (isInput) input.value = '';
+            }
+        }
+
+    </script>
+</body>
+</html>

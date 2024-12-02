@@ -66,29 +66,13 @@
             </div>
 
             <!-- Class -->
-            <div id="class" class="tab-content">
-                <h2>Choose Your Class</h2>
-                <label for="startlevel">Enter your character's starting level:</label><br>
-                <input type="number" id="startlevel" name="startlevel" min="1" max="20" value="1" onchange="setMulticlassMax(startlevel.value)"><br><br>
-
-                <label for="multiclass">Enter how many classes you would like to use:</label><br>
-                <input type="number" id="multiclass" name="multiclass" min="1" max="1" value="1" onchange="updateClasses(multiclass.value)"><label for="multiclass">(Cannot exceed starting level)</label><br><br>
-
-                <label for="classdisplay">Choose your class or classes and their level:</label>
-                <div id="classdisplay">
-                    <label for="multiclass_id">Class: </label>
-                    <select id="multiclass_id" name="multiclass_id" onload="">
-                        {% for dnd_class in all_classes %}
-                            <option value="{{ dnd_class.class_id }}">
-                                {{ dnd_class.name }}
-                            </option>
-                        {% endfor %}
-                    </select><input type="number" id="multiclass_level" name="multiclass_level" class="multiclass_level" min="1" max="20" value="1" onchange="setCollectiveMax()">
-                    
-                </div>
+            <div id="class" class="tab-content" name="character_class_selections">
+                {% for dnd_class in all_classes %}
+                <label for="{{dnd_class.name}}" name="multiclass_label">{{ dnd_class.name }}</label><label for="{{dnd_class.name}}">: </label>
                 
-                <p id="classtest">test</p>
+                <input type="number" id="{{dnd_class.name}}" name="multiclass_level" value="0" min="0" max="20" onchange="summaryClassChange()"><br>
                 
+                {% endfor %}
                 <br><button type="button" onclick="window.location.href='/homebrew/classes'">Browse Homebrew Classes</button>
             </div>
 
@@ -98,76 +82,209 @@
                 <p>Choose a method to determine your stats:</p>
                 <label for="stat_method">Stat Allocation Method:</label>
                 <select id="stat_method" name="stat_method">
-                    <option value="array">Standard Array</option>
+                    <option value="standard_array">Standard Array</option>
                     <option value="point_buy">Point Buy</option>
                     <option value="roll">Roll</option>
                     <option value="manual">Manual</option>
                 </select><br>
 
-                <div id="manualRollPast" style="display: none;">
-                    <label>Roll for stats:</label>
-                    <button type="button" onclick="rollStats()">Roll 4 Dice</button><br>
-                    <textarea id="rollResults" readonly rows="4" placeholder="Your rolls will appear here"></textarea>
+                <!-- Standard Array -->
+                <div id="standard_array" style="display: block;">
+                    <p><br>Assign values from the standard array <span id="attribute_array">[15, 14, 13, 12, 10, 8]</span>:<br></p><br>
                 </div>
 
-                <div id="standard_array" style="display: block;"> <!-- Default view -->
-                    <p>Click the value you want for strength:</p>
-                    <button type="button" id="assignAttribute">Assign strength</button>
-                    <!-- More of them. Don't know how we will make this look good but eh -->
-                </div>
-
+                <!-- Point Buy -->
                 <div id="point_buy" style="display: none;">
-                    <p>Increase or decrease attributes until you have used all 27 points.</p>
+                    <p><br>Allocate points (Max 27)<span id="remainingPoints">27</span><br></p>
                 </div>
 
+                <!-- Roll -->
                 <div id="roll" style="display: none;">
-                    <p>Roll 4d6 and drop the lowest roll for each stat:</p>
-                    <button type="button" id="rollStatsButton">Roll Stats</button>
-                    <!-- TODO: Make fields to choose the number of, type of, and num of dropped dice" -->
+                    <br>
+                    <div style="display: flex; align-items: center; gap: 4px;">
+                        <span>Roll </span>
+                        <input type="number" id="numDice" style="width: 40px;" value=4 min="0" max="100" placeholder="e.g., 4"> <!-- 40 px is to allow for 3 digits -->
+                        <span>d</span>
+                        <input type="number" id="typeDice" style="width: 40px;" value=6 min="0" max="100" placeholder="e.g., 6">
+                        <span> dice, then the drop lowest </span>
+                        <input type="number" id="dropDice" style="width: 40px;" value=1 min="0" max="100" placeholder="e.g., 1">
+                        <span> for each stat.</span>
+                    </div>
+                    <br>
+                    <button type="button" id="rollStatsButton">Roll Stats</button><br>
+                    <br><p>Assign values from the rolled values: <span id="roll_attribute_array">Press the roll button to get your values</span></p><br>
                 </div>
 
+                <!-- Manual -->
                 <div id="manual" style="display: none;">
-                    <p>Insert the values of stats that you want.</p>
+                    <p><br>Manually set stats (1-20):<br><br></p>
                 </div>
 
-                <div class="attribute-section">
-                    <label for="strength">Strength:</label>
-                    <input type="number" id="strength" name="strength" value="10" min="1" max="20">
+                <!-- Manual or Point Buy (Both should have arrows), Rolling and Array should not -->
+                <div id="attribute_fields" style="display: block">
+                    <div class="attribute-section">
+                        <label for="strength">Strength:</label>
+                        <button type="button" onclick="adjustStat('strength', -1)">-</button>
+                        <input type="number" id="strength" name="strength" value="8" min="1" max="20" readonly>
+                        <button type="button" onclick="adjustStat('strength', 1)">+</button>
+                    </div>
+                    <div class="attribute-section">
+                        <label for="dexterity">Dexterity:</label>
+                        <button type="button" onclick="adjustStat('dexterity', -1)">-</button>
+                        <input type="number" id="dexterity" name="dexterity" value="8" min="1" max="20" readonly>
+                        <button type="button" onclick="adjustStat('dexterity', 1)">+</button>
+                    </div>
+                    <div class="attribute-section">
+                        <label for="constitution">Constitution:</label>
+                        <button type="button" onclick="adjustStat('constitution', -1)">-</button>
+                        <input type="number" id="constitution" name="constitution" value="8" min="1" max="20" readonly>
+                        <button type="button" onclick="adjustStat('constitution', 1)">+</button>
+                    </div>
+                    <div class="attribute-section">
+                        <label for="intelligence">Intelligence:</label>
+                        <button type="button" onclick="adjustStat('intelligence', -1)">-</button>
+                        <input type="number" id="intelligence" name="intelligence" value="8" min="1" max="20" readonly>
+                        <button type="button" onclick="adjustStat('intelligence', 1)">+</button>
+                    </div>
+                    <div class="attribute-section">
+                        <label for="wisdom">Wisdom:</label>
+                        <button type="button" onclick="adjustStat('wisdom', -1)">-</button>
+                        <input type="number" id="wisdom" name="wisdom" value="8" min="1" max="20" readonly>
+                        <button type="button" onclick="adjustStat('wisdom', 1)">+</button>
+                    </div>
+                    <div class="attribute-section">
+                        <label for="charisma">Charisma:</label>
+                        <button type="button" onclick="adjustStat('charisma', -1)">-</button>
+                        <input type="number" id="charisma" name="charisma" value="8" min="1" max="20" readonly>
+                        <button type="button" onclick="adjustStat('charisma', 1)">+</button>
+                    </div>
                 </div>
-                <div class="attribute-section">
-                    <label for="dexterity">Dexterity:</label>
-                    <input type="number" id="dexterity" name="dexterity" value="10" min="1" max="20">
-                </div>
-                <div class="attribute-section">
-                    <label for="constitution">Constitution:</label>
-                    <input type="number" id="constitution" name="constitution" value="10" min="1" max="20">
-                </div>
-                <div class="attribute-section">
-                    <label for="intelligence">Intelligence:</label>
-                    <input type="number" id="intelligence" name="intelligence" value="10" min="1" max="20">
-                </div>
-                <div class="attribute-section">
-                    <label for="wisdom">Wisdom:</label>
-                    <input type="number" id="wisdom" name="wisdom" value="10" min="1" max="20">
-                </div>
-                <div class="attribute-section">
-                    <label for="charisma">Charisma:</label>
-                    <input type="number" id="charisma" name="charisma" value="10" min="1" max="20">
+                <div id="attribute_fields_dropdown" style="display: block">
+                    <div class="attribute-section">
+                        <label for="strength">Strength:</label>
+                        <select id="strength_dd" name="stat_method" onchange="checkAvailability(this.id, this.value)">
+                            <option value="-1">—</option>
+                            <option value="0">value 0</option>
+                            <option value="1">value 1</option>
+                            <option value="2">value 2</option>
+                            <option value="3">value 3</option>
+                            <option value="4">value 4</option>
+                            <option value="5">value 5</option>
+                        </select>
+                    </div>
+                    <div class="attribute-section">
+                        <label for="dexterity">Dexterity:</label>
+                        <select id="dexterity_dd" name="stat_method" onchange="checkAvailability(this.id, this.value)">
+                            <option value="-1">—</option>
+                            <option value="0">value 0</option>
+                            <option value="1">value 1</option>
+                            <option value="2">value 2</option>
+                            <option value="3">value 3</option>
+                            <option value="4">value 4</option>
+                            <option value="5">value 5</option>
+                        </select>
+                    </div>
+                    <div class="attribute-section">
+                        <label for="constitution">Constitution:</label>
+                        <select id="constitution_dd" name="stat_method" onchange="checkAvailability(this.id, this.value)">
+                            <option value="-1">—</option>
+                            <option value="0">value 0</option>
+                            <option value="1">value 1</option>
+                            <option value="2">value 2</option>
+                            <option value="3">value 3</option>
+                            <option value="4">value 4</option>
+                            <option value="5">value 5</option>
+                        </select>
+                    </div>
+                    <div class="attribute-section">
+                        <label for="intelligence">Intelligence:</label>
+                        <select id="intelligence_dd" name="stat_method" onchange="checkAvailability(this.id, this.value)">
+                            <option value="-1">—</option>
+                            <option value="0">value 0</option>
+                            <option value="1">value 1</option>
+                            <option value="2">value 2</option>
+                            <option value="3">value 3</option>
+                            <option value="4">value 4</option>
+                            <option value="5">value 5</option>
+                        </select>
+                    </div>
+                    <div class="attribute-section">
+                        <label for="wisdom">Wisdom:</label>
+                        <select id="wisdom_dd" name="stat_method" onchange="checkAvailability(this.id, this.value)">
+                            <option value="-1">—</option>
+                            <option value="0">value 0</option>
+                            <option value="1">value 1</option>
+                            <option value="2">value 2</option>
+                            <option value="3">value 3</option>
+                            <option value="4">value 4</option>
+                            <option value="5">value 5</option>
+                        </select>
+                    </div>
+                    <div class="attribute-section">
+                        <label for="charisma">Charisma:</label>
+                        <select id="charisma_dd" name="stat_method" onchange="checkAvailability(this.id, this.value)">
+                            <option value="-1">—</option>
+                            <option value="0">value 0</option>
+                            <option value="1">value 1</option>
+                            <option value="2">value 2</option>
+                            <option value="3">value 3</option>
+                            <option value="4">value 4</option>
+                            <option value="5">value 5</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
             <!-- Character Details -->
             <div id="details" class="tab-content">
-                <h2>Character Details</h2>
+                <h2>Character Details</h2><br>
+                <h3>Personality Traits:</h3>
                 <label for="background">Choose your character's background:</label>
                 <select id="background" name="background">
                     {% for background in all_backgrounds %}
-                        <option value="{{ background.id }}">{{ background.name }}</option>
+                        <option value="{{ background.background_id }}">{{ background.background_name }}</option>
                     {% endfor %}
                 </select><br>
+                <label for="alignment">Choose your character's alignment:</label>
+                <select id="alignment" name="alignment">
+                    <option value="Lawful Good">Lawful Good</option>
+                    <option value="Neutral Good">Neutral Good</option>
+                    <option value="Chaotic Good">Chaotic Good</option>
+                    <option value="Lawful Neutral">Lawful Neutral</option>
+                    <option value="True Neutral">True Neutral</option>
+                    <option value="Chaotic Neutral">Chaotic Neutral</option>
+                    <option value="Lawful Evil">Lawful Evil</option>
+                    <option value="Neutral Evil">Neutral Evil</option>
+                    <option value="Chaotic Evil">Chaotic Evil</option>
+                </select><br>
+                <label for="personality">Personality:</label><br>
+                <textarea id="personality" name="personality" rows="4" cols="50"></textarea><br>
+                <label for="faith">Faith:</label>
+                <input type="text" id="faith" name="faith"><br>
 
-                <label for="description">Character Description:</label>
-                <textarea id="description" name="description" rows="4"></textarea>
+                <h3>Physical Traits:</h3>
+                <label for="height">Height:</label>
+                <input type="text" id="height" name="height"><br>
+                <label for="weight">Weight:</label>
+                <input type="text" id="weight" name="weight"><br>
+                <label for="skin_color">Skin Color:</label>
+                <input type="text" id="skin_color" name="skin_color"><br>
+                <label for="hair_color">Hair Color:</label>
+                <input type="text" id="hair_color" name="hair_color"><br>
+                <label for="eye_color">Eye Color:</label>
+                <input type="text" id="eye_color" name="eye_color"><br>
+                <label for="age">Age:</label>
+                <input type="text" id="age" name="age"><br>
+                <label for="appearance">General Appearance:</label><br>
+                <textarea id="appearance" name="appearance" rows="4" cols="50"></textarea><br>
+
+                <h3>Other Details:</h3>
+                <label for="backstory">Backstory:</label><br>
+                <textarea id="backstory" name="backstory" rows="4" cols="50"></textarea><br>
+                <label for="bonds">Alliances and Organizations:</label><br>
+                <textarea id="bonds" name="bonds" rows="4" cols="50"></textarea><br>
+                <label for="misc_description">Anything else you'd like to add:</label><br>
+                <textarea id="misc_description" name="misc_description" rows="4" cols="50"></textarea>
             </div>
 
             <!-- Equipment -->
@@ -205,149 +322,66 @@
                 </p>
             </div>
             <div class="button-group">
-                <br><button type="submit">Save Character</button>
+                <br><button type="submit" onclick="setHiddenCharacterSummary()">Save Character</button>
             </div>
-
+            <div style="display:none">
+                <input type="number" id="final-str" name="final-str" value="8" min="1" max="20" readonly><br>
+                <input type="number" id="final-dex" name="final-dex" value="8" min="1" max="20" readonly><br>
+                <input type="number" id="final-con" name="final-con" value="8" min="1" max="20" readonly><br>
+                <input type="number" id="final-int" name="final-int" value="8" min="1" max="20" readonly><br>
+                <input type="number" id="final-wis" name="final-wis" value="8" min="1" max="20" readonly><br>
+                <input type="number" id="final-cha" name="final-cha" value="8" min="1" max="20" readonly><br>
+            </div>
+            <!-- Right Panel -->
+            <div class="character-summary">
+                <h2>Character Summary</h2>
+                <p><strong>Name:</strong> <span id="summary-name">None</span></p>
+                <p><strong>Race:</strong> <span id="summary-race">None</span></p>
+                <p><strong>Class:</strong> <span id="summary-class">None</span></p>
+                <p><strong>Stats:</strong></p>
+                <ul>
+                    <li>Strength: <span id="summary-strength">8</span></li>
+                    <li>Dexterity: <span id="summary-dexterity">8</span></li>
+                    <li>Constitution: <span id="summary-constitution">8</span></li>
+                    <li>Intelligence: <span id="summary-intelligence">8</span></li>
+                    <li>Wisdom: <span id="summary-wisdom">8</span></li>
+                    <li>Charisma: <span id="summary-charisma">8</span></li>
+                </ul>
+            </div>
         </form>
     </div>
+    <script src="../../static/js/character_creator.js"></script>
     <script>
-        function setCollectiveMax() {
-            levels = document.getElementsByClassName("multiclass_level")
-            starting_Level = document.getElementById("startlevel");
-            spare_levels = starting_Level.value;
-            for(var levelobj of levels) {
-                spare_levels -= levelobj.value
+        function summaryClassChange() {
+            var summaryClass = document.getElementById("summary-class");
+            var inputLevels = document.getElementsByName("multiclass_level");
+            var inputClasses = [];
+            var classes = [];
+            var levels = [];
+            var classLabels = document.getElementsByName("multiclass_label")
+            for(var i = 0; i < inputLevels.length; i++) {
+                inputClasses.push(classLabels[i].textContent)
             }
 
-            for(var levelobj of levels) {
-                levelobj.setAttribute("max", parseInt(levelobj.value) + spare_levels);
-            }
-            
-        }
-
-        function setMulticlassMax(inputValue) {
-                    element = document.getElementById("multiclass");
-                    
-                    element.setAttribute("max", inputValue);
-                    
-                    if(parseInt(element.value) > inputValue) {
-                        element.value = inputValue;
-                        updateClasses(inputValue);
-                    }
+            for(var i = 0; i < inputLevels.length; i++) {
+                if(inputLevels[i].value != 0) {
+                    classes.push(i);
+                    levels.push(inputLevels[i].value)
                 }
-
-
-        function updateClasses(value) {
-            document.getElementById("classdisplay").innerHTML = "";
-            if(value==1) {
-                document.getElementById("classdisplay").innerHTML += `
-                    <div id="classdisplay">
-                        <label for="multiclass_id">Class: </label>
-                        <select id="multiclass_id" name="multiclass_id">
-                            {% for dnd_class in all_classes %}
-                                <option value="{{ dnd_class.class_id }}">
-                                    {{ dnd_class.name }}
-                                </option>
-                            {% endfor %}
-                        </select><input type="number" id="multiclass_level" name="multiclass_level" class="multiclass_level" min="1" max="20" value="1" onchange="setCollectiveMax()">
-                    </div>
-                `
+            }
+            if(classes.length == 1) {
+                summaryClass.textContent = `${inputClasses[classes[0]]} Lvl. ${levels[0]}`
             }
             else {
-                for(var i = 0; i < value; i++) {
-                document.getElementById("classdisplay").innerHTML += `
-                        <div id="classdisplay">
-                            <label for="multiclass_id">Class ${i + 1}: </label>
-                            <select id="multiclass_id" name="multiclass_id">
-                                {% for dnd_class in all_classes %}
-                                    <option value="{{ dnd_class.class_id }}">
-                                        {{ dnd_class.name }}
-                                    </option>
-                                {% endfor %}
-                            </select><input type="number" id="multiclass_level" name="multiclass_level" class="multiclass_level" min="1" max="20" value="1" onchange="setCollectiveMax()">
-                        </div>
-                    `;
+                var totalLevel = 0;
+                summaryClass.textContent = "";
+                for(var i= 0; i < levels.length; i++) {
+                    totalLevel += Number(levels[i]);
                 }
-            }
-
-        }
-      
-      
-      
-      
-        // Function to ensure multiclass value doesn't exceed starting level
-        function validateMulticlass() {
-            const startLevel = parseInt(document.getElementById('startlevel').value) || 1;
-            const multiclass = document.getElementById('multiclass');
-
-            // If multiclass exceeds starting level, adjust it
-            if (parseInt(multiclass.value) > startLevel) {
-                multiclass.value = startLevel;
-            }
-        }
-
-        // Toggle rolling section visibility
-        document.getElementById('stat_method').addEventListener('change', function() {
-            document.getElementById('standard_array').style.display = this.value === 'array' ? 'block' : 'none';
-            document.getElementById('point_buy').style.display = this.value === 'point_buy' ? 'block' : 'none';
-            document.getElementById('roll').style.display = this.value === 'roll' ? 'block' : 'none';
-            document.getElementById('manual').style.display = this.value === 'manual' ? 'block' : 'none';
-        });
-
-        function rollStats(numDice = 4, diceType = 6, dropLowest = 1) {
-            const attributes = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'];
-            attributes.forEach(attribute => {
-                let rolls = [];
-
-                // Roll the dice
-                for (let i = 0; i < numDice; i++) {
-                    rolls.push(Math.floor(Math.random() * diceType) + 1);
+                summaryClass.textContent += `Total Level: ${totalLevel}\n`;
+                for(var i= 0; i < levels.length; i++) {
+                    summaryClass.textContent += `${inputClasses[classes[i]]} Lvl. ${levels[i]}\n`;
                 }
-
-                // Sort rolls and drop the lowest Z
-                rolls.sort((a, b) => a - b);
-                const keptRolls = rolls.slice(dropLowest);
-
-                // Calculate the total and update the field
-                const total = keptRolls.reduce((sum, roll) => sum + roll, 0);
-                document.getElementById(attribute).value = total;
-            });
-        }
-
-        // Example usage: roll 4d6 and drop the lowest 1 TODO: Make it versatile to user definition
-        document.getElementById('rollStatsButton').addEventListener('click', function() {
-            rollStats(4, 6, 1);
-        });
-
-        function showLevel() {
-            document.getElementById("test").innerHTML = document.getElementById('charname').value;
-        }
-
-        function showTab(tabId) {
-            // Remove 'active' class from all tabs and tab contents
-            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-
-            // Add 'active' class to selected tab and corresponding content
-            document.querySelector(`button[onclick="showTab('${tabId}')"]`).classList.add('active');
-            document.getElementById(tabId).classList.add('active');
-        }
-
-        function incrementValue(id) {
-            const input = document.getElementById(id);
-            const max = parseInt(input.max);
-            const value = parseInt(input.value);
-            if (value < max) {
-                input.value = value + 1;
-            }
-        }
-
-        function decrementValue(id) {
-            const input = document.getElementById(id);
-            const min = parseInt(input.min);
-            const value = parseInt(input.value);
-            if (value > min) {
-                input.value = value - 1;
             }
         }
     </script>

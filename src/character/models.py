@@ -1,21 +1,29 @@
 from src import db
 from src.auth.models import User
 from sqlalchemy.orm import backref
+from flask import jsonify
+import json
 
 #----------------------------------------------------------
-#   Character table
+#   Character table (Parent)
 class Character(db.Model):
     __tablename__ = "character"
     char_id = db.Column(db.Integer, primary_key=True, nullable=False)
     owner_id = db.Column(db.Integer, db.ForeignKey(User.id), nullable=False)
     name = db.Column(db.String(250), nullable=False)
-    faith = db.Column(db.String(50), nullable=True)
-    proficency_bonus = db.Column(db.Integer, nullable=True)
+    proficiency_bonus = db.Column(db.Integer, nullable=True)
     total_level = db.Column(db.Integer, nullable=True)
-    charClass = db.relationship("Character_Class", backref="char")
-    charRace = db.relationship("Character_Race", backref=backref("char", uselist=False))
-    charStats = db.relationship("Character_Stats", backref=backref("char", uselist=False))
 
+    # Relationships
+    charRace = db.relationship("Character_Race", backref=backref("char", uselist=False), cascade="all, delete-orphan") #uselist False indicates one-to-one relationship
+    charClass = db.relationship("Character_Class", backref="char", cascade="all, delete-orphan")
+    charStats = db.relationship("Character_Stats", backref=backref("char", uselist=False), cascade="all, delete-orphan")
+    charDetails = db.relationship('Character_Details', backref=backref("char", uselist=False), cascade="all, delete-orphan")
+    charHitPoints = db.relationship('Character_Hit_Points', backref=backref("char", uselist=False), cascade="all, delete-orphan")
+    charDeathSaves = db.relationship('Character_Death_Saves', backref=backref("char", uselist=False), cascade="all, delete-orphan")
+    charProficiencyChoices = db.relationship('Character_Proficiency_Choices', backref='char', cascade="all, delete-orphan")
+    charCondition = db.relationship('Character_Condition', backref='char', cascade="all, delete-orphan")
+    charInventory = db.relationship('Character_Inventory', backref='char', cascade="all, delete-orphan")
 
 #----------------------------------------------------------
 #   D&D tables
@@ -45,6 +53,20 @@ class DND_Class(db.Model):
     hit_die = db.Column(db.Integer, nullable=False)
     is_offical = db.Column(db.Boolean)
     characters = db.relationship("Character_Class") #Characters that have this class
+
+class DND_Background(db.Model):
+    __tablename__ = 'dnd_background'
+    background_id = db.Column(db.Integer, primary_key=True, nullable=False)
+    background_name = db.Column(db.String(100), nullable=False, unique=True)  
+    background_description = db.Column(db.Text, nullable=False)  
+    skill_proficiencies =  db.Column(db.ARRAY(db.String(50)), nullable=True)
+    tool_proficiencies =  db.Column(db.ARRAY(db.String(50)), nullable=True)
+    language_proficiencies =  db.Column(db.ARRAY(db.String(50)), nullable=True)
+    equipment = db.Column(db.ARRAY(db.String(50)), nullable=True)
+    feature_name = db.Column(db.String(50), nullable=False)
+    feature_effect = db.Column(db.Text, nullable=False)
+    suggested_characteristics = db.Column(db.JSON, nullable=True)
+    specialty_table = db.Column(db.JSON, nullable=True)
 
 
 #----------------------------------------------------------
@@ -99,7 +121,7 @@ class DND_Condition(db.Model):
     __tablename__ = "dnd_condition"
     condition_id = db.Column(db.Integer, primary_key=True, nullable=False)
     condition_name = db.Column(db.String(50), nullable=False)
-    condition_description = db.Column(db.String(250), nullable=False)
+    condition_description = db.Column(db.String(1500), nullable=False)
 
 
 #   >>> Items / Equipment
@@ -126,21 +148,21 @@ class Equipment_Positions(db.Model):
 
 
 #----------------------------------------------------------
-#   Character relation tables
+#   Character relation tables (Children - Soon to be orphans)
 class Character_Race(db.Model):
     __tablename__ = "character_race"
-    char_id = db.Column(db.Integer, db.ForeignKey(Character.char_id), primary_key=True, nullable=False)
+    char_id = db.Column(db.Integer, db.ForeignKey(Character.char_id, ondelete='CASCADE'), primary_key=True, nullable=False)
     race_id = db.Column(db.Integer, db.ForeignKey(DND_Race.race_id), nullable=False)
 
 class Character_Class(db.Model):
     __tablename__ = "character_class"
-    char_id = db.Column(db.Integer, db.ForeignKey(Character.char_id), primary_key=True, nullable=False)
-    class_id = db.Column(db.Integer, db.ForeignKey(DND_Class.class_id), nullable=False)
+    char_id = db.Column(db.Integer, db.ForeignKey(Character.char_id, ondelete='CASCADE'), primary_key=True, nullable=False)
+    class_id = db.Column(db.Integer, db.ForeignKey(DND_Class.class_id), primary_key=True, nullable=False)
     class_level = db.Column(db.Integer, nullable=False)
 
 class Character_Stats(db.Model):
     __tablename__ = "character_stats"
-    char_id = db.Column(db.Integer, db.ForeignKey(Character.char_id), primary_key=True, nullable=False)
+    char_id = db.Column(db.Integer, db.ForeignKey(Character.char_id, ondelete='CASCADE'), primary_key=True, nullable=False)
     strength = db.Column(db.Integer, nullable=False)
     dexterity = db.Column(db.Integer, nullable=False)
     constitution = db.Column(db.Integer, nullable=False)
@@ -150,29 +172,33 @@ class Character_Stats(db.Model):
 
 class Character_Details(db.Model):
     __tablename__ = "character_details"
-    char_id = db.Column(db.Integer, db.ForeignKey(Character.char_id), primary_key=True, nullable=False)
+    char_id = db.Column(db.Integer, db.ForeignKey(Character.char_id, ondelete='CASCADE'), primary_key=True, nullable=False)
     height=db.Column(db.String(20))
-    weight=db.Column(db.Float)
+    weight=db.Column(db.String(50))
     alignment=db.Column(db.String(50))
     skin_color=db.Column(db.String(50)) 
     hair_color=db.Column(db.String(50))
     eye_color=db.Column(db.String(50))
-    age=db.Column(db.Integer)
+    age=db.Column(db.String(50))
+    personality=db.Column(db.String(500))
     backstory=db.Column(db.String(500)) #description of the character's story, shown as "Character Backstory" on the sheet
     appearance=db.Column(db.String(500)) #simple description for the character's appearance
     bonds=db.Column(db.String(500)) #shown as "Alliances and Organizations" on the official character sheet
     misc=db.Column(db.String(500)) #any other info the player wants to enter
+    faith = db.Column(db.String(50), nullable=True)
 
 #   >>> HP / Death Saves
 class Character_Hit_Points(db.Model):
     __tablename__ = "character_hit_points"
-    char_id = db.Column(db.Integer, db.ForeignKey(Character.char_id), primary_key=True, nullable=False)
+    char_id = db.Column(db.Integer, db.ForeignKey(Character.char_id, ondelete='CASCADE'), primary_key=True, nullable=False)
     hit_points = db.Column(db.Integer, nullable=False)
+    max_hit_points = db.Column(db.Integer, nullable=False)
     temp_hit_points = db.Column(db.Integer, nullable=False)
+    # Should we have max_temp_hit_points TODO: Look into multiple temp hit point sources and the logic for what even matters
 
 class Character_Death_Saves(db.Model):
     __tablename__ = "character_death_saves"
-    char_id = db.Column(db.Integer, db.ForeignKey(Character.char_id), primary_key=True, nullable=False)
+    char_id = db.Column(db.Integer, db.ForeignKey(Character.char_id, ondelete='CASCADE'), primary_key=True, nullable=False)
     success_throws = db.Column(db.Integer, nullable=False)
     fail_throws = db.Column(db.Integer, nullable=False)
 
@@ -180,7 +206,7 @@ class Character_Death_Saves(db.Model):
 #   >>> Chosen Proficiencies
 class Character_Proficiency_Choices(db.Model):
     __tablename__ = "character_proficiency_choices"
-    char_id = db.Column(db.Integer, db.ForeignKey(Character.char_id), primary_key=True, nullable=False)
+    char_id = db.Column(db.Integer, db.ForeignKey(Character.char_id, ondelete='CASCADE'), primary_key=True, nullable=False)
     #proficiency_list_id = db.Column(db.Integer, db.ForeignKey(Proficiency_List.proficiency_list_id), primary_key=True, nullable=False)
     #choice_list_id = db.Column(db.Integer, db.ForeignKey(Proficiency_Choice.choice_list_id), primary_key=True, nullable=False)
     proficiency_list_id = db.Column(db.Integer, primary_key=True, nullable=False)
@@ -190,15 +216,25 @@ class Character_Proficiency_Choices(db.Model):
 #   >>> Conditions
 class Character_Condition(db.Model):
     __tablename__ = "character_condition"
-    char_id = db.Column(db.Integer, db.ForeignKey(Character.char_id), primary_key=True, nullable=False)
+    char_id = db.Column(db.Integer, db.ForeignKey(Character.char_id, ondelete='CASCADE'), primary_key=True, nullable=False)
     condition_id = db.Column(db.Integer, db.ForeignKey(DND_Condition.condition_id), primary_key=True, nullable=False)
     duration_rounds = db.Column(db.Integer, nullable=False, default=-1)
+    condition_strength = db.Column(db.Integer, nullable=False, default=1)
 
 
 #   >>> Items / Equipment
 class Character_Inventory(db.Model):
     __tablename__ = "character_inventory"
-    char_id = db.Column(db.Integer, db.ForeignKey(Character.char_id), primary_key=True, nullable=False)
+    char_id = db.Column(db.Integer, db.ForeignKey(Character.char_id, ondelete='CASCADE'), primary_key=True, nullable=False)
     item_id = db.Column(db.Integer, db.ForeignKey(DND_Items.item_id), primary_key=True, nullable=False)
     item_amount = db.Column(db.Float, nullable=False)
     equipped_position = db.Column(db.Integer, db.ForeignKey(Equipment_Positions.position_id))
+
+class DND_Class_Feature(db.Model):
+    __tablename__ = "dnd_class_features"
+    feature_id = db.Column(db.Integer, primary_key=True, nullable=False)
+    feature_name = db.Column(db.String(100), nullable=False)
+    feature_description = db.Column(db.TEXT, nullable=False)
+    feature_prerequisite = db.Column(db.JSON, nullable=False)
+    feature_required_level = db.Column(db.Integer, nullable=False)
+    feature_base_class = db.Column(db.Integer, db.ForeignKey(DND_Class.class_id), nullable=False)

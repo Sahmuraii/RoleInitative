@@ -210,3 +210,36 @@ h1 {
     margin-bottom: 1rem;
     background-color: #f9f9f9;
 }
+
+.character-creator-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.character-creator-form {
+    width: 70%;
+    margin-right: 20px;
+}
+
+.character-summary {
+    width: 25%;
+    border: 1px solid black;
+    padding: 15px;
+    border-radius: 5px;
+    top: 10px; /* Sticks as you scroll */
+    height: fit-content;
+}
+
+.character-summary h2 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}
+
+.character-summary ul {
+    list-style: none;
+    padding: 0;
+}
+
+.character-summary li {
+    margin: 5px 0;
+}
