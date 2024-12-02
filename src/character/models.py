@@ -227,3 +227,12 @@ class Character_Inventory(db.Model):
     item_id = db.Column(db.Integer, db.ForeignKey(DND_Items.item_id), primary_key=True, nullable=False)
     item_amount = db.Column(db.Float, nullable=False)
     equipped_position = db.Column(db.Integer, db.ForeignKey(Equipment_Positions.position_id))
+
+class DND_Class_Feature(db.Model):
+    __tablename__ = "dnd_class_features"
+    feature_id = db.Column(db.Integer, primary_key=True, nullable=False)
+    feature_name = db.Column(db.String(100), nullable=False)
+    feature_description = db.Column(db.TEXT, nullable=False)
+    feature_prerequisite = db.Column(db.JSON, nullable=False)
+    feature_required_level = db.Column(db.Integer, nullable=False)
+    feature_base_class = db.Column(db.Integer, db.ForeignKey(DND_Class.class_id), nullable=False)
