@@ -26,61 +26,36 @@ def fetch_api_info(URL, headers) -> tuple[bool, requests.Response]:
 
 def fetch_and_populate_classes():
     # Fetch all classes from the D&D API
-
-    class_descriptions = {
-        "Barbarian": "A fierce warrior of primitive background who can enter a battle rage",
-        "Bard": "An inspiring magician whose power echoes the music of creation",
-        "Cleric": "A priestly champion who wields divine magic in service of a higher power",
-        "Druid": "A priest of the Old Faith, wielding the powers of nature — moonlight and plant growth, fire and lightning — and adopting animal forms",
-        "Fighter": "A master of martial combat, skilled with a variety of weapons and armor",
-        "Monk": "A master of martial arts, harnessing the power of the body in pursuit of physical and spiritual perfection",
-        "Paladin": "A holy warrior bound to a sacred oath",
-        "Ranger": "A warrior who uses martial prowess and nature magic to combat threats on the edges of civilization",
-        "Rogue": "A scoundrel who uses stealth and trickery to overcome obstacles and enemies",
-        "Sorcerer": "A spellcaster who draws on inherent magic from a gift or bloodline",
-        "Warlock": "A wielder of magic that is derived from a bargain with an extraplanar entity",
-        "Wizard": "A scholarly magic-user capable of manipulating the structures of reality"
-    }
-
-    response = requests.get(API_CLASS_URL, headers={"Accept": "application/json"})
-    
-    # Check if the request was successful
-    if response.status_code != 200:
-        print(f"Failed to fetch data. Status Code: {response.status_code}")
-        return
+    success, response = fetch_api_info(API_CLASS_URL, headers={"Accept": "application/json"})
+    if not success: return
     
     # Extract the classes from the response
     classes = response.json().get("results", [])
     
     # Iterate over each class
     for cls in classes:
-        class_index = cls["index"]  # Extract the class index (e.g., "barbarian")
-        class_details_url = f"{API_CLASS_URL}/{class_index}"  # Construct the URL to fetch detailed information
-        
+        # Check if the class already exists
+        existing_class = DND_Class.query.filter_by(name=cls["name"]).first()
+        if existing_class: continue #If exist, continue to next one
+
         # Fetch detailed information for each class
-        class_details_response = requests.get(class_details_url, headers={"Accept": "application/json"}) # Make the request
-        
-        if class_details_response.status_code != 200: # Check if the request was successful
-            print(f"Failed to fetch details for {cls['name']}. Status Code: {class_details_response.status_code}") # Log the error
-            continue # Skip to the next class
-        
-        class_details = class_details_response.json() # Extract the class details
+        success, api_details_response = fetch_api_info(f"{DND_BASE_URL}/{cls["url"]}", headers={"Accept": "application/json"})
+
+        # Check if the request was successful. Skip to the next class
+        if not success: continue
+
+        class_details = api_details_response.json() # Extract the class details
+
         
         # Prepare the DND_Class object to be added to the database
         new_class = DND_Class(
             name=class_details["name"],
-            description=class_descriptions.get(class_details["name"]),
+            description=class_details["desc"],
             hit_die=class_details["hit_die"],
             is_offical=True
         )
         
-        existing_class = DND_Class.query.filter_by(name=class_details["name"]).first()  # Check if the class already exists
-
-        if existing_class:
-            continue
-        else:
-            db.session.add(new_class)
-            continue
+        db.session.add(new_class)
     
     # Commit all changes to the database
     try:
@@ -91,26 +66,23 @@ def fetch_and_populate_classes():
         print(f"An error occurred: {e}")
 
 def fetch_and_populate_races(): 
-    response = requests.get(API_RACE_URL, headers={"Accept": "application/json"})
-
-    if response.status_code != 200:
-        print(f"Failed to fetch data. Status Code: {response.status_code}")
-        return
+    success, response = fetch_api_info(API_RACE_URL, headers={"Accept": "application/json"})
+    if not success: return
     
     races = response.json().get("results", [])
 
     for race in races:
-        race_index = race["index"]  
-        race_details_url = f"{API_RACE_URL}/{race_index}" 
+        # Check if the condition already exists
+        existing_race = DND_Race.query.filter_by(name=race["name"]).first()
+        if existing_race: continue #If exist, continue to next one
 
-        # Fetch detailed information for each class
-        race_details_response = requests.get(race_details_url, headers={"Accept": "application/json"}) # Make the request
+        # Fetch detailed information for each condition
+        success, api_details_response = fetch_api_info(f"{DND_BASE_URL}/{race["url"]}", headers={"Accept": "application/json"})
+
+        # Check if the request was successful. Skip to the next condition
+        if not success: continue
         
-        if race_details_response.status_code != 200: # Check if the request was successful
-            print(f"Failed to fetch details for {race['name']}. Status Code: {race_details_response.status_code}") # Log the error
-            continue # Skip to the next class
-        
-        race_details = race_details_response.json() # Extract the class details
+        race_details = api_details_response.json() # Extract the class details
         
         # Prepare the DND_Class object to be added to the database
         new_race = DND_Race(
@@ -153,17 +125,17 @@ def fetch_and_populate_conditions():
     for condition in conditions:
         # Check if the condition already exists
         existing_condition = DND_Condition.query.filter_by(condition_name=condition["name"]).first()
-        if existing_condition: continue
+        if existing_condition: continue #If exist, continue to next one
 
-        # Fetch detailed information for each class
-        success, condition_details_response = fetch_api_info(f"{DND_BASE_URL}/{condition["url"]}", headers={"Accept": "application/json"})
+        # Fetch detailed information for each condition
+        success, api_details_response = fetch_api_info(f"{DND_BASE_URL}/{condition["url"]}", headers={"Accept": "application/json"})
 
-        # Check if the request was successful. Skip to the next class
+        # Check if the request was successful. Skip to the next condition
         if not success: continue
         
-        condition_details = condition_details_response.json() # Extract the class details
+        condition_details = api_details_response.json() # Extract the condition details
 
-        # Prepare the DND_Class object to be added to the database
+        # Prepare the DND_Condition object to be added to the database
         new_condition = DND_Condition(
             condition_name = condition_details["name"],
             condition_description = "\n".join(condition_details["desc"])
