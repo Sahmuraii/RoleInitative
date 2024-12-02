@@ -40,7 +40,7 @@ def fetch_and_populate_classes():
         if existing_class: continue #If exist, continue to next one
 
         # Fetch detailed information for each class
-        success, api_details_response = fetch_api_info(f"{DND_BASE_URL}/{cls['url']}", headers={"Accept": "application/json"})
+        success, api_details_response = fetch_api_info(f"{DND_BASE_URL}{cls['url']}", headers={"Accept": "application/json"})
 
         # Check if the request was successful. Skip to the next class
         if not success: continue
@@ -78,7 +78,7 @@ def fetch_and_populate_races():
         if existing_race: continue #If exist, continue to next one
 
         # Fetch detailed information for each condition
-        success, api_details_response = fetch_api_info(f"{DND_BASE_URL}/{race['url']}", headers={"Accept": "application/json"})
+        success, api_details_response = fetch_api_info(f"{DND_BASE_URL}{race['url']}", headers={"Accept": "application/json"})
 
         # Check if the request was successful. Skip to the next condition
         if not success: continue
@@ -129,7 +129,7 @@ def fetch_and_populate_conditions():
         if existing_condition: continue #If exist, continue to next one
 
         # Fetch detailed information for each condition
-        success, api_details_response = fetch_api_info(f"{DND_BASE_URL}/{condition['url']}", headers={"Accept": "application/json"})
+        success, api_details_response = fetch_api_info(f"{DND_BASE_URL}{condition['url']}", headers={"Accept": "application/json"})
 
         # Check if the request was successful. Skip to the next condition
         if not success: continue
