@@ -13,69 +13,63 @@
     <div class="character_hit_points_block" id="hit_points_block">
         <div class="hp_modifier_block" id="hp_modifier_block">
             <button id="hp_heal_button" class="hp_heal_button">Heal</button>
-            <input type="number" id="hp_change_field" value="5" min="0" max="10" step="1" class="hp_change_field">
+            <input type="number" id="hp_change_field" value="0" min="0" max="10000" step="1" class="hp_change_field">
             <button id="hp_damage_button" class="hp_damage_button">Damage</button>
         </div>
         <span class="hit_points_block_label" id="hit_point_label">Hit Points</span>
         <div class="hp_display_block" id="hp_display_block">
             <span class="current_hp_label">Current</span><span class="max_hp_label">Max</span><span class="temp_hp_label">Temp</span>
-            <span class="current_hp_field" id="hp_current">--</span><span class="hp_divider_label" id="divider">/</span><span class="max_hp_field" id="hp_max">--</span><span class="temp_hp_field" id="hp_temp">--</span>
+            <span class="current_hp_field" id="hp_current">{% if char_si["hit_points"] is defined %}{{ char_si["hit_points"] }}{% else %}--{% endif %}</span>
+            <span class="hp_divider_label" id="divider">/</span>
+            <span class="max_hp_field" id="hp_max">{% if char_si["max_hit_points"] is defined %}{{ char_si["max_hit_points"] }}{% else %}--{% endif %}</span>
+            <span class="temp_hp_field" id="hp_temp">{% if char_si["temp_hit_points"] is defined and char_si["temp_hit_points"] > 0 %}{{ char_si["temp_hit_points"] }}{% else %}--{% endif %}</span>
         </div>
     </div>
 
     <!-- Character Modifiers-->
     <div class="character_modifiers_block" id="modifiers_block">
-        <div class="character_modifier_1 character_modifier_base" id="modifier_1">
-            <span class="character_modifier_name" id="modifier_label_1">Mod.Name</span>
-            <button id="score_field" class="character_modifier_score_field" id="character_modifier_score_field_1">19</button>
-            <button id="modifier_field" class="character_modifier_field" id="character_modifier_field_1">+X</button>
+        {% for mod in char_si["modifier_scores"] %}
+        <div class="character_modifier_{{ loop.index }} character_modifier_base" id="modifier_{{ loop.index }}">
+            <span class="character_modifier_name" id="modifier_label_{{ loop.index }}">{% if mod["modifier_name"] is defined %}{{ mod["modifier_name"] | capitalize }}{% else %}[Unknown]{% endif %}</span>
+            <button class="character_modifier_score_field" id="character_modifier_score_field_{{ loop.index }}">{% if mod["score"] is defined %}{{ mod["score"] }}{% else %}--{% endif %}</button>
+            <button class="character_modifier_field" id="character_modifier_field_{{ loop.index }}">{% if mod["value"] is defined %}{% if mod["value"] >= 0 %}+{% endif %}{{ mod["value"] }}{% else %}--{% endif %}</button>
         </div>
-        <div class="character_modifier_2 character_modifier_base" id="modifier_2">
-            <span class="character_modifier_name" id="modifier_label_2">Mod.Name</span>
-            <button id="score_field_1" class="character_modifier_score_field" id="character_modifier_score_field_2">19</button>
-            <button id="modifier_field_1" class="character_modifier_field" id="character_modifier_field_2">+X</button>
-        </div>
-        <div class="character_modifier_base character_modifier_3" id="modifier_3">
-            <span class="character_modifier_name" id="modifier_label_3">Mod.Name</span>
-            <button id="score_field_2" class="character_modifier_score_field" id="character_modifier_score_field_3">19</button>
-            <button id="modifier_field_2" class="character_modifier_field" id="character_modifier_field_3">+X</button>
-        </div>
-        <div class="character_modifier_base character_modifier_4" id="modifier_4">
-            <span class="character_modifier_name" id="modifier_label_4">Mod.Name</span>
-            <button id="score_field_3" class="character_modifier_score_field" id="character_modifier_score_field_4">19</button>
-            <button id="modifier_field_3" class="character_modifier_field" id="character_modifier_field_4">+X</button>
-        </div>
-        <div class="character_modifier_base character_modifier_5" id="modifier_5">
-            <span class="character_modifier_name" id="modifier_label_5">Mod.Name</span>
-            <button id="score_field_4" class="character_modifier_score_field" id="character_modifier_score_field_5">19</button>
-            <button id="modifier_field_4" class="character_modifier_field" id="character_modifier_field_5">+X</button>
-        </div>
-        <div class="character_modifier_base character_modifier_6" id="modifier_6">
-            <span class="character_modifier_name" id="modifier_label_6">Mod.Name</span>
-            <button id="score_field_5" class="character_modifier_score_field" id="character_modifier_score_field_6">19</button>
-            <button id="modifier_field_5" class="character_modifier_field" id="character_modifier_field_6">+X</button>
-        </div>
+        {% endfor %}
     </div>
 
     <!-- Character Skills-->
     <div class="character_skills_block" id="character_skills">
         <!-- TODO: Add Jinja code to automatically populate skills with characters skills-->
         <!-- Jinja For loop-->
-            <div class="character_skill_line" id="skill_1">
-                <span class="character_skill_line_proficient" id="skill_1_proficient">*</span><span class="character_skill_line_skill_name" id="skill_1_name">[Skill Name Here]</span><span class="character_skill_line_mod" id="mod_1_label">WIS</span>
-                <button id="skill_1_modifier" class="character_skill_line_bonus">+X</button>
+         {% for skill in char_si['skills'][:19] %}
+            <div class="character_skill_line" id="skill_{{skill['skill_id']}}">
+                <span class="character_skill_line_proficient" id="skill_{{skill['skill_id']}}_proficient">&#9675;</span>  <!-- TODO: Add Jinja code to check if skill is proficient (represented by &#9679; )-->
+                <span class="character_skill_line_skill_name" id="skill_{{skill['skill_id']}}_name">{% if skill["skill_name"] is defined %}{{ skill["skill_name"] }}{% else %}[Unknown Skill Name]{% endif %}</span>
+                <span class="character_skill_line_mod" id="mod_{{skill['skill_id']}}_label">{% if skill["modifier_type"] is defined %}{{ skill["modifier_type"][:3].upper() }}{% else %}[??]{% endif %}</span>
+                <button id="skill_{{skill['skill_id']}}_modifier" class="character_skill_line_bonus">{% if skill["modifier_value"] is defined %}{% if skill["modifier_value"] >= 0 %}+{% endif %}{{ skill["modifier_value"] }}{% else %}--{% endif %}</button>
             </div>
+        {% endfor %}
         <!-- end Jinja loop-->
         <div class="character_skills_title_bar" id="character_skills_title"><span class="character_skills_base_title character_skills_proficient_title">Prof.</span><span class="character_skills_base_title character_skills_skill_title">Skill</span><span class="character_skills_base_title character_skills_modifier_title">Mod</span><span class="character_skills_base_title character_skills_bonus_title">Bonus</span></div>
         <div class="character_skills_footer_bar" id="character_skills_footer"><span class="character_skills_block_label" id="skill_block_label">Skills</span></div>
     </div>
 
     <!-- Character Class Info-->
-    <div class="character_info_block" id="character_info_block"><span class="character_info_label" id="character_class_and_levels">[Character Class + Level]</span></div>
+    <div class="character_info_block" id="character_info_block">
+        <span class="character_info_label" id="character_class_and_levels">
+            {% if char_si["classes"] is defined %}
+                {% for cls in char_si["classes"] %}
+                    Level {{ cls["level"]}} {{ cls["class_name"] }}{% if not loop.last %},   {% if ((char_si["classes"] |length)/4) > 1 %}&nbsp;{% endif %}{% endif %}
+                    {% if loop.index % (((char_si["classes"] |length)/4)|round(0, 'ceil')) == 0 %}<br>{% else %}&#9;{% endif %}
+                {% endfor %}
+            {% else %}[Unknown Class(es)]{% endif %}
+        </span>
+    </div>
 
     <!-- Character Name / Race / Level-->
-    <div class="title_block" id="title_block"><span class="character_name_label" id="character_name">Default Name</span>
-        <p class="character_race_label">Default Race</p><span class="character_level_label">[Total Level / Exp]</span>
+    <div class="title_block" id="title_block"><span class="character_name_label" id="character_name">{% if char_si["name"] is defined %}{{ char_si["name"] }}{% else %}Unknown{% endif %}</span>
+        <span class="character_race_label">{% if char_si["race_name"] is defined %}{{ char_si["race_name"] }}{% else %}Unknown Race{% endif %}</span>
+        <span class="character_level_label">{% if char_si["total_level"] is defined %}Level {{ char_si["total_level"] }}{% else %}[Unknown Level / Exp]{% endif %}</span>
         <div class="character_profile_image" id="character_profile_image"></div>
     </div>
 
@@ -83,27 +77,27 @@
     <div class="character_combat_stats_block" id="combat_stats">
         <div class="combat_skill_base inspiration_block" id="inspiration_block">
             <span class="inspiration_label" id="inspiration_label">Inspiration</span>
-            <button id="inspiration_field" class="inspiration_field">[  ]</button>
+            <button id="inspiration_field" class="inspiration_field">{% if char_si["inspiration"] is defined and char_si["inspiration"] %}[ {% if char_si["inspiration"] == 1 %}X{% else %}{{ char_si["inspiration"] }}{% endif %} ]{% else %}[   ]{% endif %}</button>
         </div>
         <div class="combat_skill_base initiative_block" id="initiative_block">
             <span class="initiative_label" id="initiative_label">Initiative<br></span>
-            <button id="initiative_field" class="initiative_field">+X</button>
+            <button id="initiative_field" class="initiative_field">{% if char_si["initiative"] is defined %}{% if char_si["initiative"] >= 0 %}+{% endif %}{{ char_si["initiative"] }}{% else %}+X{% endif %}</button>
         </div>
         <div class="combat_skill_base armor_class_block" id="armor_class_block">
             <span class="armor_class_bottom_label" id="armor_class_bottom_label">Class</span><span class="armor_class_top_label" id="armor_class_top_label">Armor</span>
-            <span class="armor_class_field" id="armor_class">--</span>
+            <span class="armor_class_field" id="armor_class">{% if char_si["armor_class"] is defined %}{{ char_si["armor_class"] }}{% else %}--{% endif %}</span>
         </div>
         <div class="combat_skill_base walking_speed_block" id="walking_speed_block">
             <span class="walking_speed_bottom_label" id="walking_speed_bottom_label">Speed</span><span class="walking_speed_top_label" id="walking_speed_top_label">Walking</span>
-            <span class="walking_speed_field" id="walking_speed">--</span>
+            <span class="walking_speed_field" id="walking_speed">{% if char_si["speed"] is defined %}{{ char_si["speed"] }}{% else %}--{% endif %}</span>
         </div>
         <div class="combat_skill_base passive_perception_block" id="passive_perception_block">
             <span class="passive_perception_bottom_label" id="passive_perception_bottom_label">Perception</span><span class="passive_perception_top_label" id="passive_perception_top_label">Passive<br></span>
-            <span class="passive_perception_field" id="passive_perception">--</span>
+            <span class="passive_perception_field" id="passive_perception">{% if char_si["passive_perception"] is defined %}{{ char_si["passive_perception"] }}{% else %}--{% endif %}</span>
         </div>
         <div class="combat_skill_base proficiency_bonus_block" id="proficiency_bonus_block">
             <span class="proficiency_bonus_bottom_label" id="proficiency_bonus_bottom_label">Bonus</span><span class="proficiency_bonus_top_label" id="proficiency_bonus_top_label">Proficiency</span>
-            <span class="proficiency_bonus_field" id="proficiency_bonus">--</span>
+            <span class="proficiency_bonus_field" id="proficiency_bonus">{% if char_si["proficiency_bonus"] is defined %}+{{ char_si["proficiency_bonus"] }}{% else %}--{% endif %}</span>
         </div>
     </div>
 

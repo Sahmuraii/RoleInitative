@@ -11,6 +11,7 @@ class Character(db.Model):
     name = db.Column(db.String(250), nullable=False)
     proficiency_bonus = db.Column(db.Integer, nullable=True)
     total_level = db.Column(db.Integer, nullable=True)
+    inspiration = db.Column(db.Integer, nullable=True)
 
     # Relationships
     charRace = db.relationship("Character_Race", backref=backref("char", uselist=False), cascade="all, delete-orphan") #uselist False indicates one-to-one relationship
@@ -114,6 +115,16 @@ class Proficiency_Choice(db.Model):
     proficiency_list_id = db.Column(db.Integer, primary_key=True, nullable=False)
 
 
+#   >>> Skills
+class DND_Skill(db.Model):
+    __tablename__ = "dnd_skills"
+    skill_id = db.Column(db.Integer, primary_key=True, nullable=False)
+    skill_name = db.Column(db.String(50), nullable=False)
+    modifier_type = db.Column(db.Integer, nullable=False)
+    linked_proficiency_id = db.Column(db.Integer)
+    is_offical = db.Column(db.Boolean)
+
+
 #   >>> Conditions
 class DND_Condition(db.Model):
     __tablename__ = "dnd_condition"
@@ -209,6 +220,13 @@ class Character_Proficiency_Choices(db.Model):
     #choice_list_id = db.Column(db.Integer, db.ForeignKey(Proficiency_Choice.choice_list_id), primary_key=True, nullable=False)
     proficiency_list_id = db.Column(db.Integer, primary_key=True, nullable=False)
     choice_list_id = db.Column(db.Integer, primary_key=True, nullable=False)
+
+
+#   >>> Skills
+class Character_Extra_Skill(db.Model):
+    __tablename__ = "character_extra_skill"
+    char_id = db.Column(db.Integer, db.ForeignKey(Character.char_id, ondelete='CASCADE'), primary_key=True, nullable=False)
+    skill_id = db.Column(db.Integer, primary_key=True, nullable=False)
 
 
 #   >>> Conditions

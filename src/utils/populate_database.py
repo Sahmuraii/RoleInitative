@@ -2,7 +2,7 @@ from src import db
 import requests
 
 from src.auth.models import User
-from src.character.models import DND_Class, DND_Race, DND_Condition, DND_Class_Feature
+from src.character.models import DND_Class, DND_Race, DND_Condition, DND_Class_Feature, DND_Skill
 
 DND_BASE_URL = "https://www.dnd5eapi.co"
 API_BASE_URL = "https://www.dnd5eapi.co/api"
@@ -10,6 +10,7 @@ API_CLASS_URL = "https://www.dnd5eapi.co/api/classes"
 API_RACE_URL = "https://www.dnd5eapi.co/api/races"
 API_CONDITION_URL = "https://www.dnd5eapi.co/api/conditions"
 API_CLASS_FEATURE_URL = "https://www.dnd5eapi.co/api/features"
+API_SKILLS_URL = "https://www.dnd5eapi.co/api/skills"
 
 #Takes in a URL to an api, as well as any necessary headers
 #Returns the success of the API call, and the returned response (if any)
@@ -151,6 +152,45 @@ def fetch_and_populate_conditions():
         db.session.rollback()
         print(f"An error occurred: {e}")
 
+
+def fetch_and_populate_skills(): 
+    success, response = fetch_api_info(API_SKILLS_URL, headers={"Accept": "application/json"})
+    if not success: return
+    
+    skills = response.json().get("results", [])
+
+    for skill in skills:
+        # Check if the skill already exists
+        existing_skill = DND_Skill.query.filter_by(skill_name=skill["name"]).first()
+        if existing_skill: continue #If exist, continue to next one
+
+        # Fetch detailed information for each condition
+        success, api_details_response = fetch_api_info(f"{DND_BASE_URL}{skill['url']}", headers={"Accept": "application/json"})
+
+        # Check if the request was successful. Skip to the next skill
+        if not success: continue
+        
+        skill_details = api_details_response.json() # Extract the skill details
+
+        # Prepare the DND_Skill object to be added to the database
+        mod_type_conversion = {'str':0, 'dex':1, 'con':2, 'int':3, 'wis':4, 'cha':5}
+        new_skill = DND_Skill(
+            skill_name = skill_details["name"],
+            modifier_type = mod_type_conversion[skill_details['ability_score']['index']],
+            linked_proficiency_id = None,
+            is_offical = True
+        )
+        
+        db.session.add(new_skill)
+    
+    try:
+        db.session.commit()
+        print("Skills successfully populated!")
+    except Exception as e:
+        db.session.rollback()
+        print(f"An error occurred: {e}")
+
+
 def fetch_and_populate_class_features():
     success, response = fetch_api_info(API_CLASS_FEATURE_URL, headers={"Accept": "application/json"})
     if not success: return
@@ -193,4 +233,5 @@ def repopulate_empty_tables():
     fetch_and_populate_classes()
     fetch_and_populate_races()
     fetch_and_populate_conditions()
+    fetch_and_populate_skills()
     fetch_and_populate_class_features()

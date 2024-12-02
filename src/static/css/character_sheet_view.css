@@ -312,6 +312,7 @@
     width: 54%;
     height: 38%;
     border-color: rgb(160, 160, 160);
+    font-size: 19px;
 }
 .inspiration_label {
     position: absolute;
@@ -335,6 +336,7 @@
     height: 35%;
     top: 38%;
     border-radius: 5px;
+    font-size: 19px;
 }
 .armor_class_field {
     position: absolute;
@@ -613,7 +615,7 @@ left: 50%;
 .character_info_label {
     position: absolute;
     text-align: left;
-    font-size: 15px;
+    font-size: 16px;
     height: 95%;
     left: 50%;
     transform: translate(-50%, -50%);
