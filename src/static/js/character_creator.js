@@ -364,15 +364,17 @@ function showTab(tabId) {
 }
 
 function setHiddenCharacterSummary() {
-    document.getElementById("final-str").value = document.getElementById("summary-strength").textContent;
-    document.getElementById("final-dex").value = document.getElementById("summary-dexterity").textContent;
-    document.getElementById("final-con").value = document.getElementById("summary-constitution").textContent;
-    document.getElementById("final-int").value = document.getElementById("summary-intelligence").textContent;
-    document.getElementById("final-wis").value = document.getElementById("summary-wisdom").textContent;
-    document.getElementById("final-cha").value = document.getElementById("summary-charisma").textContent;
+    storeFinalValue("final-str", "summary-strength");
+    storeFinalValue("final-dex", "summary-dexterity");
+    storeFinalValue("final-con", "summary-constitution");
+    storeFinalValue("final-int", "summary-intelligence");
+    storeFinalValue("final-wis", "summary-wisdom");
+    storeFinalValue("final-cha", "summary-charisma");
 }
 
-
+function storeFinalValue(finalValue, summaryValue) {
+    document.getElementById(finalValue).value = document.getElementById(summaryValue).textContent;
+}
 
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -401,13 +403,48 @@ document.addEventListener("DOMContentLoaded", () => {
     const raceSelect = document.getElementById("charrace");
     raceSelect.addEventListener("change", () => {
         // Subtract 1 to account for no id's with value 0
-        summaryElements.race.textContent = raceSelect.options[raceSelect.value -1].text || "None";
+        summaryElements.race.textContent = raceSelect.options[raceSelect.value - 1]?.text || "None";
     });
 
-    // Update class
-    const classInputs = document.getElementsByName("multiclass_level");
-    classInputs.addEventListener("change", () => {
-        //summaryElements.class.textContent = {{all_classes[classInputs[0]]}};
+    // Update class summary
+    const inputLevels = document.getElementsByName("multiclass_level");
+    const classLabels = document.getElementsByName("multiclass_label");
+
+    const summaryClassChange = () => {
+        var summaryClass = document.getElementById("summary-class");
+        var inputClasses = [];
+        var classes = [];
+        var levels = [];
+
+        for (var i = 0; i < inputLevels.length; i++) {
+            inputClasses.push(classLabels[i].textContent);
+        }
+
+        for (var i = 0; i < inputLevels.length; i++) {
+            if (inputLevels[i].value != 0) {
+                classes.push(i);
+                levels.push(inputLevels[i].value);
+            }
+        }
+
+        if (classes.length == 1) {
+            summaryClass.textContent = `${inputClasses[classes[0]]} Lvl. ${levels[0]}`;
+        } else {
+            var totalLevel = 0;
+            summaryClass.textContent = "";
+            for (var i = 0; i < levels.length; i++) {
+                totalLevel += Number(levels[i]);
+            }
+            summaryClass.textContent += `Total Level: ${totalLevel}\n`;
+            for (var i = 0; i < levels.length; i++) {
+                summaryClass.textContent += `${inputClasses[classes[i]]} Lvl. ${levels[i]}\n`;
+            }
+        }
+    };
+
+    // Add change listeners to class inputs
+    inputLevels.forEach(input => {
+        input.addEventListener("change", summaryClassChange);
     });
 
     // Update stats
@@ -422,62 +459,48 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const updateDropdownStatDisplay = () => {
         statInputs.forEach((stat) => {
-            const stat_id = stat.id + '_dd';
+            const stat_id = stat.id + "_dd";
             const dropdown = document.getElementById(stat_id);
-            //console.log("input value: " + dropdown.value);
-            //console.log("Dropdown element:", dropdown);
-            //console.log("Initial selected value:", dropdown.value);
-            //console.log("Selected Index:", dropdown.value);
-            // adding 1 because I was dumb about the dropdowns. will fix later I suppose
-            //attribute_value = dropdown.options[dropdown.value + 1].text;
-            // Or I do it like this. Also works
             const attribute_value = dropdown.querySelector(`option[value="${dropdown.value}"]`)?.text;
-            //console.log("Selected Option Text:", attribute_value);
             summaryElements.stats[stat.key].textContent = attribute_value || 8;
         });
-    }
+    };
 
-
-    // Add an observer to update on stat changes triggered by the buttons
     const updateStatDisplay = () => {
         statInputs.forEach((stat) => {
             const attrField = document.getElementById(stat.id);
-            console.log("attribute field " + attrField);
             summaryElements.stats[stat.key].textContent = attrField.value || 8;
         });
     };
 
     const updateOnChangeStatDisplay = () => {
-        const method = document.getElementById('stat_method').value;
-        const isDropdown = method === 'roll' || method === 'standard_array'
+        const method = document.getElementById("stat_method").value;
+        const isDropdown = method === "roll" || method === "standard_array";
         if (isDropdown) {
             updateDropdownStatDisplay();
         } else {
             updateStatDisplay();
         }
-    }
+    };
 
-    //console.log("method, isDropdown: " + method, isDropdown);
     statInputs.forEach((stat) => {
-        // if isDropdown, strength_dd, else strength
-        const stat_id = stat.id + '_dd';
+        const stat_id = stat.id + "_dd";
         const dropdown = document.getElementById(stat_id);
 
-        // Must be change because input wil happen before the onchange=checkAvailability in the dropdowns
-        dropdown.addEventListener("change", () => {
-            updateDropdownStatDisplay();
-        });
+        dropdown.addEventListener("change", updateDropdownStatDisplay);
 
         // Attach the update function to the relevant buttons
         document.querySelector(`[onclick="adjustStat('${stat.id}', -1)"]`).addEventListener("click", updateStatDisplay);
         document.querySelector(`[onclick="adjustStat('${stat.id}', 1)"]`).addEventListener("click", updateStatDisplay);
 
         // Ensure display is updated when stat method changes
-        document.getElementById('stat_method').addEventListener('change', function () {
-            updateOnChangeStatDisplay();
-        });
+        document.getElementById("stat_method").addEventListener("change", updateOnChangeStatDisplay);
     });
 
     // Ensure the display is updated on page load
+    if (charNameInput) charNameInput.dispatchEvent(new Event("input"));
+    if (raceSelect) raceSelect.dispatchEvent(new Event("change"));
+    if (inputLevels && classLabels) summaryClassChange();
     updateStatDisplay();
 });
+
