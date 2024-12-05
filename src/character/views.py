@@ -146,7 +146,43 @@ def character(character_id):
 
     return render_template('character/character.html', user=user, character=char, current_class=current_class, current_level=current_level, all_classes=all_classes, char_si=get_character_info(char.char_id))
 
+def calculate_max_hp(character_id):
+    character = Character.query.get(character_id) # Get the character by ID
+    if not character:
+        raise ValueError(f"Character with ID {character_id} not found.")
 
+    constitution_score = int(Character_Stats.query.filter_by(char_id=character_id).first().constitution) # Constitution score
+    constitution_modifier = (constitution_score - 10) // 2 # Constitution modifier
+
+    character_classes = Character_Class.query.filter_by(char_id=character_id).all() # Get all classes for the character
+
+    if not character_classes:
+        raise ValueError("Character has no associated classes.")
+
+    first_class = character_classes[0] # First class 
+    first_class_data = DND_Class.query.get(first_class.class_id)
+    if not first_class_data:
+        raise ValueError(f"Class with ID {first_class.class_id} not found.")
+
+    hit_die = first_class_data.hit_die # Hit die for the first class
+    first_level_hp = hit_die # First level HP is the max roll of the hit die
+
+    additional_hp = 0
+    total_levels = 0
+
+    for char_class in character_classes: # 
+        class_data = DND_Class.query.get(char_class.class_id) # Get class data
+        if not class_data:
+            continue
+
+        levels = char_class.class_level - 1 if char_class == first_class else char_class.class_level # Subtract 1 for first class since we already calculated first level HP
+        additional_hp += levels * (class_data.hit_die // 2 + 1)  # Average roll per level
+        total_levels += levels # Total levels calculation
+
+    con_bonus_hp = (total_levels + 1) * constitution_modifier # Add con bonus for each level
+
+    max_hp = first_level_hp + additional_hp + con_bonus_hp
+    return max(max_hp, 1)  # Ensure HP is at least 1
 
 @character_bp.route("/character/create", methods=['GET', 'POST'])
 def create():
@@ -248,12 +284,14 @@ def create():
                 class_level = new_class['level']
             )
             db.session.add(new_character_class)
+        
+        db.session.commit() # Needed in order to calculate max HP
 
         #TODO: Save Characters Actual HP (not just temp values)
         new_character_hp = Character_Hit_Points(
             char_id = new_character.char_id,
-            hit_points = 0,
-            max_hit_points = 0,
+            hit_points = calculate_max_hp(new_character.char_id),
+            max_hit_points = calculate_max_hp(new_character.char_id),
             temp_hit_points = 0
         )
         db.session.add(new_character_hp)
