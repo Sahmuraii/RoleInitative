@@ -67,12 +67,18 @@
 
             <!-- Class -->
             <div id="class" class="tab-content" name="character_class_selections">
+                <p id="currentlevel">Your current level: 0</p>
+                <p id="sparelevels">Levels left to allocate: 20</p>
+                <label for="selectFirstClass">Choose your initial class (affects character HP):</label><br>
+                <select id="selectFirstClass" name="selectFirstClass">
+                    <option value="None">No Classes Selected</option>
+                </select><br>
+
                 {% for dnd_class in all_classes %}
                 <label for="{{dnd_class.name}}" name="multiclass_label">{{ dnd_class.name }}</label><label for="{{dnd_class.name}}">: </label>
-                
                 <input type="number" id="{{dnd_class.name}}" name="multiclass_level" value="0" min="0" max="20"><br>
-                
                 {% endfor %}
+                
                 <br><button type="button" onclick="window.location.href='/homebrew/classes'">Browse Homebrew Classes</button>
             </div>
 
@@ -351,5 +357,6 @@
         </form>
     </div>
     <script src="../../static/js/character_creator.js"></script>
+
 
 {% endblock %}

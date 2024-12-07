@@ -13,33 +13,6 @@ function generateClassTabs(inputClass) {
     tabObject.innerHTML += `<button class="tab" onclick="generateClassPage('${inputClass}'); showTab('${inputClass}')">${inputClass}</button>`
 }
 
-
-function setCollectiveMax() {
-    levels = document.getElementsByClassName("multiclass_level")
-    starting_Level = document.getElementById("startlevel");
-
-    spare_levels = starting_Level.value;
-    for(var levelobj of levels) {
-        spare_levels -= levelobj.value
-    }
-
-    for(var levelobj of levels) {
-        levelobj.setAttribute("max", parseInt(levelobj.value) + spare_levels);
-    }
-
-}
-
-function setMulticlassMax(inputValue) {
-    element = document.getElementById("multiclass");
-
-    element.setAttribute("max", inputValue);
-
-    if(parseInt(element.value) > inputValue) {
-        element.value = inputValue;
-        updateClasses(inputValue);
-    }
-}
-
 // Show and hide attribute sections based on selected method
 document.getElementById('stat_method').addEventListener('change', function () {
     const method = this.value;
@@ -412,38 +385,71 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const summaryClassChange = () => {
         var summaryClass = document.getElementById("summary-class");
+        var firstClassSelect = document.getElementById("selectFirstClass");
         var inputClasses = [];
         var classes = [];
         var levels = [];
 
+        inputClasses.push("Null")
         for (var i = 0; i < inputLevels.length; i++) {
             inputClasses.push(classLabels[i].textContent);
         }
 
         for (var i = 0; i < inputLevels.length; i++) {
             if (inputLevels[i].value != 0) {
-                classes.push(i);
+                classes.push(i+1);
                 levels.push(inputLevels[i].value);
             }
         }
-
-        if (classes.length == 1) {
+        
+        if(classes.length == 0) {
+            firstClassSelect.innerHTML = `<option value="None">No Classes Selected</option>`;
+            summaryClass.textContent = "None";
+        }
+        else if (classes.length == 1) {
             summaryClass.textContent = `${inputClasses[classes[0]]} Lvl. ${levels[0]}`;
+            firstClassSelect.innerHTML = `<option value="${classes[0]}">${inputClasses[classes[0]]}</option>`;
         } else {
             var totalLevel = 0;
             summaryClass.textContent = "";
+            firstClassSelect.innerHTML = "";
             for (var i = 0; i < levels.length; i++) {
                 totalLevel += Number(levels[i]);
             }
-            summaryClass.textContent += `Total Level: ${totalLevel}\n`;
+            summaryClass.textContent += `Total Level: ${totalLevel}, \n`;
             for (var i = 0; i < levels.length; i++) {
-                summaryClass.textContent += `${inputClasses[classes[i]]} Lvl. ${levels[i]}\n`;
+                if(i == levels.length - 1) {
+                    summaryClass.textContent += `${inputClasses[classes[i]]} Lvl. ${levels[i]} \n`;
+                } else {
+                    summaryClass.textContent += `${inputClasses[classes[i]]} Lvl. ${levels[i]}, \n`;
+                }
+                firstClassSelect.innerHTML += `<option value="${classes[i]}">${inputClasses[classes[i]]}</option>`;
             }
         }
     };
 
+    const setLevelAllocation = () => {
+        levels = document.getElementsByName("multiclass_level");
+        spareLevelHTML = document.getElementById("sparelevels");
+        currentLevelHTML = document.getElementById("currentlevel");
+        var starting_level = 20;
+        spare_levels = starting_level;
+
+        levels.forEach(element => {
+            spare_levels -= parseInt(element.value);
+        });
+        
+        currentLevelHTML.innerHTML = `<p id="currentlevel">Your current level: ${20 - spare_levels}</p>`
+        spareLevelHTML.innerHTML = `<p id="sparelevels">Levels left to allocate: ${spare_levels}</p>`
+
+        levels.forEach(element => {
+            element.setAttribute("max", parseInt(element.value) + spare_levels)
+        });
+    }
+
     // Add change listeners to class inputs
     inputLevels.forEach(input => {
+        input.addEventListener("change", setLevelAllocation);
         input.addEventListener("change", summaryClassChange);
     });
 

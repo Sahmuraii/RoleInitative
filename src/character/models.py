@@ -170,6 +170,7 @@ class Character_Class(db.Model):
     char_id = db.Column(db.Integer, db.ForeignKey(Character.char_id, ondelete='CASCADE'), primary_key=True, nullable=False)
     class_id = db.Column(db.Integer, db.ForeignKey(DND_Class.class_id), primary_key=True, nullable=False)
     class_level = db.Column(db.Integer, nullable=False)
+    is_initial_class = db.Column(db.Boolean)
 
 class Character_Stats(db.Model):
     __tablename__ = "character_stats"

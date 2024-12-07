@@ -198,7 +198,7 @@ def create():
         for i in range(len(levels)):
             if levels[i] != "0":
                 classes.append({'level':levels[i], 'class_id':f'{all_classes[i].class_id}'})
-
+        initial_class = request.form.get('selectFirstClass')
         char_name = request.form.get('charname')
         #ruleset = request.form.get('ruleset')
         #xp_method = request.form.get('xp_method')
@@ -278,11 +278,21 @@ def create():
         db.session.add(new_character_race)
 
         for new_class in classes:
-            new_character_class = Character_Class(
-                char_id = new_character.char_id,
-                class_id = new_class['class_id'],
-                class_level = new_class['level']
-            )
+
+            if initial_class == new_class['class_id']:
+                    new_character_class = Character_Class(
+                    char_id = new_character.char_id,
+                    class_id = new_class['class_id'],
+                    class_level = new_class['level'],
+                    is_initial_class = True
+                )
+            else:
+                new_character_class = Character_Class(
+                    char_id = new_character.char_id,
+                    class_id = new_class['class_id'],
+                    class_level = new_class['level'],
+                    is_initial_class = False
+                )
             db.session.add(new_character_class)
         
         db.session.commit() # Needed in order to calculate max HP
