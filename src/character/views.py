@@ -159,8 +159,9 @@ def calculate_max_hp(character_id):
     if not character_classes:
         raise ValueError("Character has no associated classes.")
 
-    first_class = character_classes[0] # First class 
+    first_class = Character_Class.query.filter_by(char_id=character_id,is_initial_class=True).first()
     first_class_data = DND_Class.query.get(first_class.class_id)
+    
     if not first_class_data:
         raise ValueError(f"Class with ID {first_class.class_id} not found.")
 
