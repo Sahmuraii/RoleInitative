@@ -67,12 +67,18 @@
 
             <!-- Class -->
             <div id="class" class="tab-content" name="character_class_selections">
+                <p id="currentlevel">Your current level: 0</p>
+                <p id="sparelevels">Levels left to allocate: 20</p>
+                <label for="selectFirstClass">Choose your initial class (affects character HP):</label><br>
+                <select id="selectFirstClass" name="selectFirstClass">
+                    <option value="None">No Classes Selected</option>
+                </select><br>
+
                 {% for dnd_class in all_classes %}
                 <label for="{{dnd_class.name}}" name="multiclass_label">{{ dnd_class.name }}</label><label for="{{dnd_class.name}}">: </label>
-                
-                <input type="number" id="{{dnd_class.name}}" name="multiclass_level" value="0" min="0" max="20" onchange="summaryClassChange()"><br>
-                
+                <input type="number" id="{{dnd_class.name}}" name="multiclass_level" value="0" min="0" max="20"><br>
                 {% endfor %}
+                
                 <br><button type="button" onclick="window.location.href='/homebrew/classes'">Browse Homebrew Classes</button>
             </div>
 
@@ -351,39 +357,6 @@
         </form>
     </div>
     <script src="../../static/js/character_creator.js"></script>
-    <script>
-        function summaryClassChange() {
-            var summaryClass = document.getElementById("summary-class");
-            var inputLevels = document.getElementsByName("multiclass_level");
-            var inputClasses = [];
-            var classes = [];
-            var levels = [];
-            var classLabels = document.getElementsByName("multiclass_label")
-            for(var i = 0; i < inputLevels.length; i++) {
-                inputClasses.push(classLabels[i].textContent)
-            }
 
-            for(var i = 0; i < inputLevels.length; i++) {
-                if(inputLevels[i].value != 0) {
-                    classes.push(i);
-                    levels.push(inputLevels[i].value)
-                }
-            }
-            if(classes.length == 1) {
-                summaryClass.textContent = `${inputClasses[classes[0]]} Lvl. ${levels[0]}`
-            }
-            else {
-                var totalLevel = 0;
-                summaryClass.textContent = "";
-                for(var i= 0; i < levels.length; i++) {
-                    totalLevel += Number(levels[i]);
-                }
-                summaryClass.textContent += `Total Level: ${totalLevel}\n`;
-                for(var i= 0; i < levels.length; i++) {
-                    summaryClass.textContent += `${inputClasses[classes[i]]} Lvl. ${levels[i]}\n`;
-                }
-            }
-        }
-    </script>
 
 {% endblock %}
