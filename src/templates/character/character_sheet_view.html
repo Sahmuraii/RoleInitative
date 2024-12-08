@@ -106,35 +106,41 @@
         <div class="saving_throws_block_footer" id="saving_throws_footer">
             <span class="saving_throws_block_label" id="saving_throws_block_label">Saving Throws</span>
         </div>
+        <!-- Strength -->
         <div class="saving_throw_modifier_base saving_throw_modifier_1 saving_throw_1" id="saving_throw_1">
-            <span class="saving_throw_proficient" id="saving_throw_1_proficient">*</span>
-            <span class="saving_throw_abbreviation" id="saving_throw_1_abbreviation">ABRV.</span>
-            <button id="saving_throw_1_field" class="saving_throw_field">+X</button>
+            <span class="saving_throw_proficient" id="saving_throw_1_proficient">&#9675;</span>
+            <span class="saving_throw_abbreviation" id="saving_throw_1_abbreviation">STR</span>
+            <button id="saving_throw_1_field" class="saving_throw_field">{%if char_si["modifier_scores"][4].value >= 0 %}+{% endif %}{{ char_si["modifier_scores"][4].value }}</button>
         </div>
+        <!-- Dexterity -->
         <div class="saving_throw_modifier_base saving_throw_modifier_1 saving_throw_2" id="saving_throw_2">
-            <span class="saving_throw_proficient" id="saving_throw_1_proficient_1">*</span>
-            <span class="saving_throw_abbreviation" id="saving_throw_1_abbreviation_1">ABRV.</span>
-            <button id="saving_throw_1_field_1" class="saving_throw_field">+X</button>
+            <span class="saving_throw_proficient" id="saving_throw_1_proficient_1">&#9675;</span>
+            <span class="saving_throw_abbreviation" id="saving_throw_1_abbreviation_1">DEX</span>
+            <button id="saving_throw_1_field_1" class="saving_throw_field">{%if char_si["modifier_scores"][1].value >= 0 %}+{% endif %}{{ char_si["modifier_scores"][1].value }}</button>
         </div>
+        <!-- Constitution -->
         <div class="saving_throw_modifier_base saving_throw_modifier_1 saving_throw_3" id="saving_throw_3">
-            <span class="saving_throw_proficient" id="saving_throw_1_proficient_2">*</span>
-            <span class="saving_throw_abbreviation" id="saving_throw_1_abbreviation_2">ABRV.</span>
-            <button id="saving_throw_1_field_2" class="saving_throw_field">+X</button>
+            <span class="saving_throw_proficient" id="saving_throw_1_proficient_2">&#9675;</span>
+            <span class="saving_throw_abbreviation" id="saving_throw_1_abbreviation_2">CON</span>
+            <button id="saving_throw_1_field_2" class="saving_throw_field">{%if char_si["modifier_scores"][0].value >= 0 %}+{% endif %}{{ char_si["modifier_scores"][0].value }}</button>
         </div>
+        <!-- Intelligence -->
         <div class="saving_throw_modifier_base saving_throw_modifier_1 saving_throw_4" id="saving_throw_4">
-            <span class="saving_throw_proficient" id="saving_throw_1_proficient_3">*</span>
-            <span class="saving_throw_abbreviation" id="saving_throw_1_abbreviation_3">ABRV.</span>
-            <button id="saving_throw_1_field_3" class="saving_throw_field">+X</button>
+            <span class="saving_throw_proficient" id="saving_throw_1_proficient_3">&#9675;</span>
+            <span class="saving_throw_abbreviation" id="saving_throw_1_abbreviation_3">INT</span>
+            <button id="saving_throw_1_field_3" class="saving_throw_field">{%if char_si["modifier_scores"][3].value >= 0 %}+{% endif %}{{ char_si["modifier_scores"][3].value }}</button>
         </div>
+        <!-- Wisdom -->
         <div class="saving_throw_modifier_base saving_throw_modifier_1 saving_throw_5" id="saving_throw_5">
-            <span class="saving_throw_proficient" id="saving_throw_1_proficient_4">*</span>
-            <span class="saving_throw_abbreviation" id="saving_throw_1_abbreviation_4">ABRV.</span>
-            <button id="saving_throw_1_field_4" class="saving_throw_field">+X</button>
+            <span class="saving_throw_proficient" id="saving_throw_1_proficient_4">&#9675;</span>
+            <span class="saving_throw_abbreviation" id="saving_throw_1_abbreviation_4">WIS</span>
+            <button id="saving_throw_1_field_4" class="saving_throw_field">{%if char_si["modifier_scores"][2].value >= 0 %}+{% endif %}{{ char_si["modifier_scores"][2].value }}</button>
         </div>
+        <!-- Charisma -->
         <div class="saving_throw_modifier_base saving_throw_modifier_1 saving_throw_6" id="saving_throw_6">
-            <span class="saving_throw_proficient" id="saving_throw_1_proficient_5">*</span>
-            <span class="saving_throw_abbreviation" id="saving_throw_1_abbreviation_5">ABRV.</span>
-            <button id="saving_throw_1_field_5" class="saving_throw_field">+X</button>
+            <span class="saving_throw_proficient" id="saving_throw_1_proficient_5">&#9675;</span>
+            <span class="saving_throw_abbreviation" id="saving_throw_1_abbreviation_5">CHA</span>
+            <button id="saving_throw_1_field_5" class="saving_throw_field">{%if char_si["modifier_scores"][5].value >= 0 %}+{% endif %}{{ char_si["modifier_scores"][5].value }}</button>
         </div>
     </div>
 
