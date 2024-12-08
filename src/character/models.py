@@ -23,6 +23,7 @@ class Character(db.Model):
     charHitPoints = db.relationship('Character_Hit_Points', backref=backref("char", uselist=False), cascade="all, delete-orphan")
     charDeathSaves = db.relationship('Character_Death_Saves', backref=backref("char", uselist=False), cascade="all, delete-orphan")
     charProficiencyChoices = db.relationship('Character_Proficiency_Choices', backref='char', cascade="all, delete-orphan")
+    charExtraSkills = db.relationship('Character_Extra_Skill', backref='char', cascade="all, delete-orphan")
     charCondition = db.relationship('Character_Condition', backref='char', cascade="all, delete-orphan")
     charInventory = db.relationship('Character_Inventory', backref='char', cascade="all, delete-orphan")
 
@@ -165,12 +166,16 @@ class Character_Race(db.Model):
     char_id = db.Column(db.Integer, db.ForeignKey(Character.char_id, ondelete='CASCADE'), primary_key=True, nullable=False)
     race_id = db.Column(db.Integer, db.ForeignKey(DND_Race.race_id), nullable=False)
 
+    race = db.relationship("DND_Race", backref="character_races")
+
 class Character_Class(db.Model):
     __tablename__ = "character_class"
     char_id = db.Column(db.Integer, db.ForeignKey(Character.char_id, ondelete='CASCADE'), primary_key=True, nullable=False)
     class_id = db.Column(db.Integer, db.ForeignKey(DND_Class.class_id), primary_key=True, nullable=False)
     class_level = db.Column(db.Integer, nullable=False)
     is_initial_class = db.Column(db.Boolean)
+
+    class_ = db.relationship("DND_Class", backref="character_classes")
 
 class Character_Stats(db.Model):
     __tablename__ = "character_stats"
