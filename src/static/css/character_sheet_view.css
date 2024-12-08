@@ -1,5 +1,9 @@
 
 
+html {
+    scroll-behavior: smooth;
+}
+
 .default_sheet_container {
     height: 1100px;
     width: 950px;

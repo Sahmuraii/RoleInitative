@@ -46,7 +46,7 @@
                 <span class="character_skill_line_proficient" id="skill_{{skill['skill_id']}}_proficient">&#9675;</span>  <!-- TODO: Add Jinja code to check if skill is proficient (represented by &#9679; )-->
                 <span class="character_skill_line_skill_name" id="skill_{{skill['skill_id']}}_name">{% if skill["skill_name"] is defined %}{{ skill["skill_name"] }}{% else %}[Unknown Skill Name]{% endif %}</span>
                 <span class="character_skill_line_mod" id="mod_{{skill['skill_id']}}_label">{% if skill["modifier_type"] is defined %}{{ skill["modifier_type"][:3].upper() }}{% else %}[??]{% endif %}</span>
-                <button id="skill_{{skill['skill_id']}}_modifier" class="character_skill_line_bonus">{% if skill["modifier_value"] is defined %}{% if skill["modifier_value"] >= 0 %}+{% endif %}{{ skill["modifier_value"] }}{% else %}--{% endif %}</button>
+                <button id="skill_{{skill['skill_id']}}_modifier" name="skill_id_modifier" class="character_skill_line_bonus">{% if skill["modifier_value"] is defined %}{% if skill["modifier_value"] >= 0 %}+{% endif %}{{ skill["modifier_value"] }}{% else %}--{% endif %}</button>
             </div>
         {% endfor %}
         <!-- end Jinja loop-->
