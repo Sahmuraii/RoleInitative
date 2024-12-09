@@ -36,7 +36,7 @@ class DND_Race(db.Model):
     description = db.Column(db.String(250), nullable=True)
     speed = db.Column(db.Integer, nullable=False)
     size = db.Column(db.String(50), nullable=False)
-    is_offical = db.Column(db.Boolean, nullable=True) 
+    is_official = db.Column(db.Boolean, nullable=True) 
     alignment_description = db.Column(db.String(500), nullable=True)
     age_description = db.Column(db.String(500), nullable=True)
     size_description = db.Column(db.String(500), nullable=True)
@@ -53,7 +53,7 @@ class DND_Class(db.Model):
     name = db.Column(db.String(50), nullable=False)
     description = db.Column(db.String(250), nullable=False)
     hit_die = db.Column(db.Integer, nullable=False)
-    is_offical = db.Column(db.Boolean)
+    is_official = db.Column(db.Boolean)
     characters = db.relationship("Character_Class", back_populates="class_", overlaps="character_classes") #Characters that have this class
 
 class DND_Background(db.Model):
@@ -77,21 +77,21 @@ class DND_Background(db.Model):
 class Proficiency_Types(db.Model):
     __tablename__ = "proficiency_types"
     type_id = db.Column(db.Integer, primary_key=True, nullable=False)
-    type_name = db.Column(db.Integer, nullable=False)
+    type_name = db.Column(db.String(80), nullable=False)
 
 class Proficiencies(db.Model):
     __tablename__ = "proficiencies"
     proficiency_id = db.Column(db.Integer, primary_key=True, nullable=False)
     proficiency_name = db.Column(db.String(80), nullable=False)
     proficiency_type = db.Column(db.Integer, db.ForeignKey(Proficiency_Types.type_id), nullable=False)
-    is_offical = db.Column(db.Boolean)
+    is_official = db.Column(db.Boolean)
 
 class Proficiency_List(db.Model):
     __tablename__ = "proficiency_list"
     proficiency_list_id = db.Column(db.Integer, primary_key=True, nullable=False)
     #proficiency_id = db.Column(db.Integer, db.ForeignKey(Proficiencies.proficiency_id), primary_key=True, nullable=False)
     proficiency_id = db.Column(db.Integer, primary_key=True, nullable=False)
-    is_offical = db.Column(db.Boolean)
+    is_official = db.Column(db.Boolean)
 
 class DND_Race_Proficiency_Option(db.Model):
     __tablename__ = "dnd_race_proficiency_option"
@@ -99,6 +99,7 @@ class DND_Race_Proficiency_Option(db.Model):
     #given_by_race = db.Column(db.Integer, db.ForeignKey(DND_Race.race_id), primary_key=True, nullable=False)
     proficiency_list_id = db.Column(db.Integer, primary_key=True, nullable=False)
     given_by_race = db.Column(db.Integer, primary_key=True, nullable=False)
+    list_description = db.Column(db.String(200), nullable=False)
     max_choices = db.Column(db.Integer, nullable=False)
 
 class DND_Class_Proficiency_Option(db.Model):
@@ -107,6 +108,7 @@ class DND_Class_Proficiency_Option(db.Model):
     #given_by_class = db.Column(db.Integer, db.ForeignKey(DND_Class.class_id), primary_key=True, nullable=False)
     proficiency_list_id = db.Column(db.Integer, primary_key=True, nullable=False)
     given_by_class = db.Column(db.Integer, primary_key=True, nullable=False)
+    list_description = db.Column(db.String(200), nullable=False)
     max_choices = db.Column(db.Integer, nullable=False)
 
 
@@ -125,7 +127,7 @@ class DND_Skill(db.Model):
     skill_name = db.Column(db.String(50), nullable=False)
     modifier_type = db.Column(db.Integer, nullable=False)
     linked_proficiency_id = db.Column(db.Integer)
-    is_offical = db.Column(db.Boolean)
+    is_official = db.Column(db.Boolean)
 
 
 #   >>> Conditions
