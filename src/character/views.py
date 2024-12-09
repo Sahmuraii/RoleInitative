@@ -2,7 +2,7 @@ from flask import render_template, Blueprint, request, redirect, url_for, jsonif
 from flask_login import current_user, login_required
 from sqlalchemy import select
 from src.auth.models import User
-from src.character.models import Character, Character_Class, DND_Class, DND_Race, DND_Background, Character_Details, Character_Stats, Character_Race, Character_Hit_Points, Character_Death_Saves, DND_Skill, DND_Class_Proficiency_Option, DND_Race_Proficiency_Option, Proficiency_List, Proficiencies, Character_Proficiency_Choices, Proficiency_Choice
+from src.character.models import Character, Character_Class, DND_Class, DND_Race, DND_Background, Character_Details, Character_Stats, Character_Race, Character_Hit_Points, Character_Death_Saves, DND_Skill, DND_Class_Proficiency_Option, DND_Race_Proficiency_Option, Proficiency_List, Proficiencies, Character_Proficiency_Choices, Proficiency_Choice, Proficiency_Types
 from src import db
 import math, json
 
@@ -85,6 +85,19 @@ def get_character_info(char_id) -> dict:
     for mod in char_info['modifier_scores']:
         if mod['modifier_name'] != 'wisdom': continue
         char_info.update({'passive_perception': mod['value'] + 10})
+
+    #Load Character Proficiencies
+    char_proficiencies = [row._asdict() for row in db.session.execute(
+        select(Proficiencies.proficiency_id, Proficiencies.proficiency_name, Proficiency_Types.type_id, Proficiency_Types.type_name )
+        .select_from(Character_Proficiency_Choices)
+        .join(Proficiency_Choice, Character_Proficiency_Choices.choice_list_id == Character_Proficiency_Choices.choice_list_id)
+        .join(Proficiencies, Proficiencies.proficiency_id == Proficiency_Choice.proficiency_id)
+        .join(Proficiency_Types, Proficiency_Types.type_id == Proficiencies.proficiency_type)
+        .where(Character_Proficiency_Choices.char_id == char_id)
+    )]
+    print(char_proficiencies)
+    char_info.update({'proficiencies': char_proficiencies})
+
 
     #print(char_info)
     return char_info
