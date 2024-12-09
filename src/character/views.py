@@ -8,11 +8,11 @@ import math, json
 
 character_bp = Blueprint('character_bp', __name__, template_folder='../templates')
 
-def get_character_info(char_id) -> dict:
+def get_character_info(request_char_id) -> dict:
     char_info = {}
 
     #Load Base Character Info
-    char = Character.query.filter_by(char_id=char_id).first().__dict__
+    char = Character.query.filter_by(char_id=request_char_id).first().__dict__
     char.pop('_sa_instance_state', None)
     char_info.update(char)
 
@@ -20,7 +20,7 @@ def get_character_info(char_id) -> dict:
     race = (db.session.execute(
             select(Character_Race.race_id, DND_Race.name, DND_Race.speed, DND_Race.size)
             .join(DND_Race, DND_Race.race_id == Character_Race.race_id)
-            .where(Character_Race.char_id == char_id)
+            .where(Character_Race.char_id == request_char_id)
         ).first())
     char_info.update({'race_id':race[0], 'race_name':race[1], 'speed':race[2], 'size':race[3]})
 
@@ -28,7 +28,7 @@ def get_character_info(char_id) -> dict:
     classes = (db.session.execute(
             select(Character_Class.class_id, Character_Class.class_level, DND_Class.name)
             .join(DND_Class, DND_Class.class_id == Character_Class.class_id)
-            .where(Character_Class.char_id == char_id)
+            .where(Character_Class.char_id == request_char_id)
             .order_by(Character_Class.class_id)
         ))
     char_info.update({'classes': []})
@@ -38,21 +38,21 @@ def get_character_info(char_id) -> dict:
     #Load Character Modifier Scores
     mods = (db.session.execute(
             select(Character_Stats)
-            .where(Character_Race.char_id == char_id)
+            .where(Character_Race.char_id == request_char_id)
         ).first())
-    mods = Character_Stats.query.filter_by(char_id=char_id).first().__dict__
+    mods = Character_Stats.query.filter_by(char_id=request_char_id).first().__dict__
     char_info.update({'modifier_scores': []})
     mods.pop('_sa_instance_state', None); mods.pop('char_id', None)
     for attribute in mods:
         char_info['modifier_scores'].append({'modifier_name': attribute, 'score': mods[attribute], 'value': math.floor((mods[attribute] - 10) / 2)})
 
     #Load Character Health
-    char_hp = Character_Hit_Points.query.filter_by(char_id=char_id).first().__dict__
+    char_hp = Character_Hit_Points.query.filter_by(char_id=request_char_id).first().__dict__
     char_hp.pop('_sa_instance_state', None)
     char_info.update(char_hp)
 
     #Load Character Death Saves
-    char_death_saves = Character_Death_Saves.query.filter_by(char_id=char_id).first().__dict__
+    char_death_saves = Character_Death_Saves.query.filter_by(char_id=request_char_id).first().__dict__
     char_death_saves.pop('_sa_instance_state', None)
     char_info.update(char_death_saves)
 
@@ -90,12 +90,11 @@ def get_character_info(char_id) -> dict:
     char_proficiencies = [row._asdict() for row in db.session.execute(
         select(Proficiencies.proficiency_id, Proficiencies.proficiency_name, Proficiency_Types.type_id, Proficiency_Types.type_name )
         .select_from(Character_Proficiency_Choices)
-        .join(Proficiency_Choice, Character_Proficiency_Choices.choice_list_id == Character_Proficiency_Choices.choice_list_id)
+        .join(Proficiency_Choice, Proficiency_Choice.choice_list_id == Character_Proficiency_Choices.choice_list_id)
         .join(Proficiencies, Proficiencies.proficiency_id == Proficiency_Choice.proficiency_id)
         .join(Proficiency_Types, Proficiency_Types.type_id == Proficiencies.proficiency_type)
-        .where(Character_Proficiency_Choices.char_id == char_id)
+        .filter(Character_Proficiency_Choices.char_id == request_char_id)
     )]
-    print(char_proficiencies)
     char_info.update({'proficiencies': char_proficiencies})
 
 
@@ -337,7 +336,6 @@ def create():
         db.session.add(new_character_death_saves)
 
 
-        class_proficiency_lists_length = request.form.get("class_proficiency_list_length")
         class_proficiency_choices = request.form.getlist(f"class_proficiency_list_{initial_class}_ids")
         for list_id in class_proficiency_choices:
             max_choices = request.form.get(f"class_proficiency_list_{initial_class}_{list_id}_length")
