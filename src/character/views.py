@@ -2,7 +2,7 @@ from flask import render_template, Blueprint, request, redirect, url_for, jsonif
 from flask_login import current_user, login_required
 from sqlalchemy import select
 from src.auth.models import User
-from src.character.models import Character, Character_Class, DND_Class, DND_Race, DND_Background, Character_Details, Character_Stats, Character_Race, Character_Hit_Points, Character_Death_Saves, DND_Skill
+from src.character.models import Character, Character_Class, DND_Class, DND_Race, DND_Background, Character_Details, Character_Stats, Character_Race, Character_Hit_Points, Character_Death_Saves, DND_Skill, DND_Class_Proficiency_Option, DND_Race_Proficiency_Option
 from src import db
 import math, json
 
@@ -191,6 +191,9 @@ def create():
     all_races = DND_Race.query.all()
     all_classes = DND_Class.query.all()
     all_backgrounds = DND_Background.query.all()
+    class_proficiency_lists = DND_Class_Proficiency_Option.query.all()
+    race_proficiency_lists = DND_Race_Proficiency_Option.query.all()
+
     if request.method == 'POST':
         #returns list of levels where the class is the index. will have to be changed in the future for homebrew content
         #compare indexes of users choices with indexes of classes. save chosen level along with class_id to an array
@@ -320,7 +323,7 @@ def create():
         
         return redirect(url_for('character_bp.character', character_id=new_character.char_id))
     
-    return render_template("character/character_creator.html", all_backgrounds=all_backgrounds, all_classes=all_classes, all_races=all_races)
+    return render_template("character/character_creator.html", all_backgrounds=all_backgrounds, all_classes=all_classes, all_races=all_races, class_proficiency_lists=class_proficiency_lists, race_proficiency_lists=race_proficiency_lists)
 
 @character_bp.route('/delete_character/<character_id>', methods=['POST', 'GET'])
 @login_required
