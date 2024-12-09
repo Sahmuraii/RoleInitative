@@ -54,7 +54,7 @@ class DND_Class(db.Model):
     description = db.Column(db.String(250), nullable=False)
     hit_die = db.Column(db.Integer, nullable=False)
     is_offical = db.Column(db.Boolean)
-    characters = db.relationship("Character_Class") #Characters that have this class
+    characters = db.relationship("Character_Class", back_populates="class_", overlaps="character_classes") #Characters that have this class
 
 class DND_Background(db.Model):
     __tablename__ = 'dnd_background'
@@ -175,7 +175,7 @@ class Character_Class(db.Model):
     class_level = db.Column(db.Integer, nullable=False)
     is_initial_class = db.Column(db.Boolean)
 
-    class_ = db.relationship("DND_Class", backref="character_classes")
+    class_ = db.relationship("DND_Class", back_populates="characters", overlaps="characters")
 
 class Character_Stats(db.Model):
     __tablename__ = "character_stats"
