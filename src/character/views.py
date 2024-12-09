@@ -59,7 +59,7 @@ def get_character_info(char_id) -> dict:
     #Load Character Skills
     skills = (db.session.execute(
             select(DND_Skill.skill_id, DND_Skill.skill_name, DND_Skill.modifier_type, DND_Skill.linked_proficiency_id)
-            .where(DND_Skill.is_offical == True)
+            .where(DND_Skill.is_official == True)
             .order_by(DND_Skill.skill_name, DND_Skill.modifier_type, DND_Skill.skill_id)
         ))
     char_info.update({'skills': []})
