@@ -139,7 +139,7 @@ if errorlevel 4 (
 		echo #RUN git clone -b dev-branch https://github.com/Sahmuraii/RoleInitiative.git
 		echo.
 		echo WORKDIR %appFolder%%projectFolder%
-		echo COPY requirements.txt .
+		echo COPY . .
 		echo.
 		echo RUN pip install -r requirements.txt
 		echo.
