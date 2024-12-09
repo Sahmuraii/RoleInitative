@@ -48,7 +48,7 @@ class DND_Race(db.Model):
     subraces = db.Column(db.ARRAY(db.String(50)), nullable=True)
     
     def __repr__(self):
-        dict_repr = self.__dict__; [dict_repr.pop(i) for i in ["_sa_instance_state"]]
+        dict_repr = self.__dict__; [dict_repr.pop(i, None) for i in ["_sa_instance_state"]]
         return f"<{self.__class__.__name__}({self.__dict__})>"
     
 
@@ -62,7 +62,7 @@ class DND_Class(db.Model):
     characters = db.relationship("Character_Class", back_populates="class_", overlaps="character_classes") #Characters that have this class
 
     def __repr__(self):
-        dict_repr = self.__dict__; [dict_repr.pop(i) for i in ["_sa_instance_state"]]
+        dict_repr = self.__dict__; [dict_repr.pop(i, None) for i in ["_sa_instance_state"]]
         return f"<{self.__class__.__name__}({self.__dict__})>"
 
 class DND_Background(db.Model):
@@ -80,7 +80,7 @@ class DND_Background(db.Model):
     specialty_table = db.Column(db.JSON, nullable=True)
 
     def __repr__(self):
-        dict_repr = self.__dict__; [dict_repr.pop(i) for i in ["_sa_instance_state"]]
+        dict_repr = self.__dict__; [dict_repr.pop(i, None) for i in ["_sa_instance_state"]]
         return f"<{self.__class__.__name__}({self.__dict__})>"
 
 
@@ -93,7 +93,7 @@ class Proficiency_Types(db.Model):
     type_name = db.Column(db.String(80), nullable=False)
 
     def __repr__(self):
-        dict_repr = self.__dict__; [dict_repr.pop(i) for i in ["_sa_instance_state"]]
+        dict_repr = self.__dict__; [dict_repr.pop(i, None) for i in ["_sa_instance_state"]]
         return f"<{self.__class__.__name__}({self.__dict__})>"
 
 class Proficiencies(db.Model):
@@ -104,7 +104,7 @@ class Proficiencies(db.Model):
     is_official = db.Column(db.Boolean)
 
     def __repr__(self):
-        dict_repr = self.__dict__; [dict_repr.pop(i) for i in ["_sa_instance_state"]]
+        dict_repr = self.__dict__; [dict_repr.pop(i, None) for i in ["_sa_instance_state"]]
         return f"<{self.__class__.__name__}({self.__dict__})>"
 
 class Proficiency_List(db.Model):
@@ -115,7 +115,7 @@ class Proficiency_List(db.Model):
     is_official = db.Column(db.Boolean)
 
     def __repr__(self):
-        dict_repr = self.__dict__; [dict_repr.pop(i) for i in ["_sa_instance_state"]]
+        dict_repr = self.__dict__; [dict_repr.pop(i, None) for i in ["_sa_instance_state"]]
         return f"<{self.__class__.__name__}({self.__dict__})>"
 
 class DND_Race_Proficiency_Option(db.Model):
@@ -128,7 +128,7 @@ class DND_Race_Proficiency_Option(db.Model):
     max_choices = db.Column(db.Integer, nullable=False)
 
     def __repr__(self):
-        dict_repr = self.__dict__; [dict_repr.pop(i) for i in ["_sa_instance_state"]]
+        dict_repr = self.__dict__; [dict_repr.pop(i, None) for i in ["_sa_instance_state"]]
         return f"<{self.__class__.__name__}({self.__dict__})>"
 
 class DND_Class_Proficiency_Option(db.Model):
@@ -142,7 +142,7 @@ class DND_Class_Proficiency_Option(db.Model):
     given_when_multiclass = db.Column(db.Boolean)
 
     def __repr__(self):
-        dict_repr = self.__dict__; [dict_repr.pop(i) for i in ["_sa_instance_state"]]
+        dict_repr = self.__dict__; [dict_repr.pop(i, None) for i in ["_sa_instance_state"]]
         return f"<{self.__class__.__name__}({self.__dict__})>"
 
 
@@ -154,7 +154,7 @@ class Proficiency_Choice(db.Model):
     proficiency_list_id = db.Column(db.Integer, primary_key=True, nullable=False)
 
     def __repr__(self):
-        dict_repr = self.__dict__; [dict_repr.pop(i) for i in ["_sa_instance_state"]]
+        dict_repr = self.__dict__; [dict_repr.pop(i, None) for i in ["_sa_instance_state"]]
         return f"<{self.__class__.__name__}({self.__dict__})>"
 
 
@@ -168,7 +168,7 @@ class DND_Skill(db.Model):
     is_official = db.Column(db.Boolean)
 
     def __repr__(self):
-        dict_repr = self.__dict__; [dict_repr.pop(i) for i in ["_sa_instance_state"]]
+        dict_repr = self.__dict__; [dict_repr.pop(i, None) for i in ["_sa_instance_state"]]
         return f"<{self.__class__.__name__}({self.__dict__})>"
 
 
@@ -180,7 +180,7 @@ class DND_Condition(db.Model):
     condition_description = db.Column(db.String(1500), nullable=False)
 
     def __repr__(self):
-        dict_repr = self.__dict__; [dict_repr.pop(i) for i in ["_sa_instance_state"]]
+        dict_repr = self.__dict__; [dict_repr.pop(i, None) for i in ["_sa_instance_state"]]
         return f"<{self.__class__.__name__}({self.__dict__})>"
 
 
@@ -197,7 +197,7 @@ class DND_Items(db.Model):
     is_official = db.Column(db.Boolean)
 
     def __repr__(self):
-        dict_repr = self.__dict__; [dict_repr.pop(i) for i in ["_sa_instance_state"]]
+        dict_repr = self.__dict__; [dict_repr.pop(i, None) for i in ["_sa_instance_state"]]
         return f"<{self.__class__.__name__}({self.__dict__})>"
 
 class DND_Item_Proficiencies(db.Model):
@@ -206,7 +206,7 @@ class DND_Item_Proficiencies(db.Model):
     proficiency_id = db.Column(db.Integer, db.ForeignKey(Proficiencies.proficiency_id), primary_key=True, nullable=False)
 
     def __repr__(self):
-        dict_repr = self.__dict__; [dict_repr.pop(i) for i in ["_sa_instance_state"]]
+        dict_repr = self.__dict__; [dict_repr.pop(i, None) for i in ["_sa_instance_state"]]
         return f"<{self.__class__.__name__}({self.__dict__})>"
 
 class Equipment_Positions(db.Model):
@@ -215,7 +215,7 @@ class Equipment_Positions(db.Model):
     position_name = db.Column(db.String(50), nullable=False)
 
     def __repr__(self):
-        dict_repr = self.__dict__; [dict_repr.pop(i) for i in ["_sa_instance_state"]]
+        dict_repr = self.__dict__; [dict_repr.pop(i, None) for i in ["_sa_instance_state"]]
         return f"<{self.__class__.__name__}({self.__dict__})>"
 
 
@@ -229,7 +229,7 @@ class Character_Race(db.Model):
     race = db.relationship("DND_Race", backref="character_races")
 
     def __repr__(self):
-        dict_repr = self.__dict__; [dict_repr.pop(i) for i in ["_sa_instance_state"]]
+        dict_repr = self.__dict__; [dict_repr.pop(i, None) for i in ["_sa_instance_state"]]
         return f"<{self.__class__.__name__}({self.__dict__})>"
 
 class Character_Class(db.Model):
@@ -242,7 +242,7 @@ class Character_Class(db.Model):
     class_ = db.relationship("DND_Class", back_populates="characters", overlaps="characters")
 
     def __repr__(self):
-        dict_repr = self.__dict__; [dict_repr.pop(i) for i in ["_sa_instance_state"]]
+        dict_repr = self.__dict__; [dict_repr.pop(i, None) for i in ["_sa_instance_state"]]
         return f"<{self.__class__.__name__}({self.__dict__})>"
 
 class Character_Stats(db.Model):
@@ -256,7 +256,7 @@ class Character_Stats(db.Model):
     charisma = db.Column(db.Integer, nullable=False)
 
     def __repr__(self):
-        dict_repr = self.__dict__; [dict_repr.pop(i) for i in ["_sa_instance_state"]]
+        dict_repr = self.__dict__; [dict_repr.pop(i, None) for i in ["_sa_instance_state"]]
         return f"<{self.__class__.__name__}({self.__dict__})>"
 
 class Character_Details(db.Model):
@@ -277,7 +277,7 @@ class Character_Details(db.Model):
     faith = db.Column(db.String(50), nullable=True)
 
     def __repr__(self):
-        dict_repr = self.__dict__; [dict_repr.pop(i) for i in ["_sa_instance_state"]]
+        dict_repr = self.__dict__; [dict_repr.pop(i, None) for i in ["_sa_instance_state"]]
         return f"<{self.__class__.__name__}({self.__dict__})>"
 
 #   >>> HP / Death Saves
@@ -290,7 +290,7 @@ class Character_Hit_Points(db.Model):
     # Should we have max_temp_hit_points TODO: Look into multiple temp hit point sources and the logic for what even matters
 
     def __repr__(self):
-        dict_repr = self.__dict__; [dict_repr.pop(i) for i in ["_sa_instance_state"]]
+        dict_repr = self.__dict__; [dict_repr.pop(i, None) for i in ["_sa_instance_state"]]
         return f"<{self.__class__.__name__}({self.__dict__})>"
 
 class Character_Death_Saves(db.Model):
@@ -300,7 +300,7 @@ class Character_Death_Saves(db.Model):
     fail_throws = db.Column(db.Integer, nullable=False)
 
     def __repr__(self):
-        dict_repr = self.__dict__; [dict_repr.pop(i) for i in ["_sa_instance_state"]]
+        dict_repr = self.__dict__; [dict_repr.pop(i, None) for i in ["_sa_instance_state"]]
         return f"<{self.__class__.__name__}({self.__dict__})>"
 
 
@@ -314,7 +314,7 @@ class Character_Proficiency_Choices(db.Model):
     choice_list_id = db.Column(db.Integer, primary_key=True, nullable=False)
 
     def __repr__(self):
-        dict_repr = self.__dict__; [dict_repr.pop(i) for i in ["_sa_instance_state"]]
+        dict_repr = self.__dict__; [dict_repr.pop(i, None) for i in ["_sa_instance_state"]]
         return f"<{self.__class__.__name__}({self.__dict__})>"
 
 
@@ -325,7 +325,7 @@ class Character_Extra_Skill(db.Model):
     skill_id = db.Column(db.Integer, primary_key=True, nullable=False)
 
     def __repr__(self):
-        dict_repr = self.__dict__; [dict_repr.pop(i) for i in ["_sa_instance_state"]]
+        dict_repr = self.__dict__; [dict_repr.pop(i, None) for i in ["_sa_instance_state"]]
         return f"<{self.__class__.__name__}({self.__dict__})>"
 
 
@@ -338,7 +338,7 @@ class Character_Condition(db.Model):
     condition_strength = db.Column(db.Integer, nullable=False, default=1)
 
     def __repr__(self):
-        dict_repr = self.__dict__; [dict_repr.pop(i) for i in ["_sa_instance_state"]]
+        dict_repr = self.__dict__; [dict_repr.pop(i, None) for i in ["_sa_instance_state"]]
         return f"<{self.__class__.__name__}({self.__dict__})>"
 
 
@@ -351,7 +351,7 @@ class Character_Inventory(db.Model):
     equipped_position = db.Column(db.Integer, db.ForeignKey(Equipment_Positions.position_id))
 
     def __repr__(self):
-        dict_repr = self.__dict__; [dict_repr.pop(i) for i in ["_sa_instance_state"]]
+        dict_repr = self.__dict__; [dict_repr.pop(i, None) for i in ["_sa_instance_state"]]
         return f"<{self.__class__.__name__}({self.__dict__})>"
 
 class DND_Class_Feature(db.Model):
@@ -364,5 +364,5 @@ class DND_Class_Feature(db.Model):
     feature_base_class = db.Column(db.Integer, db.ForeignKey(DND_Class.class_id), nullable=False)
 
     def __repr__(self):
-        dict_repr = self.__dict__; [dict_repr.pop(i) for i in ["_sa_instance_state"]]
+        dict_repr = self.__dict__; [dict_repr.pop(i, None) for i in ["_sa_instance_state"]]
         return f"<{self.__class__.__name__}({self.__dict__})>"
