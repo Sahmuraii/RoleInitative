@@ -18,8 +18,6 @@
             <button class="tab" onclick="showTab('equipment')">Equipment</button>
             {% if current_user.is_admin %}
                 <button class="tab" onclick="showTab('debug')">Admin Tab</button>
-            {% else %}
-                <p>User is NOT authenticated.</p>
             {% endif %}
         </div>
 
