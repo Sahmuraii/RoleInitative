@@ -336,6 +336,10 @@ function showTab(tabId) {
     document.getElementById(tabId).classList.add('active');
 }
 
+function prepFormSubmission(){
+    setHiddenCharacterSummary()
+}
+
 function setHiddenCharacterSummary() {
     storeFinalValue("final-str", "summary-strength");
     storeFinalValue("final-dex", "summary-dexterity");
@@ -356,14 +360,17 @@ function showClassProficiencies() {
         var class_proficiency_lists = document.getElementsByName("class_proficiency_lists");
         class_proficiency_lists.forEach(element => {
             element.style.display = "none";
+            element.setAttribute("disabled", "true");
         });
     } else {
         document.getElementById("class_proficiency_list_no-class-selected").style.display = "none";
         var class_proficiency_lists = document.getElementsByName("class_proficiency_lists");
         class_proficiency_lists.forEach(element => {
             element.style.display = "none";
+            element.setAttribute("disabled", "true");
         });
         document.getElementById(`class_proficiency_list_${firstClassSelect.value}`).style.display = "block";
+        document.getElementById(`class_proficiency_list_${firstClassSelect.value}`).removeAttribute("disabled");
     }
 }
 

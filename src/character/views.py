@@ -2,7 +2,7 @@ from flask import render_template, Blueprint, request, redirect, url_for, jsonif
 from flask_login import current_user, login_required
 from sqlalchemy import select
 from src.auth.models import User
-from src.character.models import Character, Character_Class, DND_Class, DND_Race, DND_Background, Character_Details, Character_Stats, Character_Race, Character_Hit_Points, Character_Death_Saves, DND_Skill, DND_Class_Proficiency_Option, DND_Race_Proficiency_Option, Proficiency_List, Proficiencies
+from src.character.models import Character, Character_Class, DND_Class, DND_Race, DND_Background, Character_Details, Character_Stats, Character_Race, Character_Hit_Points, Character_Death_Saves, DND_Skill, DND_Class_Proficiency_Option, DND_Race_Proficiency_Option, Proficiency_List, Proficiencies, Character_Proficiency_Choices, Proficiency_Choice
 from src import db
 import math, json
 
@@ -88,11 +88,6 @@ def get_character_info(char_id) -> dict:
 
     #print(char_info)
     return char_info
-
-
-
-
-#{'proficiency_bonus': 5, 'inspiration': None, 'char_id': 21, 'owner_id': 8, 'name': 'Karnation2', 'total_level': 16, 'race_id': 1, 'race_name': 'Dragonborn', 'speed': 30, 'size': 'Medium', 'classes': [{'class_id': 3, 'level': 10, 'class_name': 'Cleric'}, {'class_id': 5, 'level': 3, 'class_name': 'Fighter'}, {'class_id': 6, 'level': 3, 'class_name': 'Monk'}], 'modifier_scores': [{'dexterity': 8, 'constitution': 8, 'wisdom': 8, 'strength': 8, 'intelligence': 8, 'charisma': 8}], 'hit_points': 0, 'temp_hit_points': 0, 'max_hit_points': 0, 'success_throws': 0, 'fail_throws': 0}
 
 
 
@@ -220,8 +215,6 @@ def create():
         #ruleset = request.form.get('ruleset')
         #xp_method = request.form.get('xp_method')
         #encumbrance = request.form.get('encumbrance')
-        
-        #just a dummy html page that displays two arrays
 
         strength = request.form.get('final-str')
         dexterity = request.form.get('final-dex')
@@ -314,7 +307,6 @@ def create():
         
         db.session.commit() # Needed in order to calculate max HP
 
-        #TODO: Save Characters Actual HP (not just temp values)
         new_character_hp = Character_Hit_Points(
             char_id = new_character.char_id,
             hit_points = calculate_max_hp(new_character.char_id),
@@ -324,12 +316,38 @@ def create():
         db.session.add(new_character_hp)
 
         #TODO: Save Character Death Saves (not just temp values)
-        new_character_hp = Character_Death_Saves(
+        new_character_death_saves = Character_Death_Saves(
             char_id = new_character.char_id,
             success_throws = 0,
             fail_throws = 0
         )
-        db.session.add(new_character_hp)
+        db.session.add(new_character_death_saves)
+
+
+        class_proficiency_lists_length = request.form.get("class_proficiency_list_length")
+        class_proficiency_choices = request.form.getlist(f"class_proficiency_list_{initial_class}_ids")
+        for list_id in class_proficiency_choices:
+            max_choices = request.form.get(f"class_proficiency_list_{initial_class}_{list_id}_length")
+
+            max_list = Proficiency_Choice.query.filter(Proficiency_Choice.choice_list_id>=0).order_by(Proficiency_Choice.choice_list_id.desc()).first()
+            new_choice_list_id = 1 if max_list is None else max_list.choice_list_id + 1
+
+            new_character_proficiency_choice_list = Character_Proficiency_Choices(
+                char_id=new_character.char_id,
+                proficiency_list_id=int(list_id),
+                max_choices=int(max_choices),
+                choice_list_id=new_choice_list_id
+            )
+            db.session.add(new_character_proficiency_choice_list)
+
+            for i in range(int(max_choices)):
+                user_proficiency_choice = request.form.get(f"class_proficiency_list_{initial_class}_{list_id}_{i}_selection")
+
+                new_choice_proficiency = Proficiency_Choice(
+                    choice_list_id = new_choice_list_id,
+                    proficiency_id = int(user_proficiency_choice)
+                )
+                db.session.add(new_choice_proficiency)
 
         # Only commit once all character data is ready to be entered
         db.session.commit()
