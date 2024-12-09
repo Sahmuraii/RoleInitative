@@ -319,3 +319,19 @@ h1 {
     color: lightgray;
     margin-top: 8px;
 }
+
+.dnd_stat_input {
+    margin-bottom: 5px;
+}
+
+.proficiency_choice_select {
+    margin: 5px;
+    margin-left: 15px;
+    height: 20px;
+    min-height: 1.5em;
+}
+
+.selection_container{
+    margin: 5px;
+    margin-left: 15px;
+}

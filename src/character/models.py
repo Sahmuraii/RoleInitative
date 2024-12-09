@@ -311,7 +311,8 @@ class Character_Proficiency_Choices(db.Model):
     #proficiency_list_id = db.Column(db.Integer, db.ForeignKey(Proficiency_List.proficiency_list_id), primary_key=True, nullable=False)
     #choice_list_id = db.Column(db.Integer, db.ForeignKey(Proficiency_Choice.choice_list_id), primary_key=True, nullable=False)
     proficiency_list_id = db.Column(db.Integer, primary_key=True, nullable=False)
-    choice_list_id = db.Column(db.Integer, primary_key=True, nullable=False)
+    max_choices = db.Column(db.Integer, primary_key=True, nullable=False)
+    choice_list_id = db.Column(db.Integer, nullable=False)
 
     def __repr__(self):
         dict_repr = self.__dict__; [dict_repr.pop(i, None) for i in ["_sa_instance_state"]]

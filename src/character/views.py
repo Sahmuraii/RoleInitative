@@ -2,7 +2,7 @@ from flask import render_template, Blueprint, request, redirect, url_for, jsonif
 from flask_login import current_user, login_required
 from sqlalchemy import select
 from src.auth.models import User
-from src.character.models import Character, Character_Class, DND_Class, DND_Race, DND_Background, Character_Details, Character_Stats, Character_Race, Character_Hit_Points, Character_Death_Saves, DND_Skill, DND_Class_Proficiency_Option, DND_Race_Proficiency_Option
+from src.character.models import Character, Character_Class, DND_Class, DND_Race, DND_Background, Character_Details, Character_Stats, Character_Race, Character_Hit_Points, Character_Death_Saves, DND_Skill, DND_Class_Proficiency_Option, DND_Race_Proficiency_Option, Proficiency_List, Proficiencies
 from src import db
 import math, json
 
@@ -191,8 +191,21 @@ def create():
     all_races = DND_Race.query.all()
     all_classes = DND_Class.query.all()
     all_backgrounds = DND_Background.query.all()
-    class_proficiency_lists = DND_Class_Proficiency_Option.query.all()
-    race_proficiency_lists = DND_Race_Proficiency_Option.query.all()
+    # class_proficiency_lists = (
+    #     db.session.query(DND_Class_Proficiency_Option)
+    #     .join(DND_Class, DND_Class_Proficiency_Option.given_by_class == DND_Class.class_id)
+    #     .order_by(DND_Class_Proficiency_Option.proficiency_list_id.asc(), DND_Class_Proficiency_Option.given_by_class.asc())
+    #     ).all()
+    class_proficiency_lists = [
+        {**row._asdict(), 'proficiency_options':[
+                              {'id': proficiency.proficiency_id, 'name': proficiency.proficiency_name, 'type': proficiency.proficiency_type} 
+                                for proficiency in Proficiencies.query.join(Proficiency_List, Proficiencies.proficiency_id==Proficiency_List.proficiency_id).filter(Proficiency_List.proficiency_list_id=={**row._asdict()}['proficiency_list_id']).all()
+                            ]} 
+            for row in db.session.execute(
+                select("*").select_from(DND_Class_Proficiency_Option).join(DND_Class, DND_Class.class_id == DND_Class_Proficiency_Option.given_by_class)
+            )]
+
+    race_proficiency_lists = DND_Race_Proficiency_Option.query.join(DND_Race, DND_Race.race_id==DND_Race_Proficiency_Option.given_by_race).all()
 
     if request.method == 'POST':
         #returns list of levels where the class is the index. will have to be changed in the future for homebrew content
