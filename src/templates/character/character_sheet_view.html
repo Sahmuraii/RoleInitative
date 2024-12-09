@@ -48,13 +48,13 @@
                 <span class="character_skill_line_skill_name" id="skill_{{skill['skill_id']}}_name">{% if skill["skill_name"] is defined %}{{ skill["skill_name"] }}{% else %}[Unknown Skill Name]{% endif %}</span>
                 <span class="character_skill_line_mod" id="mod_{{skill['skill_id']}}_label">{% if skill["modifier_type"] is defined %}{{ skill["modifier_type"][:3].upper() }}{% else %}[??]{% endif %}</span>
                 <button id="skill_{{skill['skill_id']}}_modifier" name="skill_id_modifier" class="character_skill_line_bonus"> 
-                        {% if skill["modifier_value"] is defined %}
-                            {% if is_proficient and char_si["proficiency_bonus"] is defined %}
-                                {% if (skill["modifier_value"] + char_si["proficiency_bonus"]) >= 0 %}+{% endif %}{{ skill["modifier_value"]+char_si["proficiency_bonus"] }}
-                            {% else %}
-                                {% if skill["modifier_value"] >= 0 %}+{% endif %}{{ skill["modifier_value"] }}
-                            {% endif %}
-                        {% else %}--
+                    {% if skill["modifier_value"] is defined %}
+                        {% if is_proficient and char_si["proficiency_bonus"] is defined %}
+                            {% if (skill["modifier_value"] + char_si["proficiency_bonus"]) >= 0 %}+{% endif %}{{ skill["modifier_value"]+char_si["proficiency_bonus"] }}
+                        {% else %}
+                            {% if skill["modifier_value"] >= 0 %}+{% endif %}{{ skill["modifier_value"] }}
+                        {% endif %}
+                    {% else %}--
                     {% endif %}
                 </button>
             </div>
@@ -117,40 +117,100 @@
             <span class="saving_throws_block_label" id="saving_throws_block_label">Saving Throws</span>
         </div>
         <!-- Strength -->
+        {% set is_proficient = [] %}{% for proficiency in char_si['proficiencies'] %}{% if ('saving-throw' in (proficiency['type_name'] | lower )) and ((STR | lower ) in (proficiency['proficiency_name'] | lower)) %} {% set _ = is_proficient.append(1) %} {% endif %}{% endfor %}
         <div class="saving_throw_modifier_base saving_throw_modifier_1 saving_throw_1" id="saving_throw_1">
-            <span class="saving_throw_proficient" id="saving_throw_1_proficient">&#9675;</span>
+            <span class="saving_throw_proficient" id="saving_throw_1_proficient">{% if is_proficient %}&#9679;{% else %}&#9675;{% endif %}</span>
             <span class="saving_throw_abbreviation" id="saving_throw_1_abbreviation">STR</span>
-            <button id="saving_throw_1_field" class="saving_throw_field">{%if char_si["modifier_scores"][4].value >= 0 %}+{% endif %}{{ char_si["modifier_scores"][4].value }}</button>
+            <button id="saving_throw_1_field" class="saving_throw_field">
+                {% if char_si["modifier_scores"] is defined %}
+                    {% if is_proficient and char_si["proficiency_bonus"] is defined %}
+                        {%if (char_si["modifier_scores"][4].value + char_si["proficiency_bonus"]) >= 0 %}+{% endif %}{{ char_si["modifier_scores"][4].value + char_si["proficiency_bonus"] }}
+                    {% else %}
+                        {%if char_si["modifier_scores"][4].value >= 0 %}+{% endif %}{{ char_si["modifier_scores"][4].value }}
+                    {% endif %}
+                {% else %}--
+                {% endif %}
+            </button>
         </div>
         <!-- Dexterity -->
+        {% set is_proficient = [] %}{% for proficiency in char_si['proficiencies'] %}{% if ('saving-throw' in (proficiency['type_name'] | lower )) and ((DEX | lower ) in (proficiency['proficiency_name'] | lower)) %} {% set _ = is_proficient.append(1) %} {% endif %}{% endfor %}
         <div class="saving_throw_modifier_base saving_throw_modifier_1 saving_throw_2" id="saving_throw_2">
-            <span class="saving_throw_proficient" id="saving_throw_1_proficient_1">&#9675;</span>
+            <span class="saving_throw_proficient" id="saving_throw_1_proficient_1">{% if is_proficient %}&#9679;{% else %}&#9675;{% endif %}</span>
             <span class="saving_throw_abbreviation" id="saving_throw_1_abbreviation_1">DEX</span>
-            <button id="saving_throw_1_field_1" class="saving_throw_field">{%if char_si["modifier_scores"][1].value >= 0 %}+{% endif %}{{ char_si["modifier_scores"][1].value }}</button>
+            <button id="saving_throw_1_field_1" class="saving_throw_field">
+                {% if char_si["modifier_scores"] is defined %}
+                    {% if is_proficient and char_si["proficiency_bonus"] is defined %}
+                        {%if (char_si["modifier_scores"][1].value + char_si["proficiency_bonus"]) >= 0 %}+{% endif %}{{ char_si["modifier_scores"][1].value + char_si["proficiency_bonus"] }}
+                    {% else %}
+                        {%if char_si["modifier_scores"][1].value >= 0 %}+{% endif %}{{ char_si["modifier_scores"][1].value }}
+                    {% endif %}
+                {% else %}--
+                {% endif %}
+            </button>
         </div>
         <!-- Constitution -->
+        {% set is_proficient = [] %}{% for proficiency in char_si['proficiencies'] %}{% if ('saving-throw' in (proficiency['type_name'] | lower )) and ((CON | lower ) in (proficiency['proficiency_name'] | lower)) %} {% set _ = is_proficient.append(1) %} {% endif %}{% endfor %}
         <div class="saving_throw_modifier_base saving_throw_modifier_1 saving_throw_3" id="saving_throw_3">
-            <span class="saving_throw_proficient" id="saving_throw_1_proficient_2">&#9675;</span>
+            <span class="saving_throw_proficient" id="saving_throw_1_proficient_2">{% if is_proficient %}&#9679;{% else %}&#9675;{% endif %}</span>
             <span class="saving_throw_abbreviation" id="saving_throw_1_abbreviation_2">CON</span>
-            <button id="saving_throw_1_field_2" class="saving_throw_field">{%if char_si["modifier_scores"][0].value >= 0 %}+{% endif %}{{ char_si["modifier_scores"][0].value }}</button>
+            <button id="saving_throw_1_field_2" class="saving_throw_field">
+                {% if char_si["modifier_scores"] is defined %}
+                    {% if is_proficient and char_si["proficiency_bonus"] is defined %}
+                        {%if (char_si["modifier_scores"][0].value + char_si["proficiency_bonus"]) >= 0 %}+{% endif %}{{ char_si["modifier_scores"][0].value + char_si["proficiency_bonus"] }}
+                    {% else %}
+                        {%if char_si["modifier_scores"][0].value >= 0 %}+{% endif %}{{ char_si["modifier_scores"][0].value }}
+                    {% endif %}
+                {% else %}--
+                {% endif %}
+            </button>
         </div>
         <!-- Intelligence -->
+        {% set is_proficient = [] %}{% for proficiency in char_si['proficiencies'] %}{% if ('saving-throw' in (proficiency['type_name'] | lower )) and ((INT | lower ) in (proficiency['proficiency_name'] | lower)) %} {% set _ = is_proficient.append(1) %} {% endif %}{% endfor %}
         <div class="saving_throw_modifier_base saving_throw_modifier_1 saving_throw_4" id="saving_throw_4">
-            <span class="saving_throw_proficient" id="saving_throw_1_proficient_3">&#9675;</span>
+            <span class="saving_throw_proficient" id="saving_throw_1_proficient_3">{% if is_proficient %}&#9679;{% else %}&#9675;{% endif %}</span>
             <span class="saving_throw_abbreviation" id="saving_throw_1_abbreviation_3">INT</span>
-            <button id="saving_throw_1_field_3" class="saving_throw_field">{%if char_si["modifier_scores"][3].value >= 0 %}+{% endif %}{{ char_si["modifier_scores"][3].value }}</button>
+            <button id="saving_throw_1_field_3" class="saving_throw_field">
+                {% if char_si["modifier_scores"] is defined %}
+                    {% if is_proficient and char_si["proficiency_bonus"] is defined %}
+                        {%if (char_si["modifier_scores"][3].value + char_si["proficiency_bonus"]) >= 0 %}+{% endif %}{{ char_si["modifier_scores"][3].value + char_si["proficiency_bonus"] }}
+                    {% else %}
+                        {%if char_si["modifier_scores"][3].value >= 0 %}+{% endif %}{{ char_si["modifier_scores"][3].value }}
+                    {% endif %}
+                {% else %}--
+                {% endif %}
+            </button>
         </div>
         <!-- Wisdom -->
+        {% set is_proficient = [] %}{% for proficiency in char_si['proficiencies'] %}{% if ('saving-throw' in (proficiency['type_name'] | lower )) and ((WIS | lower ) in (proficiency['proficiency_name'] | lower)) %} {% set _ = is_proficient.append(1) %} {% endif %}{% endfor %}
         <div class="saving_throw_modifier_base saving_throw_modifier_1 saving_throw_5" id="saving_throw_5">
-            <span class="saving_throw_proficient" id="saving_throw_1_proficient_4">&#9675;</span>
+            <span class="saving_throw_proficient" id="saving_throw_1_proficient_4">{% if is_proficient %}&#9679;{% else %}&#9675;{% endif %}</span>
             <span class="saving_throw_abbreviation" id="saving_throw_1_abbreviation_4">WIS</span>
-            <button id="saving_throw_1_field_4" class="saving_throw_field">{%if char_si["modifier_scores"][2].value >= 0 %}+{% endif %}{{ char_si["modifier_scores"][2].value }}</button>
+            <button id="saving_throw_1_field_4" class="saving_throw_field">
+                {% if char_si["modifier_scores"] is defined %}
+                    {% if is_proficient and char_si["proficiency_bonus"] is defined %}
+                        {%if (char_si["modifier_scores"][2].value + char_si["proficiency_bonus"]) >= 0 %}+{% endif %}{{ char_si["modifier_scores"][2].value + char_si["proficiency_bonus"] }}
+                    {% else %}
+                        {%if char_si["modifier_scores"][2].value >= 0 %}+{% endif %}{{ char_si["modifier_scores"][2].value }}
+                    {% endif %}
+                {% else %}--
+                {% endif %}
+            </button>
         </div>
         <!-- Charisma -->
+        {% set is_proficient = [] %}{% for proficiency in char_si['proficiencies'] %}{% if ('saving-throw' in (proficiency['type_name'] | lower )) and ((CHA | lower ) in (proficiency['proficiency_name'] | lower)) %} {% set _ = is_proficient.append(1) %} {% endif %}{% endfor %}
         <div class="saving_throw_modifier_base saving_throw_modifier_1 saving_throw_6" id="saving_throw_6">
-            <span class="saving_throw_proficient" id="saving_throw_1_proficient_5">&#9675;</span>
+            <span class="saving_throw_proficient" id="saving_throw_1_proficient_5">{% if is_proficient %}&#9679;{% else %}&#9675;{% endif %}</span>
             <span class="saving_throw_abbreviation" id="saving_throw_1_abbreviation_5">CHA</span>
-            <button id="saving_throw_1_field_5" class="saving_throw_field">{%if char_si["modifier_scores"][5].value >= 0 %}+{% endif %}{{ char_si["modifier_scores"][5].value }}</button>
+            <button id="saving_throw_1_field_5" class="saving_throw_field">
+                {% if char_si["modifier_scores"] is defined %}
+                    {% if is_proficient and char_si["proficiency_bonus"] is defined %}
+                        {%if (char_si["modifier_scores"][5].value + char_si["proficiency_bonus"]) >= 0 %}+{% endif %}{{ char_si["modifier_scores"][5].value + char_si["proficiency_bonus"] }}
+                    {% else %}
+                        {%if char_si["modifier_scores"][5].value >= 0 %}+{% endif %}{{ char_si["modifier_scores"][5].value }}
+                    {% endif %}
+                {% else %}--
+                {% endif %}
+            </button>
         </div>
     </div>
 

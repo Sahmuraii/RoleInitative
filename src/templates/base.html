@@ -18,19 +18,19 @@
         	<img src="../../static/images/RILogoWithTextNoBorder.png" alt="Logo" class="nav-logo">
         </a>
         <div class="navbar-links">
-            <a href="#">Search (Not functional rn)</a>
-            <a href="#">Campaigns (Not functional rn)</a>
-            <a href="#">News (Not functional rn)</a>
-            <a href="#">Collection (Not functional rn)</a>
-            <a href="#">Forums (Not functional rn)</a>
+            <a href="#">Search (WIP)</a>
+            <a href="#">Campaigns (WIP)</a>
+            <a href="#">News (WIP)</a>
+            <a href="#">Collection (WIP)</a>
+            <a href="#">Forums (WIP)</a>
         </div>
         {% if current_user.is_authenticated %}
         	<div class="profile">
         	    <span class="profile-name">{{current_user.username}}</span>
         	    <div class="profile-dropdown">
         	        <a href="/profile/{{current_user.username}}">Profile</a>
-        	        <a href="#">My Campaigns (Not functional rn)</a>
-        	        <a href="#">Settings (Not functional rn)</a>
+        	        <a href="#">My Campaigns (WIP)</a>
+        	        <a href="#">Settings (WIP)</a>
         	        <a href="{{ url_for('auth_bp.logout') }}">Log Out</a>
         	    </div>
         	</div>

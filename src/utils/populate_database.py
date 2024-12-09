@@ -238,7 +238,7 @@ def populate_proficiency_types():
         {'id': 2, 'name':'Weapons'},
         {'id': 3, 'name':'Tool'},
         {'id': 4, 'name':'Armor'},
-        {'id': 5, 'name':'Saving Throw'},
+        {'id': 5, 'name':'Saving-Throw'},
         {'id': 6, 'name':'Spell'},
         {'id': 7, 'name':'Equipment'},
         {'id': 8, 'name':'Ability-Scores'}
@@ -514,4 +514,3 @@ def repopulate_empty_tables():
     fetch_and_populate_proficiencies()
     fetch_and_populate_class_proficiencies()
     fetch_and_populate_race_proficiencies()
-    pass
