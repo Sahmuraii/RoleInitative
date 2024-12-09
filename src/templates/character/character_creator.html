@@ -12,6 +12,7 @@
             <button class="tab active" onclick="showTab('basicInfo')">Basic Info</button>
             <button class="tab" onclick="showTab('race')">Race</button>
             <button class="tab" onclick="showTab('class')">Class</button>
+            <button class="tab" onclick="showTab('class_proficiencies')">Class Proficiencies</button>
             <button class="tab" onclick="showTab('attributes')">Attributes</button>
             <button class="tab" onclick="showTab('details')">Character Details</button>
             <button class="tab" onclick="showTab('equipment')">Equipment</button>
@@ -76,10 +77,44 @@
 
                 {% for dnd_class in all_classes %}
                 <label for="{{dnd_class.name}}" name="multiclass_label">{{ dnd_class.name }}</label><label for="{{dnd_class.name}}">: </label>
-                <input type="number" id="{{dnd_class.name}}" name="multiclass_level" value="0" min="0" max="20"><br>
+                <input type="number" id="{{dnd_class.name}}" name="multiclass_level" value="0" min="0" max="20" class="dnd_stat_input"><br>
                 {% endfor %}
                 
                 <br><button type="button" onclick="window.location.href='/homebrew/classes'">Browse Homebrew Classes</button>
+            </div>
+
+            <!-- Class Proficiencies -->
+            <div id="class_proficiencies" class="tab-content" name="character_class_proficiencies">
+
+                <div id="class_proficiency_list_no-class-selected" dnd_class_no-class-selected style="display: none;">
+                    <label for="no-class-selected" name="class_proficiencies_label"><strong>No Class Selected...</strong></label><br><label for="no-class-selected">No proficiency options to display</label>
+                    <!--<input type="number" id="no-class-selected" name="class_proficiencies_level" value="0" min="0" max="20" class="dnd_stat_input">--><br>
+                    <br>
+                </div>
+                <input type="number" id="class_proficiency_list_length" name="class_proficiency_list_length" value="{{ class_proficiency_lists | length }}" style="display:none;" readonly>
+            {% for dnd_class in all_classes %}
+                <div id="class_proficiency_list_{{dnd_class['class_id']}}" name="class_proficiency_lists" dnd_class_{{dnd_class['name']}} style="display: none;">
+                    <label for="{{dnd_class.class_id}}" name="class_proficiencies_label"><strong>{{ dnd_class.name }}</strong></label><label for="{{dnd_class.name}}"><strong> Proficiencies:</strong></label>
+                    <!--<input type="number" id="{{dnd_class.name}}" name="class_proficiencies_level" value="0" min="0" max="20" class="dnd_stat_input">--><br>
+                    {% for proficiency_list in class_proficiency_lists %} {% if proficiency_list['class_id'] == dnd_class['class_id'] %}
+                        <input type="number" id="class_proficiency_list_id" name="class_proficiency_list_{{dnd_class.class_id}}_ids" value="{{ proficiency_list['proficiency_list_id'] }}" style="display:none;" readonly>
+                        <input type="number" id="class_proficiency_list_length" name="class_proficiency_list_{{dnd_class.class_id}}_{{proficiency_list['proficiency_list_id']}}_length" value="{{ proficiency_list['max_choices'] }}" style="display:none;" readonly>
+
+                        <div id="class_proficiency_{{dnd_class.class_id}}_{{proficiency_list['proficiency_list_id']}}_div" class="selection_container">
+                        <label for="{{dnd_class.class_id}}_{{proficiency_list['proficiency_list_id']}}" name="class_proficiency_list_{{dnd_class.class_id}}_{{proficiency_list['proficiency_list_id']}}_choice">{{ proficiency_list['list_description'] }}</label><br>
+                        {% for i in range(proficiency_list['max_choices'])%}
+                            <select class="proficiency_choice_select" id="class_proficiency_list_{{dnd_class.class_id}}_{{proficiency_list['proficiency_list_id']}}_{{i}}" name="class_proficiency_list_{{dnd_class.class_id}}_{{proficiency_list['proficiency_list_id']}}_{{i}}_selection">
+                            {% for option in proficiency_list['proficiency_options'] %}
+                                <option value="{{option['id']}}">{{option['name']}}</option>
+                            {% endfor %}
+                            </select><br>
+                        {% endfor %}
+                        </div><br>
+                    {% endif %}
+                    {% endfor %}
+                    <br>
+                </div>
+            {% endfor %}
             </div>
 
             <!-- Attributes -->
@@ -328,7 +363,7 @@
                 </p>
             </div>
             <div class="button-group">
-                <br><button type="submit" onclick="setHiddenCharacterSummary()">Save Character</button>
+                <br><button type="submit" onclick="prepFormSubmission()">Save Character</button>
             </div>
             <div style="display:none">
                 <input type="number" id="final-str" name="final-str" value="8" min="1" max="20" readonly><br>

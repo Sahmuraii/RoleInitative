@@ -22,6 +22,13 @@ if errorlevel 1 (
     exit /b 1
 )
 
+:: Check for .env file. Database will not work without it.
+if NOT EXIST .env (
+    echo Environment File not found. Please contact an admin only if you should be in posession of this file.
+    timeout /t 10 /nobreak
+    exit /b 1
+)
+
 :: Prompt the user for which Dockerfile to use
 echo -------------------------------------------------------------
 echo Select which Dockerfile to use for building the Docker image:
@@ -186,6 +193,7 @@ if errorlevel 1 (
 :: Run the newly built image with port mapping and container name
 echo Running Docker image with container name %containerName% and port mapping (5000:5000)...
 docker run -d -p 5000:5000 --name %containerName% %imageName%
+::docker run --network=host -d --name %containerName% %imageName%
 
 :: Check if the image ran successfully
 if errorlevel 1 (
@@ -219,15 +227,15 @@ if errorlevel 3 (
 	docker stop %containerName% >nul
 ) else if errorlevel 2 (
 	::Do nothing...
-	echo Closing gently...
+	echo Leaving Container Open. Closing CMD...
 ) else if errorlevel 1 (
 	echo Stopping the container %containerName%...
 	docker stop %containerName% >nul
 ) else (
-    echo Invalid choice. Please enter 1, 2, or 3
+	echo Invalid choice. Please enter 1, 2, or 3
 	echo Closing in 5 seconds...
 	timeout /t 5 /nobreak >nul
-    exit /b 1
+	exit /b 1
 )
 
 :: Show a 10-second timer before closing

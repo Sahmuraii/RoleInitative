@@ -155,6 +155,10 @@ html {
     width: 98%;
     left: 50%;
 }
+.hp_damage_button:hover {
+    background-color:#ff8080;
+    transition: 0.4s;
+}
 .hp_change_field {
     display: block;
     height: 22%;
@@ -185,6 +189,10 @@ html {
     transform: translate(-50%, -50%);
     width: 98%;
     left: 50%;
+}
+.hp_heal_button:hover {
+    background-color:#61d262;
+    transition: 0.4s;
 }
 .hp_display_block {
     position: absolute;
@@ -318,6 +326,10 @@ html {
     border-color: rgb(160, 160, 160);
     font-size: 19px;
 }
+.initiative_field:hover {
+    background-color:#d0d0d0;
+    transition: 0.4s;
+}
 .inspiration_label {
     position: absolute;
     font-size: 18px;
@@ -397,6 +409,10 @@ left: 50%;
     height: 34%;
     left: 50%;
     top: 47%;
+}
+.character_modifier_field:hover {
+    background-color:#d0d0d0;
+    transition: 0.4s;
 }
 .character_modifier_score_field {
     position: absolute;
@@ -561,6 +577,10 @@ left: 50%;
     top: 54%;
     transform: translate(-50%, -50%);
 }
+.character_skill_line_bonus:hover {
+    background-color:#d0d0d0;
+    transition: 0.4s;
+}
 .character_skills_footer_bar {
     position: absolute;
     transform: translate(-50%, -50%);
@@ -669,6 +689,10 @@ left: 50%;
     font-size: 16px;
     left: 77%;
     border-color: rgb(137, 137, 137);
+}
+.saving_throw_field:hover {
+    background-color:#d0d0d0;
+    transition: 0.4s;
 }
 .character_modifier_2 {
     left: 16.667%;

@@ -336,6 +336,10 @@ function showTab(tabId) {
     document.getElementById(tabId).classList.add('active');
 }
 
+function prepFormSubmission(){
+    setHiddenCharacterSummary()
+}
+
 function setHiddenCharacterSummary() {
     storeFinalValue("final-str", "summary-strength");
     storeFinalValue("final-dex", "summary-dexterity");
@@ -349,6 +353,26 @@ function storeFinalValue(finalValue, summaryValue) {
     document.getElementById(finalValue).value = document.getElementById(summaryValue).textContent;
 }
 
+const firstClassSelect = document.getElementById("selectFirstClass");
+function showClassProficiencies() {
+    if ( firstClassSelect.value === "None") {
+        document.getElementById("class_proficiency_list_no-class-selected").style.display = "block";
+        var class_proficiency_lists = document.getElementsByName("class_proficiency_lists");
+        class_proficiency_lists.forEach(element => {
+            element.style.display = "none";
+            element.setAttribute("disabled", "true");
+        });
+    } else {
+        document.getElementById("class_proficiency_list_no-class-selected").style.display = "none";
+        var class_proficiency_lists = document.getElementsByName("class_proficiency_lists");
+        class_proficiency_lists.forEach(element => {
+            element.style.display = "none";
+            element.setAttribute("disabled", "true");
+        });
+        document.getElementById(`class_proficiency_list_${firstClassSelect.value}`).style.display = "block";
+        document.getElementById(`class_proficiency_list_${firstClassSelect.value}`).removeAttribute("disabled");
+    }
+}
 
 document.addEventListener("DOMContentLoaded", () => {
     // Update summary values on input changes
@@ -426,6 +450,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 firstClassSelect.innerHTML += `<option value="${classes[i]}">${inputClasses[classes[i]]}</option>`;
             }
         }
+
+        //Update Proficiency Display
+        showClassProficiencies()
     };
 
     const setLevelAllocation = () => {
@@ -502,6 +529,10 @@ document.addEventListener("DOMContentLoaded", () => {
         // Ensure display is updated when stat method changes
         document.getElementById("stat_method").addEventListener("change", updateOnChangeStatDisplay);
     });
+
+    //Update Class Proficiency List display
+    const ClassChoiceSelect = document.getElementById("selectFirstClass");
+    ClassChoiceSelect.addEventListener("change", showClassProficiencies);
 
     // Ensure the display is updated on page load
     if (charNameInput) charNameInput.dispatchEvent(new Event("input"));

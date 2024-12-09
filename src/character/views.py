@@ -2,7 +2,7 @@ from flask import render_template, Blueprint, request, redirect, url_for, jsonif
 from flask_login import current_user, login_required
 from sqlalchemy import select
 from src.auth.models import User
-from src.character.models import Character, Character_Class, DND_Class, DND_Race, DND_Background, Character_Details, Character_Stats, Character_Race, Character_Hit_Points, Character_Death_Saves, DND_Skill
+from src.character.models import Character, Character_Class, DND_Class, DND_Race, DND_Background, Character_Details, Character_Stats, Character_Race, Character_Hit_Points, Character_Death_Saves, DND_Skill, DND_Class_Proficiency_Option, DND_Race_Proficiency_Option, Proficiency_List, Proficiencies, Character_Proficiency_Choices, Proficiency_Choice, Proficiency_Types
 from src import db
 import math, json
 
@@ -59,7 +59,7 @@ def get_character_info(char_id) -> dict:
     #Load Character Skills
     skills = (db.session.execute(
             select(DND_Skill.skill_id, DND_Skill.skill_name, DND_Skill.modifier_type, DND_Skill.linked_proficiency_id)
-            .where(DND_Skill.is_offical == True)
+            .where(DND_Skill.is_official == True)
             .order_by(DND_Skill.skill_name, DND_Skill.modifier_type, DND_Skill.skill_id)
         ))
     char_info.update({'skills': []})
@@ -86,13 +86,21 @@ def get_character_info(char_id) -> dict:
         if mod['modifier_name'] != 'wisdom': continue
         char_info.update({'passive_perception': mod['value'] + 10})
 
+    #Load Character Proficiencies
+    char_proficiencies = [row._asdict() for row in db.session.execute(
+        select(Proficiencies.proficiency_id, Proficiencies.proficiency_name, Proficiency_Types.type_id, Proficiency_Types.type_name )
+        .select_from(Character_Proficiency_Choices)
+        .join(Proficiency_Choice, Character_Proficiency_Choices.choice_list_id == Character_Proficiency_Choices.choice_list_id)
+        .join(Proficiencies, Proficiencies.proficiency_id == Proficiency_Choice.proficiency_id)
+        .join(Proficiency_Types, Proficiency_Types.type_id == Proficiencies.proficiency_type)
+        .where(Character_Proficiency_Choices.char_id == char_id)
+    )]
+    print(char_proficiencies)
+    char_info.update({'proficiencies': char_proficiencies})
+
+
     #print(char_info)
     return char_info
-
-
-
-
-#{'proficiency_bonus': 5, 'inspiration': None, 'char_id': 21, 'owner_id': 8, 'name': 'Karnation2', 'total_level': 16, 'race_id': 1, 'race_name': 'Dragonborn', 'speed': 30, 'size': 'Medium', 'classes': [{'class_id': 3, 'level': 10, 'class_name': 'Cleric'}, {'class_id': 5, 'level': 3, 'class_name': 'Fighter'}, {'class_id': 6, 'level': 3, 'class_name': 'Monk'}], 'modifier_scores': [{'dexterity': 8, 'constitution': 8, 'wisdom': 8, 'strength': 8, 'intelligence': 8, 'charisma': 8}], 'hit_points': 0, 'temp_hit_points': 0, 'max_hit_points': 0, 'success_throws': 0, 'fail_throws': 0}
 
 
 
@@ -191,6 +199,22 @@ def create():
     all_races = DND_Race.query.all()
     all_classes = DND_Class.query.all()
     all_backgrounds = DND_Background.query.all()
+    # class_proficiency_lists = (
+    #     db.session.query(DND_Class_Proficiency_Option)
+    #     .join(DND_Class, DND_Class_Proficiency_Option.given_by_class == DND_Class.class_id)
+    #     .order_by(DND_Class_Proficiency_Option.proficiency_list_id.asc(), DND_Class_Proficiency_Option.given_by_class.asc())
+    #     ).all()
+    class_proficiency_lists = [
+        {**row._asdict(), 'proficiency_options':[
+                              {'id': proficiency.proficiency_id, 'name': proficiency.proficiency_name, 'type': proficiency.proficiency_type} 
+                                for proficiency in Proficiencies.query.join(Proficiency_List, Proficiencies.proficiency_id==Proficiency_List.proficiency_id).filter(Proficiency_List.proficiency_list_id=={**row._asdict()}['proficiency_list_id']).all()
+                            ]} 
+            for row in db.session.execute(
+                select("*").select_from(DND_Class_Proficiency_Option).join(DND_Class, DND_Class.class_id == DND_Class_Proficiency_Option.given_by_class)
+            )]
+
+    race_proficiency_lists = DND_Race_Proficiency_Option.query.join(DND_Race, DND_Race.race_id==DND_Race_Proficiency_Option.given_by_race).all()
+
     if request.method == 'POST':
         #returns list of levels where the class is the index. will have to be changed in the future for homebrew content
         #compare indexes of users choices with indexes of classes. save chosen level along with class_id to an array
@@ -204,8 +228,6 @@ def create():
         #ruleset = request.form.get('ruleset')
         #xp_method = request.form.get('xp_method')
         #encumbrance = request.form.get('encumbrance')
-        
-        #just a dummy html page that displays two arrays
 
         strength = request.form.get('final-str')
         dexterity = request.form.get('final-dex')
@@ -298,7 +320,6 @@ def create():
         
         db.session.commit() # Needed in order to calculate max HP
 
-        #TODO: Save Characters Actual HP (not just temp values)
         new_character_hp = Character_Hit_Points(
             char_id = new_character.char_id,
             hit_points = calculate_max_hp(new_character.char_id),
@@ -308,19 +329,45 @@ def create():
         db.session.add(new_character_hp)
 
         #TODO: Save Character Death Saves (not just temp values)
-        new_character_hp = Character_Death_Saves(
+        new_character_death_saves = Character_Death_Saves(
             char_id = new_character.char_id,
             success_throws = 0,
             fail_throws = 0
         )
-        db.session.add(new_character_hp)
+        db.session.add(new_character_death_saves)
+
+
+        class_proficiency_lists_length = request.form.get("class_proficiency_list_length")
+        class_proficiency_choices = request.form.getlist(f"class_proficiency_list_{initial_class}_ids")
+        for list_id in class_proficiency_choices:
+            max_choices = request.form.get(f"class_proficiency_list_{initial_class}_{list_id}_length")
+
+            max_list = Proficiency_Choice.query.filter(Proficiency_Choice.choice_list_id>=0).order_by(Proficiency_Choice.choice_list_id.desc()).first()
+            new_choice_list_id = 1 if max_list is None else max_list.choice_list_id + 1
+
+            new_character_proficiency_choice_list = Character_Proficiency_Choices(
+                char_id=new_character.char_id,
+                proficiency_list_id=int(list_id),
+                max_choices=int(max_choices),
+                choice_list_id=new_choice_list_id
+            )
+            db.session.add(new_character_proficiency_choice_list)
+
+            for i in range(int(max_choices)):
+                user_proficiency_choice = request.form.get(f"class_proficiency_list_{initial_class}_{list_id}_{i}_selection")
+
+                new_choice_proficiency = Proficiency_Choice(
+                    choice_list_id = new_choice_list_id,
+                    proficiency_id = int(user_proficiency_choice)
+                )
+                db.session.add(new_choice_proficiency)
 
         # Only commit once all character data is ready to be entered
         db.session.commit()
         
         return redirect(url_for('character_bp.character', character_id=new_character.char_id))
     
-    return render_template("character/character_creator.html", all_backgrounds=all_backgrounds, all_classes=all_classes, all_races=all_races)
+    return render_template("character/character_creator.html", all_backgrounds=all_backgrounds, all_classes=all_classes, all_races=all_races, class_proficiency_lists=class_proficiency_lists, race_proficiency_lists=race_proficiency_lists)
 
 @character_bp.route('/delete_character/<character_id>', methods=['POST', 'GET'])
 @login_required
