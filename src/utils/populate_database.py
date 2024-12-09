@@ -55,7 +55,7 @@ def fetch_and_populate_classes():
             name=class_details["name"],
             description=class_details["desc"],
             hit_die=class_details["hit_die"],
-            is_offical=True
+            is_official=True
         )
         
         db.session.add(new_class)
@@ -101,7 +101,7 @@ def fetch_and_populate_races():
             traits = [trait["name"] for trait in race_details["traits"]],
             subraces = [subrace["name"] for subrace in race_details["subraces"]],
             starting_proficiencies = [proficiency["name"] for proficiency in race_details["starting_proficiencies"]],
-            is_offical = True
+            is_official = True
         )
         
         existing_race = DND_Race.query.filter_by(name=race_details["name"]).first()  # Check if the class already exists
@@ -179,7 +179,7 @@ def fetch_and_populate_skills():
             skill_name = skill_details["name"],
             modifier_type = mod_type_conversion[skill_details['ability_score']['index']],
             linked_proficiency_id = None,
-            is_offical = True
+            is_official = True
         )
         
         db.session.add(new_skill)
@@ -370,7 +370,8 @@ def fetch_and_populate_class_proficiencies():
                 proficiency_list_id = new_list_id,
                 given_by_class = class_referenced.class_id,
                 max_choices = choice_list['choose'],
-                list_description = choice_list['desc']
+                list_description = choice_list['desc'],
+                given_when_multiclass = False
             )
 
             db.session.add(new_class_proficiency_list)
