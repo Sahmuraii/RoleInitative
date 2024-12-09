@@ -182,7 +182,7 @@ docker image prune -f
 
 :: Build the new image using the selected Dockerfile
 echo Building new Docker image using %dockerfilePath%...
-docker build -t %imageName% -f %dockerfilePath% .
+docker build --no-cache -t %imageName% -f %dockerfilePath% .
 
 :: Check if the image was built successfully
 if errorlevel 1 (
