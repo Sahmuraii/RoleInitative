@@ -4,6 +4,12 @@ from src.character.models import DND_Background
 
 homebrew_bp = Blueprint('homebrew_bp', __name__, template_folder='../templates')
 
+@homebrew_bp.route('/create_homebrew', methods=['GET', 'POST'])
+def create_homebrew():
+    if request.method == 'POST':
+        return redirect(url_for('homebrew_bp.create_homebrew'))
+    return render_template('homebrew/create_homebrew.html')
+
 @homebrew_bp.route('/create_feat', methods=['GET', 'POST'])
 def create_feat():
     if request.method == 'POST':

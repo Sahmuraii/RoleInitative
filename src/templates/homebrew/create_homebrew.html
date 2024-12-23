@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title_content %}Home{% endblock %}
+
+{% block body_content %}
+    <!-- Main Content -->
+    <div class="main-content">
+        <a href="{{ url_for('homebrew_bp.create_feat') }}">
+            <button class="new-background">New Background</button>
+        </a>
+    </div>
+
+    <script src="../../static/js/main.js"></script>
+{% endblock %}

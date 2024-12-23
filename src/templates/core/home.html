@@ -8,7 +8,9 @@
         <!-- Search Bar and Buttons -->
         <div class="search-bar">
             <input type="text" placeholder="Search Campaigns, Homebrews, Characters, and Users">
-            <button class="new-homebrew">New Homebrew</button>
+            <a href="{{ url_for('homebrew_bp.create_homebrew') }}">
+                <button class="new-homebrew">New Homebrew</button>
+            </a>
             <button class="my-campaigns">My Campaigns</button>
         </div>
 
