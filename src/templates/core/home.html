@@ -29,66 +29,69 @@
                 {% for entry in user.chars %}
                 <div class="character-card" style="position: relative; border: 1px solid #ddd; overflow: hidden; background: #fff;">
                     <!-- Character Image -->
-                    <div class="character-image" style="height: 260px; overflow: hidden; position: relative;">
-                        <img src="../../static/images/race_profile/{{ entry.charRace[0].race.name }}CharacterImage.jpg"
-                             alt="{{ entry.charRace[0].race.name }} Character Image"
-                             style="width: 100%; height: auto; position: absolute; top: 0;">
+                    <a href="{{ url_for('character_bp.character', character_id=entry.char_id) }}" class="character-card-link"
+                                style="display: block; text-decoration: none; color: inherit;">
+                        <div class="character-image" style="height: 260px; overflow: hidden; position: relative;">
+                            <img src="../../static/images/race_profile/{{ entry.charRace[0].race.name }}CharacterImage.jpg"
+                                 alt="{{ entry.charRace[0].race.name }} Character Image"
+                                 style="width: 100%; height: auto; position: absolute; top: 0; transition: .3s;">
 
-                        <!-- Class Icon -->
-                        <div class="class-icon" style="position: absolute; top: 8px; left: 8px; width: 50px; height: 50px; background: #fff; border-radius: 50%; overflow: hidden; display: flex; justify-content: center; align-items: center; box-shadow: 0px 2px 4px rgba(0,0,0,0.2); border-color: black;">
-                            <img src="../../static/images/class_logo/{{ entry.charClass[0].class_.name }}Logo.png" alt="{{ entry.charClass[0].class_.name }} Class Icon" style="width: 60px; height: 60px; object-fit: cover;">
+                            <!-- Class Icon -->
+                            <div class="class-icon" style="position: absolute; top: 8px; left: 8px; width: 50px; height: 50px; background: #fff; border-radius: 50%; overflow: hidden; display: flex; justify-content: center; align-items: center; box-shadow: 0px 2px 4px rgba(0,0,0,0.2); border-color: black;">
+                                <img src="../../static/images/class_logo/{{ entry.charClass[0].class_.name }}Logo.png" alt="{{ entry.charClass[0].class_.name }} Class Icon" style="width: 60px; height: 60px; object-fit: cover;">
+                            </div>
+
+                            <!-- Gradient Mask -->
+                            <div class="bottom-gradient-mask" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100px; background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0)); pointer-events: none;"></div>
+                            <!-- Campaign Information -->
+                            <div class="campaign-info" style="position: absolute; bottom: 8px; left: 8px; color: #fff; font-size: 14px; display: flex; align-items: center;">
+                                <img src="../../static/images/CampaignIcon.png" alt="Campaign Icon" style="width: 20px; height: 20px; margin-right: 4px;">
+                                <span>No Campaign</span>
+                            </div>
+                            <!-- Engagement Information -->
+                            <div class="character-engagement-information" style="position: absolute; bottom: 8px; right: 8px; color: #fff; font-size: 14px;">
+                                <span>{{ entry.views }} views • Created {{ entry.timestamp }} ago</span>
+                            </div>
                         </div>
 
-                        <!-- Gradient Mask -->
-                        <div class="bottom-gradient-mask" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100px; background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0)); pointer-events: none;"></div>
-                        <!-- Campaign Information -->
-                        <div class="campaign-info" style="position: absolute; bottom: 8px; left: 8px; color: #fff; font-size: 14px; display: flex; align-items: center;">
-                            <img src="../../static/images/CampaignIcon.png" alt="Campaign Icon" style="width: 20px; height: 20px; margin-right: 4px;">
-                            <span>No Campaign</span>
-                        </div>
-                        <!-- Engagement Information -->
-                        <div class="character-engagement-information" style="position: absolute; bottom: 8px; right: 8px; color: #fff; font-size: 14px;">
-                            <span>{{ entry.views }} views • Created {{ entry.timestamp }} ago</span>
-                        </div>
-                    </div>
-
-                    <!-- Kebab Menu Button -->
-                    <div class="dropdown-trigger" style="position: absolute; top: 280px; right: 16px;">
-                        <button type="button" class="kebab-button" style="background: none; border: none; cursor: pointer;">
-                            <img src="../../static/icons/kebab-menu.svg" alt="Menu" style="width: 16px; height: 16px;">
-                        </button>
-                        <div class="dropdown-menu" style="display: none; position: absolute; top: 20px; right: 0; background: #fff; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0px 4px 6px rgba(0,0,0,0.1); z-index: 10;">
-                            <form action="{{ url_for('character_bp.delete_character', character_id=entry.char_id) }}" method="POST">
-                                <button type="submit" onclick="return confirm('Are you sure you want to delete this item?');" style="background: none; border: none; padding: 8px 16px; text-align: left; width: 100%; cursor: pointer; font-size: 14px;">Delete</button>
-                            </form>
-                        </div>
-                    </div>
-
-                    <!-- Card Content -->
-                    <div class="character-info-container" style="padding: 16px;">
-                        <!-- Deck Owner Avatar -->
-                        <a class="author-avatar" href="{{ url_for('profile_bp.profile', username=entry.owner.username) }}" style="display: flex; align-items: center; margin-bottom: 8px;">
-                            <img src="../../static/avatars/{{ entry.owner }}.png" alt="{{ entry.owner.username }}'s Avatar" style="width: 32px; height: 32px; border-radius: 50%; margin-right: 8px;">
-                            <span style="font-weight: bold;">{{ entry.owner.username }}</span>
-                        </a>
-
-                        <p>{{ entry.name }}</p>
-
-                        <!-- Deck Details -->
-                        <div class="char-title" style="margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
-                            <h3 style="margin: 0; font-size: 18px;">{{ entry.title }}</h3>
+                        <!-- Kebab Menu Button -->
+                        <div class="dropdown-trigger" style="position: absolute; top: 280px; right: 16px;">
+                            <button type="button" class="kebab-button" style="background: none; border: none; cursor: pointer;">
+                                <img src="../../static/icons/kebab-menu.svg" alt="Menu" style="width: 16px; height: 16px;">
+                            </button>
+                            <div class="dropdown-menu" style="display: none; position: absolute; top: 20px; right: 0; background: #fff; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0px 4px 6px rgba(0,0,0,0.1); z-index: 10;">
+                                <form action="{{ url_for('character_bp.delete_character', character_id=entry.char_id) }}" method="POST">
+                                    <button type="submit" onclick="return confirm('Are you sure you want to delete this item?');" style="background: none; border: none; padding: 8px 16px; text-align: left; width: 100%; cursor: pointer; font-size: 14px;">Delete</button>
+                                </form>
+                            </div>
                         </div>
 
-                        <!-- Deck Meta Information -->
-                        <div class="char-meta" style="margin-bottom: 8px; font-size: 14px; color: #666;">
-                            <span>Level {{ entry.total_level }}</span> • <span>{{ entry.charRace[0].race.name }}</span>
-                        </div>
+                        <!-- Card Content -->
+                        <div class="character-info-container" style="padding: 16px;">
+                            <!-- Deck Owner Avatar -->
+                            <a class="author-avatar" href="{{ url_for('profile_bp.profile', username=entry.owner.username) }}" style="display: flex; align-items: center; margin-bottom: 8px; color: inherit ;">
+                                <img src="../../static/avatars/{{ entry.owner }}.png" alt="{{ entry.owner.username }}'s Avatar" style="width: 32px; height: 32px; border-radius: 50%; margin-right: 8px;">
+                                <span style="font-weight: bold;">{{ entry.owner.username }}</span>
+                            </a>
 
-                        <!-- Deck Tags -->
-                        <div class="char-tags" style="font-size: 12px; color: #999; margin-bottom: 8px;">
-                            {{ entry.tags | default("No community tags") }}
+                            <p>{{ entry.name }}</p>
+
+                            <!-- Deck Details -->
+                            <div class="char-title" style="margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
+                                <h3 style="margin: 0; font-size: 18px;">{{ entry.title }}</h3>
+                            </div>
+
+                            <!-- Deck Meta Information -->
+                            <div class="char-meta" style="margin-bottom: 8px; font-size: 14px; color: #666;">
+                                <span>Level {{ entry.total_level }}</span> • <span>{{ entry.charRace[0].race.name }}</span>
+                            </div>
+
+                            <!-- Deck Tags -->
+                            <div class="char-tags" style="font-size: 12px; color: #999; margin-bottom: 8px;">
+                                {{ entry.tags | default("No community tags") }}
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
                 {% endfor %}
             </div>
@@ -158,5 +161,10 @@
                 });
             });
     </script>
+    <style>
+        .character-image img:hover {
+          transform: scale(1.05); /* (105% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+        }
+    </style>
     <script src="../../static/js/main.js"></script>
 {% endblock %}
