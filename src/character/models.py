@@ -83,6 +83,28 @@ class DND_Background(db.Model):
         dict_repr = self.__dict__; [dict_repr.pop(i, None) for i in ["_sa_instance_state"]]
         return f"<{self.__class__.__name__}({self.__dict__})>"
 
+class DND_Spell(db.Model):
+    __tablename__ = 'dnd_spell'
+
+    spell_id = db.Column(db.Integer, primary_key=True, nullable=False)
+    spell_name = db.Column(db.String(100), nullable=False, unique=True)
+    spell_level = db.Column(db.Integer, nullable=False) # 0 for cantrips
+    spell_school = db.Column(db.String(50), nullable=False)
+    casting_time = db.Column(db.String(50), nullable=False)
+    reaction_condition = db.Column(db.Text, nullable=True)
+    range_area = db.Column(db.String(100), nullable=False)
+    components = db.Column(db.ARRAY(db.Boolean), nullable=False)
+    material = db.Column(db.Text, nullable=True)
+    duration = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    higher_level = db.Column(db.Text, nullable=True)
+    classes = db.Column(db.ARRAY(db.String(50)), nullable=False)
+    subclasses = db.Column(db.ARRAY(db.String(50)), nullable=True)
+
+    def __repr__(self):
+        dict_repr = self.__dict__; [dict_repr.pop(i, None) for i in ["_sa_instance_state"]]
+        return f"<{self.__class__.__name__}({self.__dict__})>"
+
 
 #----------------------------------------------------------
 #   D&D relation tables

@@ -1,6 +1,6 @@
 from flask import render_template, Blueprint, request, redirect, url_for
 from src import db 
-from src.character.models import DND_Background
+from src.character.models import DND_Background, DND_Spell
 
 homebrew_bp = Blueprint('homebrew_bp', __name__, template_folder='../templates')
 
@@ -10,8 +10,8 @@ def create_homebrew():
         return redirect(url_for('homebrew_bp.create_homebrew'))
     return render_template('homebrew/create_homebrew.html')
 
-@homebrew_bp.route('/create_feat', methods=['GET', 'POST'])
-def create_feat():
+@homebrew_bp.route('/create_background', methods=['GET', 'POST'])
+def create_background():
     if request.method == 'POST':
         name = request.form.get('name') # Get the name of the background
         description = request.form.get('description') # Get the description of the background
@@ -60,7 +60,57 @@ def create_feat():
             db.session.rollback()
             print(f"Error adding background to the database: {e}")
 
-        return redirect(url_for('homebrew_bp.create_feat'))  # Redirect to the same page after submission
+        return redirect(url_for('homebrew_bp.create_background'))  # Redirect to the same page after submission
 
-    return render_template('homebrew/create_feat.html')
+    return render_template('homebrew/create_background.html')
 
+@homebrew_bp.route('/create_spell', methods=['GET', 'POST'])
+def create_spell():
+    if request.method == 'POST':
+        spell_name = request.form.get('spell_name')
+        spell_level = request.form.get('spell_level')
+        spell_school = request.form.get('spell_school')
+        casting_time = request.form.get('casting_time')
+        reaction_condition = request.form.get('reaction_condition')
+        range_area = request.form.get('range_area')
+        components = [
+            request.form.get('verbal') == 'true',
+            request.form.get('somatic') == 'true',
+            request.form.get('material') == 'true'
+        ]
+        material = request.form.get('material')
+        duration = request.form.get('duration')
+        description = request.form.get('description')
+        higher_level = request.form.get('higher_level')
+        classes = request.form.getlist('classes[]')
+        subclasses = request.form.getlist('subclasses[]')
+
+        # Create a new DND_Spell object
+        new_spell = DND_Spell(
+            spell_name=spell_name,
+            spell_level=int(spell_level),
+            spell_school=spell_school,
+            casting_time=casting_time,
+            reaction_condition=reaction_condition,
+            range_area=range_area,
+            components=components,
+            material=material,
+            duration=duration,
+            description=description,
+            higher_level=higher_level,
+            classes=classes,
+            subclasses=subclasses
+        )
+
+        # Add to the database session and commit
+        try:
+            db.session.add(new_spell)
+            db.session.commit()
+            print(f"Spell {spell_name} successfully added to the database.")
+        except Exception as e:
+            db.session.rollback()
+            print(f"Error adding spell to the database: {e}")
+
+        return redirect(url_for('homebrew_bp.create_spell'))  # Redirect to the same page after submission
+
+    return render_template('homebrew/create_spell.html')
