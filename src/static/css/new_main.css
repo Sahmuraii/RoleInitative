@@ -141,8 +141,7 @@ h1 {
 /* Main Content Styling */
 .main-content {
     padding: calc(var(--navbar-height) + 1rem) 2rem 2rem;
-    max-width: 800px;
-    margin: auto;
+    margin: 3rem;
 }
 
 /* Search Bar and Buttons */
