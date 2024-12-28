@@ -202,14 +202,6 @@ h1 {
     display: block;
 }
 
-.character-card {
-    padding: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-    background-color: #f9f9f9;
-}
-
 .character-creator-container {
     display: flex;
     justify-content: space-between;
