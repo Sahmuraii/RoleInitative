@@ -1,4 +1,4 @@
-from flask import render_template, Blueprint, request, redirect, url_for
+from flask import render_template, Blueprint, request, redirect, url_for, jsonify
 from src import db 
 from src.character.models import DND_Background, DND_Spell
 
@@ -13,21 +13,28 @@ def create_homebrew():
 @homebrew_bp.route('/create_background', methods=['GET', 'POST'])
 def create_background():
     if request.method == 'POST':
-        name = request.form.get('name') # Get the name of the background
-        description = request.form.get('description') # Get the description of the background
+        # Parse JSON data from the request
+        data = request.get_json()
 
-        skill_proficiencies = request.form.getlist('skill_proficiency[]') # Get the skill proficiencies added by background
-        tool_proficiencies = request.form.getlist('tool_proficiency[]') # Get the tool proficiencies added by background
-        language_proficiencies = request.form.getlist('language_proficiency[]') # Get the language proficiencies added by background
-        equipment = request.form.getlist('equipment[]') # Get the equipment added by background
+        if not data:
+            return jsonify({"error": "No data provided"}), 400
 
-        feature_name = request.form.get('feature_name') # Get the name of the feature given
-        feature_description = request.form.get('feature_description') # Get the description of the feature given
-        
-        personality_traits = request.form.getlist('personality_traits') # Get the personality traits suggested
-        ideals = request.form.getlist('ideals') # Get the ideals suggested
-        bonds = request.form.getlist('bonds') # Get the bonds suggested
-        flaws = request.form.getlist('flaws') # Get the flaws suggested
+        # Extract data from the JSON payload
+        name = data.get('name')  # Get the name of the background
+        description = data.get('description')  # Get the description of the background
+
+        skill_proficiencies = data.get('skillProficiencies', [])  # Get the skill proficiencies
+        tool_proficiencies = data.get('toolProficiencies', [])  # Get the tool proficiencies
+        language_proficiencies = data.get('languageProficiencies', [])  # Get the language proficiencies
+        equipment = data.get('equipment', [])  # Get the equipment
+
+        feature_name = data.get('featureName')  # Get the name of the feature
+        feature_description = data.get('featureDescription')  # Get the description of the feature
+
+        personality_traits = data.get('personalityTraits', [])  # Get the personality traits
+        ideals = data.get('ideals', [])  # Get the ideals
+        bonds = data.get('bonds', [])  # Get the bonds
+        flaws = data.get('flaws', [])  # Get the flaws
 
         # Suggested Characteristics JSON
         suggested_characteristics = {
@@ -48,7 +55,7 @@ def create_background():
             feature_name=feature_name,
             feature_effect=feature_description,
             suggested_characteristics=suggested_characteristics,
-            specialty_table=None 
+            specialty_table=None
         )
 
         # Add to the database session and commit
@@ -56,11 +63,14 @@ def create_background():
             db.session.add(new_background)
             db.session.commit()
             print(f"Background {name} successfully added to the database.")
+            return jsonify({"message": "Background created successfully!"}), 201
         except Exception as e:
             db.session.rollback()
             print(f"Error adding background to the database: {e}")
+            return jsonify({"error": "Failed to create background"}), 500
 
-        return redirect(url_for('homebrew_bp.create_background'))  # Redirect to the same page after submission
+    # Handle GET request (if needed)
+    return render_template('homebrew/create_background.html')
 
     return render_template('homebrew/create_background.html')
 
