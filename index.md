@@ -15,30 +15,30 @@ This project aims to take inspiration from platforms such as D&DBeyond, Roll20, 
 
 ### Project Related Resources 
 Miguel Grinberg, “Flask Web Development: Developing Web Applications with Python” 
-[https://coddyschool.com/upload/Flask_Web_Development_Developing.pdf]
+[https://coddyschool.com/upload/Flask_Web_Development_Developing.pdf](https://coddyschool.com/upload/Flask_Web_Development_Developing.pdf)
 A step-by-step guide to developing a social blogging application using a python-based framework. It teaches the fundamentals of Flask’s core functions along with going over user authentication, RESTful APIs, and scalable app features. It also goes over important skills such as database integration, template use, and deployment strategies. 
 		
 Mozilla.org, “Getting started with Angular” 
-[https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Angular_getting_started]
+[https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Angular_getting_started](https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Angular_getting_started)
 This guide is a basic outline of Angular, a front-end web framework. It goes over how to set up Angular for a website, the command line interface, and outlines how to make a simple to-do list website along with fundamental Angular concepts.
 
-Shay Howe, “Learn to Code HTML & CSS” [https://learn.shayhowe.com/html-css/] 
+Shay Howe, “Learn to Code HTML & CSS” [https://learn.shayhowe.com/html-css/](https://learn.shayhowe.com/html-css/)
 This website is dedicated to teaching people how to use HTML and CSS, which are incredibly important tools that every web developer should know. It goes over different aspects of HTML and CSS, like how to add media to a website or how to format text.
 
 freecodecamp.org, “Learn TypeScript – The Ultimate Beginners Guide” 
-[https://www.freecodecamp.org/news/learn-typescript-beginners-guide/] 
+[https://www.freecodecamp.org/news/learn-typescript-beginners-guide/](https://www.freecodecamp.org/news/learn-typescript-beginners-guide/)
 This article is a good basic tutorial for TypeScript, which is the language used in Angular, our front-end framework. It explains what TypeScript is, its relation to JavaScript, and how they differ from each other. It goes in-depth on the types provided by the language, as they are different from JavaScript, which has no types.
 
 D&DBeyond 
-[https://www.dndbeyond.com/]
+[https://www.dndbeyond.com/](https://www.dndbeyond.com/)
 An official digital toolset used for playing Dungeons & Dragons. It provides players with all the official content they need in order to play the game. It offers character creations, rulebooks, and campaign management tools as its main features. Along with that, it simplifies tracking characters, spells, game mechanics, and provides a smoother gameplay experience. 
 
 Roll20
-[https://roll20.net/] 
+[https://roll20.net/](https://roll20.net/)
 A website that’s main function is to be a virtual tabletop for various tabletop roleplaying games. It allows Dungeon Masters to connect to their users with a virtual map, where players can move their characters around during combat. Roll20 also allows users to create D&D characters. We can use this website as inspiration to make our own character creation system.
 
 The OGL Explained
-[https://www.youtube.com/watch?v=szUnCuXVEJ8]
+[https://www.youtube.com/watch?v=szUnCuXVEJ8](https://www.youtube.com/watch?v=szUnCuXVEJ8)
 
 Systems Reference Document (SRD) - Resources - D&D Beyond
-[https://www.dndbeyond.com/resources/1781-systems-reference-document-srd]
+[https://www.dndbeyond.com/resources/1781-systems-reference-document-srd](https://www.dndbeyond.com/resources/1781-systems-reference-document-srd)
