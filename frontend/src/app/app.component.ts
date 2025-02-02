@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { UserProfileComponent } from './user-profile/user-profile.component';
 import { HttpClientModule } from '@angular/common/http'; 
 import { CommonModule } from '@angular/common'; 
 
@@ -9,7 +8,6 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [
     RouterOutlet,
-    UserProfileComponent,
     HttpClientModule, 
     CommonModule 
   ],

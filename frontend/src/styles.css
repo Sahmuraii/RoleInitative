@@ -10,7 +10,7 @@
     /*color-scheme: light dark;*/
 
     --accentColor: rgb(240, 240, 229 );
-    --primaryRed: rgb(0, 12, 16);
+    --primaryRed: rgb(146, 12, 16);
     --darkRed: rgb(26, 15, 15);
     --secondaryColor: rgb(195, 152, 60);
     --lightText: rgb(235, 232, 230);
@@ -140,7 +140,7 @@ h1 {
 
 /* Main Content Styling */
 .main-content {
-    padding: 100rem;
+    padding: calc(var(--navbar-height) + 1rem) 2rem 2rem;
     margin: 3rem;
 }
 
