@@ -69,7 +69,7 @@ def get_character_info(char_id) -> dict:
         for mod in char_info['modifier_scores']:
             if mod['modifier_name'] != mod_type_conversion[skill[2]]: continue
             mod_value = mod['value']
-        char_info['skills'].append({'skill_id':skill[0], 'skill_name':skill[1], 'modifier_type':mod_type_conversion[skill[2]], 'modifier_value': mod_value, 'linked_proficiency_id':skill[3]})
+        char_info['skills'].append({'skill_id':skill[0], 'skill_name':skill[1], 'modifier_type':mod_type_conversion[skill[2]], 'modifier_value': mod_value, 'linked_proficiency_id':skill[3], 'proficient':False})
 
     #Load Character Armor Class
     for mod in char_info['modifier_scores']:
@@ -97,6 +97,12 @@ def get_character_info(char_id) -> dict:
     )]
     print(char_proficiencies)
     char_info.update({'proficiencies': char_proficiencies})
+
+    for proficiency in char_info['proficiencies']:
+        for skill in char_info['skills']:
+            if ('skill' in proficiency['type_name'].lower()) and (skill['skill_name'].lower() in proficiency['proficiency_name'].lower()):
+                skill['proficient'] = True
+
 
 
     #print(char_info)
