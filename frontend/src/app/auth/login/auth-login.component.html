@@ -1,0 +1,23 @@
+<div class="auth-container">
+  <div class="auth-form">
+    <a class="logoLink" routerLink="/home">
+      <img src="assets/images/RILogoWithTextNoBorder.png" alt="Logo" class="auth-logo">
+    </a>
+    <h2>Log Into Your Account</h2>
+    <form (submit)="onSubmit()">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input id="email" type="email" class="input-field" placeholder="YourEmail@SomeDomain" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input id="password" type="password" class="input-field" placeholder="YourPasswordHere!" required>
+      </div>
+      <button class="auth-button" type="submit">Sign in</button>
+      <div class="extra-links">
+        <p class="link-text">New User? <a routerLink="/register">Register now</a></p>
+        <p class="link-text">Forgot Your Password? <a href="#">Not Implemented Yet</a></p>
+      </div>
+    </form>
+  </div>
+</div>
