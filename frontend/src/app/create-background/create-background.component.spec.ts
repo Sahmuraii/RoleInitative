@@ -15,9 +15,27 @@ import { ReactiveFormsModule } from '@angular/forms';
 export class CreateBackgroundComponent {
   backgroundForm: FormGroup;
 
-  skillProficiencies = ['Stealth', 'Survival', 'Athletics', 'Arcana'];
-  toolProficiencies = ['Herbalism Kit', 'Thieves\' Tools', 'Smith\'s Tools'];
-  languageProficiencies = ['Elvish', 'Dwarvish', 'Gnomish'];
+  skillProficiencies = [
+    'Acrobatics', 'Animal Handling', 'Arcana', 'Athletics', 'Deception', 
+    'History', 'Insight', 'Intimidation', 'Investigation', 'Medicine', 
+    'Nature', 'Perception', 'Performance', 'Persuasion', 'Religion', 
+    'Sleight of Hand', 'Stealth', 'Survival'
+  ];
+  toolProficiencies = [
+    'Alchemist\'s Supplies', 'Brewer\'s Supplies', 'Calligrapher\'s Supplies', 
+    'Carpenter\'s Tools', 'Cartographer\'s Tools', 'Cobbler\'s Tools', 
+    'Cook\'s Utensils', 'Glassblower\'s Tools', 'Herbalism Kit', 
+    'Jeweler\'s Tools', 'Leatherworker\'s Tools', 'Mason\'s Tools', 
+    'Painter\'s Supplies', 'Potter\'s Tools', 'Smith\'s Tools', 
+    'Thieves\' Tools', 'Tinker\'s Tools', 'Weaver\'s Tools', 
+    'Woodcarver\'s Tools', 'Disguise Kit', 'Forgery Kit', 
+    'Navigator\'s Tools', 'Poisoner\'s Kit'
+  ];
+languageProficiencies = [
+  'Common', 'Dwarvish', 'Elvish', 'Giant', 'Gnomish', 'Goblin', 
+  'Halfling', 'Orc', 'Abyssal', 'Celestial', 'Draconic', 'Deep Speech', 
+  'Infernal', 'Primordial', 'Sylvan', 'Undercommon'
+  ];
 
   constructor(
     private fb: FormBuilder,
