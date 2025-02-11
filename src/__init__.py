@@ -55,12 +55,14 @@ from src.core.views import core_bp
 from src.profile.views import profile_bp
 from src.character.views import character_bp
 from src.homebrew.views import homebrew_bp
+from src.json.views import json_bp
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(core_bp)
 app.register_blueprint(profile_bp)
 app.register_blueprint(character_bp)
 app.register_blueprint(homebrew_bp)
+app.register_blueprint(json_bp)
 
 from src.auth.models import User
 from src.utils.populate_database import repopulate_empty_tables
