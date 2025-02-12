@@ -51,11 +51,11 @@
             <h2>Choose Your Race</h2>
             <label for="charrace">Choose your character's race:</label>
             <select id="charrace" name="charrace">
-                <!-- {% for dnd_race in all_races %}
-                    <option value="{{ dnd_race.race_id }}">
-                        {{ dnd_race.name }}
+                @for (dndRace of dndRaces(); track $index) {
+                    <option value="{{ dndRace.race_id }}">
+                        {{ dndRace.name }}
                     </option>
-                {% endfor %} -->
+                }
             </select><br>
 
             <button type="button" onclick="window.location.href='/homebrew/races'">Browse Homebrew Races</button>
@@ -70,10 +70,10 @@
                 <option value="None">No Classes Selected</option>
             </select><br>
 
-            <!-- {% for dnd_class in all_classes %}
-            <label for="{{dnd_class.name}}" name="multiclass_label">{{ dnd_class.name }}</label><label for="{{dnd_class.name}}">: </label>
-            <input type="number" id="{{dnd_class.name}}" name="multiclass_level" value="0" min="0" max="20" class="dnd_stat_input"><br>
-            {% endfor %} -->
+            @for (dndClass of dndClasses(); track $index) {
+            <label for="{{dndClass.name}}" name="multiclass_label">{{ dndClass.name }}</label><label for="{{dndClass.name}}">: </label>
+            <input type="number" id="{{dndClass.name}}" name="multiclass_level" value="0" min="0" max="20" class="dnd_stat_input"><br>
+            }
             
             <br><button type="button" onclick="window.location.href='/homebrew/classes'">Browse Homebrew Classes</button>
         </div>

@@ -1,6 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, QueryList, ViewChild, ViewChildren } from '@angular/core';
+
+import { Component, inject, QueryList, signal, ViewChild, ViewChildren, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { CreateCharacterService } from '../services/create-character.service';
+import { catchError } from 'rxjs';
+import { DND_Class } from '../models/dnd_class.type';
+import { DND_Race } from '../models/dnd_race.type';
 
 @Component({
   selector: 'app-create-character',
@@ -9,10 +14,14 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
   templateUrl: './create-character.component.html',
   styleUrl: './create-character.component.css'
 })
-export class CreateCharacterComponent {
+export class CreateCharacterComponent implements OnInit {
   characterForm = new FormGroup({
 
   })
+  dndClasses = signal<Array<DND_Class>>([])
+  dndRaces = signal<Array<DND_Race>>([])
+
+
   hideBasicInfo = false;
   hideRace = true;
   hideClass = true;
@@ -20,8 +29,19 @@ export class CreateCharacterComponent {
   hideAttributes = true;
   hideDetails = true;
   hideEquipment = true;
+  createCharacterService = inject(CreateCharacterService)
 
+  ngOnInit(): void {
+    this.createCharacterService.getClassData().subscribe((classes) => {
+      this.dndClasses.set(classes)
+    })
+    this.createCharacterService.getRaceData().subscribe((races) => {
+      this.dndRaces.set(races)
+    })
+  }
 
+  
+  
 
   public showTab(tabId: string) {
     switch(tabId) {

@@ -51,6 +51,25 @@ class DND_Race(db.Model):
         dict_repr = self.__dict__; [dict_repr.pop(i, None) for i in ["_sa_instance_state"]]
         return f"<{self.__class__.__name__}({self.__dict__})>"
     
+    def serialize(self):
+        return {
+            "race_id": self.race_id,
+            "name": self.name,
+            "description": self.description,
+            "speed": self.speed,
+            "size": self.size,
+            "is_official": self.is_official,
+            "alignment_description": self.alignment_description,
+            "age_description": self.age_description,
+            "size_description": self.size_description,
+            "language_description": self.language_description,
+            "languages": self.languages,
+            "traits": self.traits,
+            "ability_bonuses": self.ability_bonuses,
+            "starting_proficiencies": self.starting_proficiencies,
+            "subraces": self.subraces
+        }
+    
 
 class DND_Class(db.Model):
     __tablename__ = "dnd_class"
@@ -64,6 +83,15 @@ class DND_Class(db.Model):
     def __repr__(self):
         dict_repr = self.__dict__; [dict_repr.pop(i, None) for i in ["_sa_instance_state"]]
         return f"<{self.__class__.__name__}({self.__dict__})>"
+    
+    def serialize(self):
+        return {
+            "class_id": self.class_id,
+            "name": self.name,
+            "description": self.description,
+            "hit_die": self.hit_die,
+            "is_official": self.is_official
+        }
 
 class DND_Background(db.Model):
     __tablename__ = 'dnd_background'
