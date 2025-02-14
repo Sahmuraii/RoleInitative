@@ -4,6 +4,7 @@ import { BackgroundService } from '../services/background.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-create-background',
@@ -14,6 +15,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 })
 export class CreateBackgroundComponent {
   backgroundForm: FormGroup;
+  currentUserID: number | null = null;
 
   skillProficiencies = [
     'Acrobatics', 'Animal Handling', 'Arcana', 'Athletics', 'Deception', 
@@ -40,7 +42,8 @@ export class CreateBackgroundComponent {
   constructor(
     private fb: FormBuilder,
     private backgroundService: BackgroundService,
-    private router: Router
+    private router: Router,
+    private AuthService: AuthService
   ) {
     this.backgroundForm = this.fb.group({
       name: [''],
@@ -56,6 +59,17 @@ export class CreateBackgroundComponent {
       bonds: this.fb.array(Array(6).fill(this.fb.control(''))),
       flaws: this.fb.array(Array(6).fill(this.fb.control('')))
     });
+  }
+
+  ngOnInit(): void {
+    const currentUser = this.AuthService.getCurrentUser();
+    if (currentUser && currentUser.id) {
+      this.currentUserID = currentUser.id; 
+    } else {
+      console.error('No user is logged in.');
+      alert('You must be logged in to create a background.');
+      this.router.navigate(['/login']); 
+    }
   }
 
   get skillProficienciesArray() {
@@ -112,11 +126,12 @@ export class CreateBackgroundComponent {
   onSubmit() {
     const formData = this.backgroundForm.value;
     console.log('Form Data:', formData); 
+    formData.user_id = this.currentUserID;
     this.backgroundService.createBackground(formData).subscribe(
       response => {
         console.log('Background created successfully!', response);
         alert('Background saved!');
-        this.router.navigate(['/create-background']);
+        this.router.navigate(['/create_background']);
       },
       error => {
         console.error('Error creating background:', error);

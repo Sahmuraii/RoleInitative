@@ -111,6 +111,28 @@ class DND_Background(db.Model):
         dict_repr = self.__dict__; [dict_repr.pop(i, None) for i in ["_sa_instance_state"]]
         return f"<{self.__class__.__name__}({self.__dict__})>"
 
+class UserBackground(db.Model):
+    __tablename__ = 'user_background'
+    user_background_id = db.Column(db.Integer, primary_key=True, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey(User.id), nullable=False) 
+    background_name = db.Column(db.String(100), nullable=False)
+    background_description = db.Column(db.Text, nullable=False)
+    skill_proficiencies = db.Column(db.ARRAY(db.String(50)), nullable=True)
+    tool_proficiencies = db.Column(db.ARRAY(db.String(50)), nullable=True)
+    language_proficiencies = db.Column(db.ARRAY(db.String(50)), nullable=True)
+    equipment = db.Column(db.ARRAY(db.String(50)), nullable=True)
+    feature_name = db.Column(db.String(50), nullable=False)
+    feature_effect = db.Column(db.Text, nullable=False)
+    suggested_characteristics = db.Column(db.JSON, nullable=True)
+    specialty_table = db.Column(db.JSON, nullable=True)
+
+    #Reference to the original DND_Background if this is a modified version
+    original_background_id = db.Column(db.Integer, db.ForeignKey('dnd_background.background_id'), nullable=True)
+
+    def __repr__(self):
+        dict_repr = self.__dict__; [dict_repr.pop(i, None) for i in ["_sa_instance_state"]]
+        return f"<{self.__class__.__name__}({self.__dict__})>"
+
 class DND_Spell(db.Model):
     __tablename__ = 'dnd_spell'
 

@@ -1,6 +1,6 @@
 from flask import render_template, Blueprint, request, redirect, url_for, jsonify
 from src import db 
-from src.character.models import DND_Background, DND_Spell
+from src.character.models import UserBackground, DND_Spell
 
 homebrew_bp = Blueprint('homebrew_bp', __name__, template_folder='../templates')
 
@@ -12,7 +12,12 @@ def create_homebrew():
 
 @homebrew_bp.route('/create_background', methods=['GET', 'POST'])
 def create_background():
+    print("Received a request to /create_background")
+    print("Request method:", request.method)
+    print("Request headers:", request.headers)
+    print("Request data:", request.get_json())
     if request.method == 'POST':
+        print("Method = Post")
         # Parse JSON data from the request
         data = request.get_json()
 
@@ -20,6 +25,10 @@ def create_background():
             return jsonify({"error": "No data provided"}), 400
 
         # Extract data from the JSON payload
+        user_id = data.get('user_id')  # Get the user ID to tie the background to a user
+        if not user_id:
+            return jsonify({"error": "User ID is required"}), 400
+
         name = data.get('name')  # Get the name of the background
         description = data.get('description')  # Get the description of the background
 
@@ -44,8 +53,12 @@ def create_background():
             "flaws": flaws
         }
 
-        # Create a new DND_Background object
-        new_background = DND_Background(
+        # Optional: If this is a modified version of an existing background
+        original_background_id = data.get('original_background_id')  # Get the original background ID (if applicable)
+
+        # Create a new UserBackground object
+        new_background = UserBackground(
+            user_id=user_id,  # Tie the background to the user
             background_name=name,
             background_description=description,
             skill_proficiencies=skill_proficiencies,
@@ -55,7 +68,7 @@ def create_background():
             feature_name=feature_name,
             feature_effect=feature_description,
             suggested_characteristics=suggested_characteristics,
-            specialty_table=None
+            specialty_table=None,
         )
 
         # Add to the database session and commit
@@ -70,8 +83,6 @@ def create_background():
             return jsonify({"error": "Failed to create background"}), 500
 
     # Handle GET request (if needed)
-    return render_template('homebrew/create_background.html')
-
     return render_template('homebrew/create_background.html')
 
 @homebrew_bp.route('/create_spell', methods=['GET', 'POST'])

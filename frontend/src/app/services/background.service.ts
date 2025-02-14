@@ -16,8 +16,10 @@ export class BackgroundService {
   }
 
   // Create a new background
-  createBackground(background: any): Observable<any> {
-    return this.http.post(API_URL, background);
+  createBackground(backgroundData: any): Observable<any> {
+    return this.http.post(`${API_URL}/create_background`, backgroundData, {
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 
   // Update an existing background (if needed)
