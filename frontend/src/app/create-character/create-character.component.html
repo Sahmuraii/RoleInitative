@@ -2,7 +2,7 @@
     <h1>Character Creator</h1>
     <p>Welcome to the character creator! Here you can design your own Dungeons and Dragons character.</p>
     <p>Follow the steps below to build your character:</p>
-
+    <p>Value: {{ characterForm.value | json }}</p>
     <div class="tabs">
         <button #tab class="tab active" (click)="showTab('basicInfo')" [ngClass]="{'active' : !hideBasicInfo}">Basic Info</button>
         <button #tabtest class="tab" (click)="showTab('race')" [ngClass]="{'active' : !hideRace}">Race</button>
@@ -63,31 +63,24 @@
 
         <!-- Class -->
         <div id="class" name="character_class_selections" [hidden]="hideClass">
-            <p id="currentlevel">Your current level: 0</p>
-            <p id="sparelevels">Levels left to allocate: 20</p>
-            <label for="selectFirstClass">Choose your initial class (affects character HP):</label><br>
-            <select id="selectFirstClass" name="selectFirstClass">
-                <option value="None">No Classes Selected</option>
-            </select><br>
-
-            @for (dndClass of dndClasses(); track $index) {
-            <label for="{{dndClass.name}}" name="multiclass_label">{{ dndClass.name }}</label><label for="{{dndClass.name}}">: </label>
-            <input type="number" id="{{dndClass.name}}" name="multiclass_level" value="0" min="0" max="20" class="dnd_stat_input"><br>
+            @for (dndClass of dndClassesSignal(); track $index) {
+                <label>{{ dndClass.name }}:</label>
+                <div class="level-control">
+                    <input type="number" formControlName="level" min="0" max="20" value="0" placeholder="0"/>
+                </div>
             }
-            
-            <br><button type="button" onclick="window.location.href='/homebrew/classes'">Browse Homebrew Classes</button>
         </div>
 
         <!-- Class Proficiencies -->
         <div id="class_proficiencies" name="character_class_proficiencies" [hidden]="hideClassProficiencies">
 
-            <div id="class_proficiency_list_no-class-selected" dnd_class_no-class-selected style="display: none;">
+            <!-- <div id="class_proficiency_list_no-class-selected" dnd_class_no-class-selected style="display: none;">
                 <label for="no-class-selected" name="class_proficiencies_label"><strong>No Class Selected...</strong></label><br><label for="no-class-selected">No proficiency options to display</label>
-                <!--<input type="number" id="no-class-selected" name="class_proficiencies_level" value="0" min="0" max="20" class="dnd_stat_input">--><br>
+                <input type="number" id="no-class-selected" name="class_proficiencies_level" value="0" min="0" max="20" class="dnd_stat_input"><br>
                 <br>
-            </div>
-            <!-- <input type="number" id="class_proficiency_list_length" name="class_proficiency_list_length" value="{{ class_proficiency_lists | length }}" style="display:none;" readonly>
-        {% for dnd_class in all_classes %}
+            </div> -->
+            <!-- <input type="number" id="class_proficiency_list_length" name="class_proficiency_list_length" value="{{ class_proficiency_lists | length }}" style="display:none;" readonly> -->
+        <!-- {% for dnd_class in all_classes %}
             <div id="class_proficiency_list_{{dnd_class['class_id']}}" name="class_proficiency_lists" dnd_class_{{dnd_class['name']}} style="display: none;">
                 <label for="{{dnd_class.class_id}}" name="class_proficiencies_label"><strong>{{ dnd_class.name }}</strong></label><label for="{{dnd_class.name}}"><strong> Proficiencies:</strong></label><br>
                 {% for proficiency_list in class_proficiency_lists %} {% if proficiency_list['class_id'] == dnd_class['class_id'] %}
