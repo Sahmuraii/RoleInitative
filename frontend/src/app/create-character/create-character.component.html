@@ -62,14 +62,21 @@
         </div>
 
         <!-- Class -->
-        <div id="class" name="character_class_selections" [hidden]="hideClass">
-            @for (dndClass of dndClassesSignal(); track $index) {
-                <label>{{ dndClass.name }}:</label>
-                <div class="level-control">
-                    <input type="number" formControlName="level" min="0" max="20" value="0" placeholder="0"/>
-                </div>
-            }
+        <div id="class" name="character_class_selections" [hidden]="hideClass" formArrayName="classLevels">
+            <div *ngFor="let dndClass of dndClassesSignal(); let i = index">
+            <label>{{ dndClass.name }}:</label>
+            <div class="level-control">
+                <input 
+                type="number"
+                [formControlName]="i"
+                min="0"
+                max="20"
+                placeholder="0"
+                />
+            </div>
+            </div>
         </div>
+  
 
         <!-- Class Proficiencies -->
         <div id="class_proficiencies" name="character_class_proficiencies" [hidden]="hideClassProficiencies">
