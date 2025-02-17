@@ -5,6 +5,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, FormBuilder, Form, FormArr
 import { CreateCharacterService } from '../services/create-character.service';
 import { DND_Class } from '../models/dnd_class.type';
 import { DND_Race } from '../models/dnd_race.type';
+import { max } from 'rxjs';
 
 @Component({
   selector: 'app-create-character',
@@ -19,16 +20,11 @@ export class CreateCharacterComponent implements OnInit {
   dndClassesSignal = signal<Array<DND_Class>>([])
   dndRaces = signal<Array<DND_Race>>([])
 
-  totalLevel = signal(0);
-  primaryClass = signal(null)
+  minLevel = 0
+  maxLevel: number[] = [20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20]
+  totalLevelsDisplay = 0
 
-  hideBasicInfo = false;
-  hideRace = true;
-  hideClass = true;
-  hideClassProficiencies = true;
-  hideAttributes = true;
-  hideDetails = true;
-  hideEquipment = true;
+  hiddenArray = [false, true, true, true, true, true, true]
 
   createCharacterService = inject(CreateCharacterService)
 
@@ -46,7 +42,7 @@ export class CreateCharacterComponent implements OnInit {
 
   initializeClassLevels(classes: DND_Class[]): void {
     classes.forEach(() => {
-      this.classLevels.push(this.fb.control(0, [Validators.min(0), Validators.max(20)]));
+      this.classLevels.push(this.fb.control(0, Validators.min(0)));
     });
   }
 
@@ -55,6 +51,17 @@ export class CreateCharacterComponent implements OnInit {
       class_name: dndClass.name,
       level: this.classLevels.at(index).value ?? 0
     }));
+  }
+
+  updateMaxLevels() {
+    let totalLevels = 0
+    this.classLevels.controls.forEach(dndClass => {
+      totalLevels += dndClass.value
+    })
+    this.totalLevelsDisplay = totalLevels
+    for (var i in this.maxLevel) {
+      this.maxLevel[i] = this.classLevels.at(parseInt(i)).value + (20 - totalLevels)
+    }
   }
 
   ngOnInit(): void {
@@ -70,73 +77,31 @@ export class CreateCharacterComponent implements OnInit {
   public showTab(tabId: string) {
     switch(tabId) {
       case "basicInfo": {
-        this.hideBasicInfo = false;
-        this.hideRace = true;
-        this.hideClass = true;
-        this.hideClassProficiencies = true;
-        this.hideAttributes = true;
-        this.hideDetails = true;
-        this.hideEquipment = true;
+        this.hiddenArray = [false, true, true, true, true, true, true]
         break;
       }
       case "race": {
-        this.hideBasicInfo = true;
-        this.hideRace = false;
-        this.hideClass = true;
-        this.hideClassProficiencies = true;
-        this.hideAttributes = true;
-        this.hideDetails = true;
-        this.hideEquipment = true;
+        this.hiddenArray = [true, false, true, true, true, true, true]
         break; 
       }
       case "class": {
-        this.hideBasicInfo = true;
-        this.hideRace = true;
-        this.hideClass = false;
-        this.hideClassProficiencies = true;
-        this.hideAttributes = true;
-        this.hideDetails = true;
-        this.hideEquipment = true;
+        this.hiddenArray = [true, true, false, true, true, true, true];
         break;
       }
       case "class_proficiencies": {
-        this.hideBasicInfo = true;
-        this.hideRace = true;
-        this.hideClass = true;
-        this.hideClassProficiencies = false;
-        this.hideAttributes = true;
-        this.hideDetails = true;
-        this.hideEquipment = true;
+        this.hiddenArray = [true, true, true, false, true, true, true]
         break;
       }
       case "attributes": {
-        this.hideBasicInfo = true;
-        this.hideRace = true;
-        this.hideClass = true;
-        this.hideClassProficiencies = true;
-        this.hideAttributes = false;
-        this.hideDetails = true;
-        this.hideEquipment = true;
+        this.hiddenArray = [true, true, true, true, false, true, true]
         break;
       }
       case "details": {
-        this.hideBasicInfo = true;
-        this.hideRace = true;
-        this.hideClass = true;
-        this.hideClassProficiencies = true;
-        this.hideAttributes = true;
-        this.hideDetails = false;
-        this.hideEquipment = true;
+        this.hiddenArray = [true, true, true, true, true, false, true]
         break;
       }
       case "equipment": {
-        this.hideBasicInfo = true;
-        this.hideRace = true;
-        this.hideClass = true;
-        this.hideClassProficiencies = true;
-        this.hideAttributes = true;
-        this.hideDetails = true;
-        this.hideEquipment = false;
+        this.hiddenArray = [true, true, true, true, true, true, false]
         break;
       }
     }

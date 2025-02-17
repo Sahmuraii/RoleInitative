@@ -4,13 +4,13 @@
     <p>Follow the steps below to build your character:</p>
     <p>Value: {{ characterForm.value | json }}</p>
     <div class="tabs">
-        <button #tab class="tab active" (click)="showTab('basicInfo')" [ngClass]="{'active' : !hideBasicInfo}">Basic Info</button>
-        <button #tabtest class="tab" (click)="showTab('race')" [ngClass]="{'active' : !hideRace}">Race</button>
-        <button #tab class="tab" (click)="showTab('class')" [ngClass]="{'active' : !hideClass}">Class</button>
-        <button #tab class="tab" (click)="showTab('class_proficiencies')" [ngClass]="{'active' : !hideClassProficiencies}">Class Proficiencies</button>
-        <button #tab class="tab" (click)="showTab('attributes')" [ngClass]="{'active' : !hideAttributes}">Attributes</button>
-        <button #tab class="tab" (click)="showTab('details')" [ngClass]="{'active' : !hideDetails}">Character Details</button>
-        <button #tab class="tab" (click)="showTab('equipment')" [ngClass]="{'active' : !hideEquipment}">Equipment</button>
+        <button #tab class="tab active" (click)="showTab('basicInfo')" [ngClass]="{'active' : !hiddenArray[0]}">Basic Info</button>
+        <button #tabtest class="tab" (click)="showTab('race')" [ngClass]="{'active' : !hiddenArray[1]}">Race</button>
+        <button #tab class="tab" (click)="showTab('class')" [ngClass]="{'active' : !hiddenArray[2]}">Class</button>
+        <button #tab class="tab" (click)="showTab('class_proficiencies')" [ngClass]="{'active' : !hiddenArray[3]}">Class Proficiencies</button>
+        <button #tab class="tab" (click)="showTab('attributes')" [ngClass]="{'active' : !hiddenArray[4]}">Attributes</button>
+        <button #tab class="tab" (click)="showTab('details')" [ngClass]="{'active' : !hiddenArray[5]}">Character Details</button>
+        <button #tab class="tab" (click)="showTab('equipment')" [ngClass]="{'active' : !hiddenArray[6]}">Equipment</button>
         <!-- {% if current_user.is_admin %}
             <button class="tab" onclick="showTab('debug')">Admin Tab</button>
         {% else %}
@@ -21,7 +21,7 @@
     <form [formGroup]="characterForm">
 
         <!-- Basic Info -->
-        <div id="basicInfo" [hidden]="hideBasicInfo">
+        <div id="basicInfo" [hidden]="hiddenArray[0]">
             <h2>Basic Info</h2>
             <label for="charname">Enter your character's name:</label>
             <input type="text" id="charname" name="charname" placeholder="Enter character name"><br>
@@ -46,7 +46,7 @@
         </div>
 
         <!-- Race -->
-        <div id="race" [hidden]="hideRace">
+        <div id="race" [hidden]="hiddenArray[1]">
             <!-- Make sure to add an option to decide between rulesets somehow (2014 vs 2024) -->
             <h2>Choose Your Race</h2>
             <label for="charrace">Choose your character's race:</label>
@@ -62,24 +62,33 @@
         </div>
 
         <!-- Class -->
-        <div id="class" name="character_class_selections" [hidden]="hideClass" formArrayName="classLevels">
+        <div id="class" name="character_class_selections" [hidden]="hiddenArray[2]" formArrayName="classLevels">
+            <p id="currentlevel">Your current level: {{ totalLevelsDisplay }}</p>
+            <p id="sparelevels">Levels left to allocate: {{ 20 - totalLevelsDisplay }}</p>
+            <label for="selectFirstClass">Choose your initial class (affects character HP):</label><br>
+            <select id="selectFirstClass" name="selectFirstClass">
+                <option value="None">No Classes Selected</option>
+            </select><br>
             <div *ngFor="let dndClass of dndClassesSignal(); let i = index">
-            <label>{{ dndClass.name }}:</label>
-            <div class="level-control">
-                <input 
-                type="number"
-                [formControlName]="i"
-                min="0"
-                max="20"
-                placeholder="0"
-                />
+                <div class="level-control">
+                    <label>{{ dndClass.name }}:</label>
+                    <input 
+                    type="number"
+                    [formControlName]="i"
+                    [min]="minLevel"
+                    [max]="maxLevel[i]"
+                    placeholder="0"
+                    (change)="updateMaxLevels()"
+                    />
+                </div>
             </div>
-            </div>
+            
+            
         </div>
   
 
         <!-- Class Proficiencies -->
-        <div id="class_proficiencies" name="character_class_proficiencies" [hidden]="hideClassProficiencies">
+        <div id="class_proficiencies" name="character_class_proficiencies" [hidden]="hiddenArray[3]">
 
             <!-- <div id="class_proficiency_list_no-class-selected" dnd_class_no-class-selected style="display: none;">
                 <label for="no-class-selected" name="class_proficiencies_label"><strong>No Class Selected...</strong></label><br><label for="no-class-selected">No proficiency options to display</label>
@@ -112,7 +121,7 @@
         </div>
 
         <!-- Attributes -->
-        <div id="attributes" [hidden]="hideAttributes">
+        <div id="attributes" [hidden]="hiddenArray[4]">
             <h2>Set Your Attributes</h2>
             <p>Choose a method to determine your stats:</p>
             <label for="stat_method">Stat Allocation Method:</label>
@@ -271,7 +280,7 @@
         </div>
 
         <!-- Character Details -->
-        <div id="details" [hidden]="hideDetails">
+        <div id="details" [hidden]="hiddenArray[5]">
             <h2>Character Details</h2><br>
             <h3>Personality Traits:</h3>
             <label for="background">Choose your character's background:</label>
@@ -323,7 +332,7 @@
         </div>
 
         <!-- Equipment -->
-        <div id="equipment" [hidden]="hideEquipment">
+        <div id="equipment" [hidden]="hiddenArray[6]">
             <h2>Starting Equipment</h2>
             <p>Select starting equipment based on your background, class, and race:</p>
             <!-- Generate dynamically based on above-mentioned -->
