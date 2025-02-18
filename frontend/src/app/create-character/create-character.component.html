@@ -3,6 +3,7 @@
     <p>Welcome to the character creator! Here you can design your own Dungeons and Dragons character.</p>
     <p>Follow the steps below to build your character:</p>
     <p>Value: {{ characterForm.value | json }}</p>
+    <p>{{chosenClasses}}</p>
     <div class="tabs">
         <button #tab class="tab active" (click)="showTab('basicInfo')" [ngClass]="{'active' : !hiddenArray[0]}">Basic Info</button>
         <button #tabtest class="tab" (click)="showTab('race')" [ngClass]="{'active' : !hiddenArray[1]}">Race</button>
@@ -65,9 +66,17 @@
         <div id="class" name="character_class_selections" [hidden]="hiddenArray[2]" formArrayName="classLevels">
             <p id="currentlevel">Your current level: {{ totalLevelsDisplay }}</p>
             <p id="sparelevels">Levels left to allocate: {{ 20 - totalLevelsDisplay }}</p>
-            <label for="selectFirstClass">Choose your initial class (affects character HP):</label><br>
+            <label for="selectFirstClass">Choose your primary class (affects character HP):</label><br>
             <select id="selectFirstClass" name="selectFirstClass">
-                <option value="None">No Classes Selected</option>
+                @if (chosenClasses.length > 0) {
+                    @for (class of chosenClasses; track $index) {
+                        <option [value]="class">{{ class }}</option>
+                    }
+                } @else {
+                    <option value="None">No Classes Selected</option>
+                }
+                
+                
             </select><br>
             <div *ngFor="let dndClass of dndClassesSignal(); let i = index">
                 <div class="level-control">

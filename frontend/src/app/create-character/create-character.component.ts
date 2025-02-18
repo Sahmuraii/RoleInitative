@@ -23,6 +23,7 @@ export class CreateCharacterComponent implements OnInit {
   minLevel = 0
   maxLevel: number[] = [20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20]
   totalLevelsDisplay = 0
+  chosenClasses: string[] = []
 
   hiddenArray = [false, true, true, true, true, true, true]
 
@@ -61,6 +62,12 @@ export class CreateCharacterComponent implements OnInit {
     this.totalLevelsDisplay = totalLevels
     for (var i in this.maxLevel) {
       this.maxLevel[i] = this.classLevels.at(parseInt(i)).value + (20 - totalLevels)
+    }
+    this.chosenClasses = []
+    for(var dndClass of this.getClassLevels()) {
+      if(dndClass.level != 0) {
+        this.chosenClasses.push(dndClass.class_name)
+      }
     }
   }
 
