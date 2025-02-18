@@ -1,0 +1,86 @@
+<div class="auth-container">
+    <div class="auth-form">
+      <a class="logoLink" href="/">
+        <img src="assets/images/RILogoWithTextNoBorder.png" alt="Logo" class="auth-logo">
+      </a>
+      <h2>Register</h2>
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+
+        <!-- Username input -->
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input
+            formControlName="username"
+            class="input-field"
+            type="text"
+            placeholder="Choose a username"
+          />
+          <div *ngIf="registerForm.get('username')?.errors && registerForm.get('username')?.touched" class="error-messages">
+            <div *ngIf="registerForm.get('username')?.errors?.['required']" class="text-danger">Username is required.</div>
+          </div>
+        </div>
+
+        <!-- Email input -->
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            formControlName="email"
+            class="input-field"
+            type="email"
+            placeholder="YourEmail@SomeDomain"
+          />
+          <div *ngIf="registerForm.get('email')?.errors && registerForm.get('email')?.touched" class="error-messages">
+            <div *ngIf="registerForm.get('email')?.errors?.['required']" class="text-danger">Email is required.</div>
+            <div *ngIf="registerForm.get('email')?.errors?.['email']" class="text-danger">Please enter a valid email.</div>
+          </div>
+        </div>
+
+        <!-- Password input -->
+
+        <div class="form-group password-group">
+          <label for="password">Password</label>
+          <div class="input-container">
+            <input
+              formControlName="password"
+              class="input-field"
+              [type]="showPassword ? 'text' : 'password'"
+              placeholder="YourPasswordHere!"
+            />
+            <i
+              class="fa"
+              [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"
+              (click)="togglePasswordVisibility()"
+              matTooltip="{{ passwordTooltip }}"
+              #tooltip="matTooltip"
+              (mouseenter)="tooltip.show()">
+            </i>
+          </div>
+          <div *ngIf="registerForm.get('password')?.errors && registerForm.get('password')?.touched" class="error-messages">
+            <div *ngIf="registerForm.get('password')?.errors?.['required']" class="text-danger">Password is required.</div>
+          </div>
+        </div>
+
+        <!-- Confirm Password input -->
+        <div class="form-group">
+          <label for="confirm">Confirm Password</label>
+          <input
+            formControlName="confirm"
+            class="input-field"
+            [type]="showPassword ? 'text' : 'password'"
+            placeholder="Confirm your password"
+          />
+          <div *ngIf="registerForm.get('confirm')?.errors && registerForm.get('confirm')?.touched" class="error-messages">
+            <div *ngIf="registerForm.get('confirm')?.errors?.['required']" class="text-danger">Confirm Password is required.</div>
+            <div *ngIf="registerForm.errors?.['mismatch']" class="text-danger">Passwords do not match.</div>
+          </div>
+        </div>
+
+        <button class="auth-button" type="submit" [disabled]="registerForm.invalid">Register</button>
+
+      </form>
+      <div class="extra-links">
+        <p class="link-text">Already have an account? <a href="/login">Sign in</a></p>
+        <p class="link-text">Forgot Your Password? <a href="#">Not Implemented Yet</a></p>
+      </div>
+    </div>
+  </div>

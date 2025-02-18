@@ -18,27 +18,57 @@ from ..utils.email import send_email
 auth_bp = Blueprint("auth_bp", __name__, template_folder="templates")
 
 
-@auth_bp.route("/register", methods=["GET", "POST"])
+@auth_bp.route("/register", methods=["POST"])
 @logout_required
 def register():
-    form = RegisterForm(request.form)
-    if form.validate_on_submit():
-        # Grab information from the form
-        requested_username = form.username.data
-        requested_password = form.password.data
-        requested_email = form.email.data
+    try:
+        data = request.get_json()
 
-        # Encrypt the password. We can check against this later during log in
-        password_hash = bcrypt.hashpw(requested_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        # Log the received data to the frontend console
+        print(f"Received registration data: {json.dumps(data)}")
 
-        user = User(username=requested_username, password=password_hash, email=requested_email)
+        # Validate request data
+        if not data:
+            return jsonify({"message": "Data not processed correctly"}), 400
+        if "username" not in data or not data["username"].strip():
+            return jsonify({"message": "Missing or invalid username"}), 400
+        if "email" not in data or not data["email"].strip():
+            return jsonify({"message": "Missing or invalid email"}), 400
+        if "password" not in data or not data["password"].strip():
+            return jsonify({"message": "Missing or invalid password"}), 400
+
+        username = data["username"].strip()
+        email = data["email"].strip().lower()  # Store emails in lowercase for consistency
+        password = data["password"].strip()
+
+        # Check if user already exists
+        existing_user = User.query.filter((User.username == username) | (User.email == email)).first()
+        if existing_user:
+            return jsonify({"message": "Username or email already taken"}), 409  # Conflict status code
+
+        # Hash the password
+        password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
+        # Create new user
+        user = User(username=username, password=password_hash, email=email)
         db.session.add(user)
         db.session.commit()
 
+        # Log in the new user automatically
         login_user(user)
 
-        return redirect(url_for("auth_bp.send_confirmation"))
-    return render_template("auth/register.html", form=form)
+        return jsonify({
+            "message": "Registration successful",
+            "user": {
+                "id": user.id,
+                "email": user.email,
+                "username": user.username
+            }
+        }), 201  # Created status code
+
+    except Exception as e:
+        print(f"Error during registration: {str(e)}")  # Logs in the backend
+        return jsonify({"message": "Internal server error"}), 500
 
 
 @auth_bp.route("/inactive")
