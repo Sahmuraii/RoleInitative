@@ -4,7 +4,7 @@ import { HomeComponent } from './components/home/home.component';
 import { CharacterSheetComponent } from './components/character-sheet/character-sheet.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
-import { InactiveComponent } from './inactive/inactive.component';
+import { InactiveComponent } from './components/inactive/inactive.component';
 import { CreateCharacterComponent } from './components/create-character/create-character.component';
 
 export const routes: Routes = [
