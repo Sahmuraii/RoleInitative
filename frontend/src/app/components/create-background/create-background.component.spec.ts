@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CreateBackgroundComponent } from './create-background.component';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { BackgroundService } from '../services/background.service';
-import { AuthService } from '../services/auth.service';
+import { BackgroundService } from '../../services/background.service';
+import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { of, throwError } from 'rxjs';

@@ -2,10 +2,10 @@ import { CommonModule } from '@angular/common';
 
 import { Component, inject, QueryList, signal, ViewChild, ViewChildren, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { CreateCharacterService } from '../services/create-character.service';
+import { CreateCharacterService } from '../../services/create-character.service';
 import { catchError } from 'rxjs';
-import { DND_Class } from '../models/dnd_class.type';
-import { DND_Race } from '../models/dnd_race.type';
+import { DND_Class } from '../../models/dnd_class.type';
+import { DND_Race } from '../../models/dnd_race.type';
 
 @Component({
   selector: 'app-create-character',
