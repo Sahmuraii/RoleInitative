@@ -1,7 +1,7 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common'; // Import isPlatformBrowser
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { API_URL } from '../constants';
 import { Router } from '@angular/router';
@@ -10,13 +10,17 @@ import { Router } from '@angular/router';
   providedIn: 'root'
 })
 export class AuthService {
+  private isLoggedInSubject = new BehaviorSubject<boolean>(false);
+  isLoggedIn$ = this.isLoggedInSubject.asObservable();
+
   constructor(
     private http: HttpClient,
     private router: Router,
-    @Inject(PLATFORM_ID) private platformId: Object // Inject PLATFORM_ID
-  ) {}
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
+    this.isLoggedInSubject.next(this.isLoggedIn());
+  }
 
-  // Check if the code is running in a browser environment
   private isBrowser(): boolean {
     return isPlatformBrowser(this.platformId);
   }
@@ -26,6 +30,7 @@ export class AuthService {
       tap((response: any) => {
         if (this.isBrowser()) {
           localStorage.setItem('currentUser', JSON.stringify(response.user));
+          this.isLoggedInSubject.next(true);
         }
       }),
       catchError((error) => {
@@ -41,6 +46,7 @@ export class AuthService {
       tap((response: any) => {
         if (this.isBrowser()) {
           localStorage.setItem('currentUser', JSON.stringify(response.user));
+          this.isLoggedInSubject.next(true);
         }
       }),
       catchError((error) => {
@@ -50,21 +56,10 @@ export class AuthService {
     );
   }
 
-  // Send email confirmation
-  sendConfirmation(): Observable<any> {
-    return this.http.get(`${API_URL}/send_confirmation`).pipe(
-      tap(() => console.log('Confirmation email sent.')),
-      catchError((error) => {
-        console.error('Failed to send confirmation email', error);
-        throw error;
-      })
-    );
-  }
-
-  // Logout user
   logout(): void {
     if (this.isBrowser()) {
       localStorage.removeItem('currentUser');
+      this.isLoggedInSubject.next(false);
     }
     this.router.navigate(['/login']);
   }
@@ -81,30 +76,11 @@ export class AuthService {
     return null;
   }
 
-  updateUser(id: string, userData: any): Observable<any> {
-    return this.http.put(`${API_URL}/user/${id}`, userData).pipe(
-      tap((response: any) => {
-        if (this.isBrowser()) {
-          localStorage.setItem('currentUser', JSON.stringify(response.user));
-        }
-      }),
+  sendConfirmation(): Observable<any> {
+    return this.http.get(`${API_URL}/send_confirmation`).pipe(
+      tap(() => console.log('Confirmation email sent.')),
       catchError((error) => {
-        console.error('Update failed', error);
-        throw error;
-      })
-    );
-  }
-
-  deleteUser(id: string): Observable<any> {
-    return this.http.delete(`${API_URL}/user/${id}`).pipe(
-      tap(() => {
-        if (this.isBrowser()) {
-          localStorage.removeItem('currentUser');
-        }
-        this.router.navigate(['/login']);
-      }),
-      catchError((error) => {
-        console.error('Deletion failed', error);
+        console.error('Failed to send confirmation email', error);
         throw error;
       })
     );
