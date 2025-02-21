@@ -66,8 +66,8 @@ export class CreateBackgroundComponent {
     if (currentUser && currentUser.id) {
       this.currentUserID = currentUser.id; 
     } else {
-      console.error('No user is logged in.');
-      alert('You must be logged in to create a background.');
+      console.error('No user is logged in for Background.');
+      // alert('You must be logged in to create a background.');
       this.router.navigate(['/login']); 
     }
   }

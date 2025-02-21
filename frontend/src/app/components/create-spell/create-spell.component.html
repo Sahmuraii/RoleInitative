@@ -1,1 +1,55 @@
-<p>create-spell works!</p>
+<form [formGroup]="spellForm" (ngSubmit)="onSubmit()">
+    <div>
+      <label for="name">Spell Name:</label>
+      <input id="name" formControlName="name" required>
+    </div>
+  
+    <div>
+      <label for="level">Spell Level:</label>
+      <select id="level" formControlName="level" required>
+        <option *ngFor="let level of spellLevels" [value]="level">{{ level }}</option>
+      </select>
+    </div>
+  
+    <div>
+      <label for="school">Spell School:</label>
+      <select id="school" formControlName="school" required>
+        <option *ngFor="let school of spellSchools" [value]="school">{{ school }}</option>
+      </select>
+    </div>
+  
+    <div>
+      <label>Components:</label>
+      <div formArrayName="components">
+        <div *ngFor="let component of components.controls; let i = index">
+          <input [formControlName]="i">
+          <button type="button" (click)="removeComponent(i)">Remove</button>
+        </div>
+      </div>
+      <button type="button" (click)="addComponent()">Add Component</button>
+    </div>
+  
+    <div>
+      <label>Classes:</label>
+      <div formArrayName="classes">
+        <div *ngFor="let class of classes.controls; let i = index">
+          <input [formControlName]="i">
+          <button type="button" (click)="removeClass(i)">Remove</button>
+        </div>
+      </div>
+      <button type="button" (click)="addClass()">Add Class</button>
+    </div>
+  
+    <div>
+      <label>Subclasses:</label>
+      <div formArrayName="subclasses">
+        <div *ngFor="let subclass of subclasses.controls; let i = index">
+          <input [formControlName]="i">
+          <button type="button" (click)="removeSubclass(i)">Remove</button>
+        </div>
+      </div>
+      <button type="button" (click)="addSubclass()">Add Subclass</button>
+    </div>
+  
+    <button type="submit">Create Spell</button>
+  </form>
