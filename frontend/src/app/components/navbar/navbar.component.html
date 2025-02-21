@@ -9,20 +9,15 @@
         <a href="#">Collection (WIP)</a>
         <a href="#">Forums (WIP)</a>
     </div>
-    <!-- {% if current_user.is_authenticated %}
+    @if (isLoggedIn) {
         <div class="profile">
-            <span class="profile-name">{{current_user.username}}</span>
-            <div class="profile-dropdown">
-                <a href="/profile/{{current_user.username}}">Profile</a>
-                <a href="#">My Campaigns (WIP)</a>
-                <a href="#">Settings (WIP)</a>
-                <a href="{{ url_for('auth_bp.logout') }}">Log Out</a>
-            </div>
+            <span class="profile-name">{{ username }}</span>
+            <button (click)="logout()">Log Out</button>
         </div>
-    {% else %} -->
+    } @else {
         <div class="navbar-links">
-            <a href="">Log In</a>
-            <a href="">Register</a>
+            <a href="/login">Log In</a>
+            <a href="/register">Register</a>
         </div>
-    <!-- {% endif %} -->
+    }
 </div>

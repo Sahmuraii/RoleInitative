@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 
-import { Component, inject, signal, OnInit, Signal, computed, WritableSignal, ViewChildren, QueryList, ElementRef } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, FormBuilder, Form, FormArray, Validators } from '@angular/forms';
-import { CreateCharacterService } from '../services/create-character.service';
-import { DND_Class } from '../models/dnd_class.type';
-import { DND_Race } from '../models/dnd_race.type';
-import { max } from 'rxjs';
-import { Class_Proficiency_Option } from '../models/class_proficiency_option.type';
+import { Component, inject, QueryList, signal, ViewChild, ViewChildren, OnInit } from '@angular/core';
+import { FormControl, FormGroup, FormBuilder, FormArray, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CreateCharacterService } from '../../services/create-character.service';
+import { catchError } from 'rxjs';
+import { DND_Class } from '../../models/dnd_class.type';
+import { DND_Race } from '../../models/dnd_race.type';
+import { Class_Proficiency_Option } from '../../models/class_proficiency_option.type';
 
 @Component({
   selector: 'app-create-character',

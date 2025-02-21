@@ -1,11 +1,12 @@
 import { Routes } from '@angular/router';
-import { CreateBackgroundComponent } from './create-background/create-background.component';
-import { HomeComponent } from './home/home.component';
-import { CharacterSheetComponent } from './character-sheet/character-sheet.component';
-import { LoginComponent } from './login/login.component';
-import { RegisterComponent } from './register/register.component';
-import { InactiveComponent } from './inactive/inactive.component';
-import { CreateCharacterComponent } from './create-character/create-character.component';
+import { CreateBackgroundComponent } from './components/create-background/create-background.component';
+import { HomeComponent } from './components/home/home.component';
+import { CharacterSheetComponent } from './components/character-sheet/character-sheet.component';
+import { LoginComponent } from './components/login/login.component';
+import { RegisterComponent } from './components/register/register.component';
+import { InactiveComponent } from './components/inactive/inactive.component';
+import { CreateCharacterComponent } from './components/create-character/create-character.component';
+import { CreateSpellComponent } from './components/create-spell/create-spell.component';
 
 export const routes: Routes = [
   { path: 'home', component: HomeComponent},
@@ -14,7 +15,7 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'inactive', component: InactiveComponent },
   { path: 'create/character', component: CreateCharacterComponent},
-  //{ path: 'create/spell', component: CreateSpellComponent },
+  { path: 'create/spell', component: CreateSpellComponent},
   { path: 'character-sheet', component: CharacterSheetComponent},
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: '**', redirectTo: '/home' },
