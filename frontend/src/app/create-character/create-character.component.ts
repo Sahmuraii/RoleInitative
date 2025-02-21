@@ -6,6 +6,7 @@ import { CreateCharacterService } from '../services/create-character.service';
 import { DND_Class } from '../models/dnd_class.type';
 import { DND_Race } from '../models/dnd_race.type';
 import { max } from 'rxjs';
+import { Class_Proficiency_Option } from '../models/class_proficiency_option.type';
 
 @Component({
   selector: 'app-create-character',
@@ -17,8 +18,10 @@ import { max } from 'rxjs';
 export class CreateCharacterComponent implements OnInit {
   characterForm: FormGroup; // Changed Initalization of form group
 
-  dndClassesSignal = signal<Array<DND_Class>>([])
   dndRaces = signal<Array<DND_Race>>([])
+  dndClassesSignal = signal<Array<DND_Class>>([])
+  classProficiencyOptions = signal<Array<Class_Proficiency_Option>>([])
+
 
   minLevel = 0
   maxLevel: number[] = [20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20]
@@ -33,7 +36,8 @@ export class CreateCharacterComponent implements OnInit {
   constructor(private fb: FormBuilder) {
     // Initialize the form with a FormArray for class levels
     this.characterForm = this.fb.group({
-      classLevels: this.fb.array([]) // FormArray to store class levels
+      classLevels: this.fb.array([]), // FormArray to store class levels
+      primaryClass: this.fb.control("None")
     });
   }
 
@@ -72,12 +76,15 @@ export class CreateCharacterComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.createCharacterService.getRaceData().subscribe((races) => {
+      this.dndRaces.set(races)
+    })
     this.createCharacterService.getClassData().subscribe((classes) => {
       this.dndClassesSignal.set(classes)
       this.initializeClassLevels(classes); // Initialize the FormArray with class levels
     })
-    this.createCharacterService.getRaceData().subscribe((races) => {
-      this.dndRaces.set(races)
+    this.createCharacterService.getClassProficiencyData().subscribe((options) => {
+      this.classProficiencyOptions.set(options)
     })
   }
   

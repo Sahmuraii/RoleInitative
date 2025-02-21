@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { API_URL } from '../constants';
 import { DND_Class } from '../models/dnd_class.type';
 import { DND_Race } from '../models/dnd_race.type';
+import { Class_Proficiency_Option } from '../models/class_proficiency_option.type';
 
 @Injectable({
   providedIn: 'root'
@@ -11,11 +12,16 @@ export class CreateCharacterService {
   http = inject(HttpClient)
   constructor() { }
   
+  getRaceData() {
+    return this.http.get<Array<DND_Race>>(`${API_URL}/json/races`)
+  }
+
   getClassData() {
     return this.http.get<Array<DND_Class>>(`${API_URL}/json/classes`)
   }
 
-  getRaceData() {
-    return this.http.get<Array<DND_Race>>(`${API_URL}/json/races`)
+  getClassProficiencyData() {
+    return this.http.get<Array<Class_Proficiency_Option>>(`${API_URL}/json/classproficiencies`)
   }
+  
 }
