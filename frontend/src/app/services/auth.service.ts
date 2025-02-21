@@ -50,6 +50,18 @@ export class AuthService {
     );
   }
 
+  // Send email confirmation
+  sendConfirmation(): Observable<any> {
+    return this.http.get(`${API_URL}/send_confirmation`).pipe(
+      tap(() => console.log('Confirmation email sent.')),
+      catchError((error) => {
+        console.error('Failed to send confirmation email', error);
+        throw error;
+      })
+    );
+  }
+
+  // Logout user
   logout(): void {
     if (this.isBrowser()) {
       localStorage.removeItem('currentUser');
