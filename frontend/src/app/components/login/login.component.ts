@@ -4,12 +4,14 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, MatButtonModule, MatTooltipModule],
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
@@ -19,7 +21,7 @@ export class LoginComponent {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router 
+    private router: Router
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -27,8 +29,15 @@ export class LoginComponent {
     });
   }
 
+  passwordTooltip = 'Reveal Password';
+
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
+    this.passwordTooltip = this.showPassword ? 'Hide Password' : 'Reveal Password';
+  }
+
+  getPasswordVisibility() {
+    return this.showPassword
   }
 
   onSubmit() {

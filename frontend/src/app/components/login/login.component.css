@@ -166,3 +166,25 @@ label {
     color: red;
     margin-top: 10px;
 }
+
+.input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-field {
+  width: 100%;
+  padding-right: 40px; /* Space for the icon */
+}
+
+.eye-icon {
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
+  color: #666;
+}
+
+.eye-icon:hover {
+  color: #333;
+}
