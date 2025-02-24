@@ -17,43 +17,63 @@ import { Class_Proficiency_Option } from '../../models/class_proficiency_option.
 })
 export class CreateCharacterComponent implements OnInit {
   characterForm: FormGroup; // Changed Initalization of form group
+  createCharacterService = inject(CreateCharacterService)
 
+  //Data Retrieved From Backend
   dndRaces = signal<Array<DND_Race>>([])
   dndClassesSignal = signal<Array<DND_Class>>([])
   classProficiencyOptions = signal<Array<Class_Proficiency_Option>>([])
 
-
+  //Class Selection Variables
   minLevel = 0
-  maxLevel: number[] = [20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20]
+  maxLevel: number[] = []
   totalLevelsDisplay = 0
-  chosenClasses: string[] = []
+  chosenClasses: number[] = []
+
+
+
+  //Class Proficiency Variables
+
 
   hiddenArray = [false, true, true, true, true, true, true]
-
-  createCharacterService = inject(CreateCharacterService)
-
   // Cosntructor changed to initalized formGroup
   constructor(private fb: FormBuilder) {
     // Initialize the form with a FormArray for class levels
     this.characterForm = this.fb.group({
       classLevels: this.fb.array([]), // FormArray to store class levels
-      primaryClass: this.fb.control("None")
+      primaryClass: this.fb.control("None"),
+      classProficiencies: this.fb.array([]),
+      profSelects: this.fb.array([])
     });
   }
 
+  //Getters and setters
   get classLevels(): FormArray {
     return this.characterForm.get('classLevels') as FormArray;
   }
 
+  get primaryClass(): string {
+    return this.characterForm.get('primaryClass')?.value;
+  }
+
+  get classProficiencies(): FormArray {
+    return this.characterForm.get('classProficiencies') as FormArray
+  }
+  
+  set classProficiencies(newArray: []) {
+    this.characterForm.setValue([])
+  }
+
+  //Class Selection Methods
   initializeClassLevels(classes: DND_Class[]): void {
     classes.forEach(() => {
-      this.classLevels.push(this.fb.control(0, Validators.min(0)));
+      this.classLevels.push(this.fb.control(0, Validators.min(this.minLevel)));
     });
   }
 
-  getClassLevels(): { class_name: string, level: number }[] {
+  getClassLevels(): { class_id: number, level: number }[] {
     return this.dndClassesSignal().map((dndClass, index) => ({
-      class_name: dndClass.name,
+      class_id: dndClass.class_id,
       level: this.classLevels.at(index).value ?? 0
     }));
   }
@@ -64,17 +84,54 @@ export class CreateCharacterComponent implements OnInit {
       totalLevels += dndClass.value
     })
     this.totalLevelsDisplay = totalLevels
-    for (var i in this.maxLevel) {
+    for (let i in this.maxLevel) {
       this.maxLevel[i] = this.classLevels.at(parseInt(i)).value + (20 - totalLevels)
     }
     this.chosenClasses = []
-    for(var dndClass of this.getClassLevels()) {
+    for(let dndClass of this.getClassLevels()) {
       if(dndClass.level != 0) {
-        this.chosenClasses.push(dndClass.class_name)
+        this.chosenClasses.push(dndClass.class_id)
       }
     }
   }
 
+  //Class Proficiency Methods
+  getArrayOfProfTypes(dndClass: string): Class_Proficiency_Option[] {
+    let classNum = parseInt(dndClass)
+    let result: Class_Proficiency_Option[] = []
+    for(let classProf of this.classProficiencyOptions()) {
+      if(classProf.class_id == classNum) {
+        result.push(classProf)
+      }
+    }
+    
+    return result
+  }
+
+  initializeClassProficiencies(dndClass: string): void {
+    this.classProficiencies.clear()
+    this.getArrayOfProfTypes(dndClass).forEach(x => {
+      this.classProficiencies.push(this.fb.group({
+        list_desc: x.list_description,
+        selects: this.initializeProfOptions(x)
+      }))
+    })
+    
+  }
+
+  initializeProfOptions(x: Class_Proficiency_Option) {
+    let arr = new FormArray<FormGroup>([])
+    for(let i = 0; i < x.max_choices; i++) {
+      arr.push(this.fb.group({
+        prof_list: new FormControl(x.proficiency_options),
+        option: null
+      }))
+    }
+    return arr
+  }
+
+
+  //Miscellaneous Methods
   ngOnInit(): void {
     this.createCharacterService.getRaceData().subscribe((races) => {
       this.dndRaces.set(races)
@@ -82,9 +139,13 @@ export class CreateCharacterComponent implements OnInit {
     this.createCharacterService.getClassData().subscribe((classes) => {
       this.dndClassesSignal.set(classes)
       this.initializeClassLevels(classes); // Initialize the FormArray with class levels
+      this.dndClassesSignal().forEach(() => {
+        this.maxLevel.push(20)
+      })
     })
     this.createCharacterService.getClassProficiencyData().subscribe((options) => {
       this.classProficiencyOptions.set(options)
+
     })
   }
   

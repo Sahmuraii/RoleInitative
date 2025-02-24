@@ -1,9 +1,11 @@
 <div class="main-content">
-    <h1>Character Creator</h1>
-    <p>Welcome to the character creator! Here you can design your own Dungeons and Dragons character.</p>
-    <p>Follow the steps below to build your character:</p>
-    <p>Value: {{ characterForm.value | json }}</p>
-    <p>{{chosenClasses}}</p>
+    <div class="everything-not-tabs">
+        <h1 class="titleclass">Character Creator</h1>
+        <p>Welcome to the character creator! Here you can design your own Dungeons and Dragons character.</p>
+        <p>Follow the steps below to build your character:</p>
+        <p>Value: {{ characterForm.value | json }}</p>
+        <br>
+    </div>
     <div class="tabs">
         <button #tab class="tab active" (click)="showTab('basicInfo')" [ngClass]="{'active' : !hiddenArray[0]}">Basic Info</button>
         <button #tabtest class="tab" (click)="showTab('race')" [ngClass]="{'active' : !hiddenArray[1]}">Race</button>
@@ -18,388 +20,383 @@
             <p>User is NOT authenticated.</p>
         {% endif %} -->
     </div>
+    <div class="everything-not-tabs">
+        <form [formGroup]="characterForm">
 
-    <form [formGroup]="characterForm">
+            <!-- Basic Info -->
+            <div id="basicInfo" [hidden]="hiddenArray[0]">
+                <h2>Basic Info</h2>
+                <label for="charname">Enter your character's name:</label>
+                <input type="text" id="charname" name="charname" placeholder="Enter character name"><br>
 
-        <!-- Basic Info -->
-        <div id="basicInfo" [hidden]="hiddenArray[0]">
-            <h2>Basic Info</h2>
-            <label for="charname">Enter your character's name:</label>
-            <input type="text" id="charname" name="charname" placeholder="Enter character name"><br>
+                <label for="ruleset">Choose your ruleset:</label>
+                <select id="ruleset" name="ruleset">
+                    <option value="2014">2014 (Original)</option>
+                    <option value="2024">2024 (Updated)</option>
+                </select><br>
 
-            <label for="ruleset">Choose your ruleset:</label>
-            <select id="ruleset" name="ruleset">
-                <option value="2014">2014 (Original)</option>
-                <option value="2024">2024 (Updated)</option>
-            </select><br>
+                <label for="xp_method">Experience Method:</label>
+                <select id="xp_method" name="xp_method">
+                    <option value="xp">XP</option>
+                    <option value="milestone">Milestone</option>
+                </select><br>
 
-            <label for="xp_method">Experience Method:</label>
-            <select id="xp_method" name="xp_method">
-                <option value="xp">XP</option>
-                <option value="milestone">Milestone</option>
-            </select><br>
+                <label for="encumbrance">Encumbrance Rules:</label>
+                <select id="encumbrance" name="encumbrance">
+                    <option value="yes">Use Encumbrance</option>
+                    <option value="no">No Encumbrance</option>
+                </select>
+            </div>
 
-            <label for="encumbrance">Encumbrance Rules:</label>
-            <select id="encumbrance" name="encumbrance">
-                <option value="yes">Use Encumbrance</option>
-                <option value="no">No Encumbrance</option>
-            </select>
-        </div>
-
-        <!-- Race -->
-        <div id="race" [hidden]="hiddenArray[1]">
-            <!-- Make sure to add an option to decide between rulesets somehow (2014 vs 2024) -->
-            <h2>Choose Your Race</h2>
-            <label for="charrace">Choose your character's race:</label>
-            <select id="charrace" name="charrace">
-                @for (dndRace of dndRaces(); track $index) {
-                    <option value="{{ dndRace.race_id }}">
-                        {{ dndRace.name }}
-                    </option>
-                }
-            </select><br>
-
-            <button type="button" onclick="window.location.href='/homebrew/races'">Browse Homebrew Races</button>
-        </div>
-
-        <!-- Class -->
-        <div id="class" name="character_class_selections" [hidden]="hiddenArray[2]" formArrayName="classLevels">
-            <p id="currentlevel">Your current level: {{ totalLevelsDisplay }}</p>
-            <p id="sparelevels">Levels left to allocate: {{ 20 - totalLevelsDisplay }}</p>
-            <label for="selectFirstClass">Choose your primary class (affects character HP):</label><br>
-            <select id="selectFirstClass" name="selectFirstClass">
-                @if (chosenClasses.length > 0) {
-                    @for (class of chosenClasses; track $index) {
-                        <option [value]="class">{{ class }}</option>
+            <!-- Race -->
+            <div id="race" [hidden]="hiddenArray[1]">
+                <!-- Make sure to add an option to decide between rulesets somehow (2014 vs 2024) -->
+                <h2>Choose Your Race</h2>
+                <label for="charrace">Choose your character's race:</label>
+                <select id="charrace" name="charrace">
+                    @for (dndRace of dndRaces(); track $index) {
+                        <option value="{{ dndRace.race_id }}">
+                            {{ dndRace.name }}
+                        </option>
                     }
+                </select><br>
+
+                <button type="button" onclick="window.location.href='/homebrew/races'">Browse Homebrew Races</button>
+            </div>
+
+            <!-- Class -->
+            <div id="class" name="character_class_selections" [hidden]="hiddenArray[2]">
+                <p id="currentlevel">Your current level: {{ totalLevelsDisplay }}</p>
+                <p id="sparelevels">Levels left to allocate: {{ 20 - totalLevelsDisplay }}</p>
+                <label for="selectFirstClass">Choose your primary class (affects character HP):</label>
+                <select id="selectFirstClass" name="selectFirstClass" formControlName="primaryClass" (change)="initializeClassProficiencies(this.primaryClass)">
+                    @if (chosenClasses.length > 0) {
+                        <option ngValue="None" selected>Select a Class!</option>
+                        @for (class of chosenClasses; track $index) {
+                            <option [ngValue]="class">{{ dndClassesSignal()[class-1].name }}</option>
+                            
+                        }
+                    } @else {
+                        <option ngValue="None">No Classes Selected</option>
+                    }
+                    
+                    
+                </select><br>
+                <div *ngFor="let dndClass of dndClassesSignal(); let i = index" formArrayName="classLevels">
+                    <div class="level-control">
+                        <label>{{ dndClass.name }}:</label>
+                        <input 
+                        type="number"
+                        [formControlName]="i"
+                        [min]="minLevel"
+                        [max]="maxLevel[i]"
+                        placeholder="0"
+                        (change)="updateMaxLevels()"
+                        />
+                    </div>
+                </div>
+                
+                
+            </div>
+    
+
+            <!-- Class Proficiencies -->
+            <div id="class_proficiencies" name="character_class_proficiencies" [hidden]="hiddenArray[3]">
+                @if (primaryClass == "None") {
+                    <p>No Class Selected</p>
                 } @else {
-                    <option value="None">No Classes Selected</option>
+                    <div formArrayName="classProficiencies">
+                        @for (profSet of classProficiencies.controls; track i; let i = $index) {
+                            <div [formGroupName]="i">
+                                <p>List description: {{profSet.value.list_desc}}</p>
+                                    @for (sel of profSet.value.selects; track j; let j = $index) {
+                                        <div [formGroupName]="j">
+                                            <select formControlName="profSelects">
+                                                @for (opt of sel['prof_list']; track $index) {
+                                                    <option [value]="opt.id">{{opt.name}}</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    }
+                            </div>
+                        }
+                    </div>
                 }
                 
-                
-            </select><br>
-            <div *ngFor="let dndClass of dndClassesSignal(); let i = index">
-                <div class="level-control">
-                    <label>{{ dndClass.name }}:</label>
-                    <input 
-                    type="number"
-                    [formControlName]="i"
-                    [min]="minLevel"
-                    [max]="maxLevel[i]"
-                    placeholder="0"
-                    (change)="updateMaxLevels()"
-                    />
+            </div>
+
+            <!-- Attributes -->
+            <div id="attributes" [hidden]="hiddenArray[4]">
+                <h2>Set Your Attributes</h2>
+                <p>Choose a method to determine your stats:</p>
+                <label for="stat_method">Stat Allocation Method:</label>
+                <select id="stat_method" name="stat_method">
+                    <option value="standard_array">Standard Array</option>
+                    <option value="point_buy">Point Buy</option>
+                    <option value="roll">Roll</option>
+                    <option value="manual">Manual</option>
+                </select><br>
+
+                <!-- Standard Array -->
+                <div id="standard_array" style="display: block;">
+                    <p><br>Assign values from the standard array <span id="attribute_array">[15, 14, 13, 12, 10, 8]</span>:<br></p><br>
+                </div>
+
+                <!-- Point Buy -->
+                <div id="point_buy" style="display: none;">
+                    <p><br>Allocate points (Max 27)<span id="remainingPoints">27</span><br></p>
+                </div>
+
+                <!-- Roll -->
+                <div id="roll" style="display: none;">
+                    <br>
+                    <div style="display: flex; align-items: center; gap: 4px;">
+                        <span>Roll </span>
+                        <input type="number" id="numDice" style="width: 40px;" value=4 min="0" max="100" placeholder="e.g., 4"> <!-- 40 px is to allow for 3 digits -->
+                        <span>d</span>
+                        <input type="number" id="typeDice" style="width: 40px;" value=6 min="0" max="100" placeholder="e.g., 6">
+                        <span> dice, then the drop lowest </span>
+                        <input type="number" id="dropDice" style="width: 40px;" value=1 min="0" max="100" placeholder="e.g., 1">
+                        <span> for each stat.</span>
+                    </div>
+                    <br>
+                    <button type="button" id="rollStatsButton">Roll Stats</button><br>
+                    <br><p>Assign values from the rolled values: <span id="roll_attribute_array">Press the roll button to get your values</span></p><br>
+                </div>
+
+                <!-- Manual -->
+                <div id="manual" style="display: none;">
+                    <p><br>Manually set stats (1-20):<br><br></p>
+                </div>
+
+                <!-- Manual or Point Buy (Both should have arrows), Rolling and Array should not -->
+                <div id="attribute_fields" style="display: block">
+                    <div class="attribute-section">
+                        <label for="strength">Strength:</label>
+                        <button type="button" onclick="adjustStat('strength', -1)">-</button>
+                        <input type="number" id="strength" name="strength" value="8" min="1" max="20" readonly>
+                        <button type="button" onclick="adjustStat('strength', 1)">+</button>
+                    </div>
+                    <div class="attribute-section">
+                        <label for="dexterity">Dexterity:</label>
+                        <button type="button" onclick="adjustStat('dexterity', -1)">-</button>
+                        <input type="number" id="dexterity" name="dexterity" value="8" min="1" max="20" readonly>
+                        <button type="button" onclick="adjustStat('dexterity', 1)">+</button>
+                    </div>
+                    <div class="attribute-section">
+                        <label for="constitution">Constitution:</label>
+                        <button type="button" onclick="adjustStat('constitution', -1)">-</button>
+                        <input type="number" id="constitution" name="constitution" value="8" min="1" max="20" readonly>
+                        <button type="button" onclick="adjustStat('constitution', 1)">+</button>
+                    </div>
+                    <div class="attribute-section">
+                        <label for="intelligence">Intelligence:</label>
+                        <button type="button" onclick="adjustStat('intelligence', -1)">-</button>
+                        <input type="number" id="intelligence" name="intelligence" value="8" min="1" max="20" readonly>
+                        <button type="button" onclick="adjustStat('intelligence', 1)">+</button>
+                    </div>
+                    <div class="attribute-section">
+                        <label for="wisdom">Wisdom:</label>
+                        <button type="button" onclick="adjustStat('wisdom', -1)">-</button>
+                        <input type="number" id="wisdom" name="wisdom" value="8" min="1" max="20" readonly>
+                        <button type="button" onclick="adjustStat('wisdom', 1)">+</button>
+                    </div>
+                    <div class="attribute-section">
+                        <label for="charisma">Charisma:</label>
+                        <button type="button" onclick="adjustStat('charisma', -1)">-</button>
+                        <input type="number" id="charisma" name="charisma" value="8" min="1" max="20" readonly>
+                        <button type="button" onclick="adjustStat('charisma', 1)">+</button>
+                    </div>
+                </div>
+                <div id="attribute_fields_dropdown" style="display: block">
+                    <div class="attribute-section">
+                        <label for="strength">Strength:</label>
+                        <select id="strength_dd" name="stat_method" onchange="checkAvailability(this.id, this.value)">
+                            <option value="-1">—</option>
+                            <option value="0">value 0</option>
+                            <option value="1">value 1</option>
+                            <option value="2">value 2</option>
+                            <option value="3">value 3</option>
+                            <option value="4">value 4</option>
+                            <option value="5">value 5</option>
+                        </select>
+                    </div>
+                    <div class="attribute-section">
+                        <label for="dexterity">Dexterity:</label>
+                        <select id="dexterity_dd" name="stat_method" onchange="checkAvailability(this.id, this.value)">
+                            <option value="-1">—</option>
+                            <option value="0">value 0</option>
+                            <option value="1">value 1</option>
+                            <option value="2">value 2</option>
+                            <option value="3">value 3</option>
+                            <option value="4">value 4</option>
+                            <option value="5">value 5</option>
+                        </select>
+                    </div>
+                    <div class="attribute-section">
+                        <label for="constitution">Constitution:</label>
+                        <select id="constitution_dd" name="stat_method" onchange="checkAvailability(this.id, this.value)">
+                            <option value="-1">—</option>
+                            <option value="0">value 0</option>
+                            <option value="1">value 1</option>
+                            <option value="2">value 2</option>
+                            <option value="3">value 3</option>
+                            <option value="4">value 4</option>
+                            <option value="5">value 5</option>
+                        </select>
+                    </div>
+                    <div class="attribute-section">
+                        <label for="intelligence">Intelligence:</label>
+                        <select id="intelligence_dd" name="stat_method" onchange="checkAvailability(this.id, this.value)">
+                            <option value="-1">—</option>
+                            <option value="0">value 0</option>
+                            <option value="1">value 1</option>
+                            <option value="2">value 2</option>
+                            <option value="3">value 3</option>
+                            <option value="4">value 4</option>
+                            <option value="5">value 5</option>
+                        </select>
+                    </div>
+                    <div class="attribute-section">
+                        <label for="wisdom">Wisdom:</label>
+                        <select id="wisdom_dd" name="stat_method" onchange="checkAvailability(this.id, this.value)">
+                            <option value="-1">—</option>
+                            <option value="0">value 0</option>
+                            <option value="1">value 1</option>
+                            <option value="2">value 2</option>
+                            <option value="3">value 3</option>
+                            <option value="4">value 4</option>
+                            <option value="5">value 5</option>
+                        </select>
+                    </div>
+                    <div class="attribute-section">
+                        <label for="charisma">Charisma:</label>
+                        <select id="charisma_dd" name="stat_method" onchange="checkAvailability(this.id, this.value)">
+                            <option value="-1">—</option>
+                            <option value="0">value 0</option>
+                            <option value="1">value 1</option>
+                            <option value="2">value 2</option>
+                            <option value="3">value 3</option>
+                            <option value="4">value 4</option>
+                            <option value="5">value 5</option>
+                        </select>
+                    </div>
                 </div>
             </div>
-            
-            
-        </div>
-  
 
-        <!-- Class Proficiencies -->
-        <div id="class_proficiencies" name="character_class_proficiencies" [hidden]="hiddenArray[3]">
+            <!-- Character Details -->
+            <div id="details" [hidden]="hiddenArray[5]">
+                <h2>Character Details</h2><br>
+                <h3>Personality Traits:</h3>
+                <label for="background">Choose your character's background:</label>
+                <select id="background" name="background">
+                    <!-- {% for background in all_backgrounds %}
+                        <option value="{{ background.background_id }}">{{ background.background_name }}</option>
+                    {% endfor %} -->
+                </select><br>
+                <label for="alignment">Choose your character's alignment:</label>
+                <select id="alignment" name="alignment">
+                    <option value="Lawful Good">Lawful Good</option>
+                    <option value="Neutral Good">Neutral Good</option>
+                    <option value="Chaotic Good">Chaotic Good</option>
+                    <option value="Lawful Neutral">Lawful Neutral</option>
+                    <option value="True Neutral">True Neutral</option>
+                    <option value="Chaotic Neutral">Chaotic Neutral</option>
+                    <option value="Lawful Evil">Lawful Evil</option>
+                    <option value="Neutral Evil">Neutral Evil</option>
+                    <option value="Chaotic Evil">Chaotic Evil</option>
+                </select><br>
+                <label for="personality">Personality:</label><br>
+                <textarea id="personality" name="personality" rows="4" cols="50"></textarea><br>
+                <label for="faith">Faith:</label>
+                <input type="text" id="faith" name="faith"><br>
 
-            <!-- <div id="class_proficiency_list_no-class-selected" dnd_class_no-class-selected style="display: none;">
-                <label for="no-class-selected" name="class_proficiencies_label"><strong>No Class Selected...</strong></label><br><label for="no-class-selected">No proficiency options to display</label>
-                <input type="number" id="no-class-selected" name="class_proficiencies_level" value="0" min="0" max="20" class="dnd_stat_input"><br>
-                <br>
-            </div> -->
-            <!-- <input type="number" id="class_proficiency_list_length" name="class_proficiency_list_length" value="{{ class_proficiency_lists | length }}" style="display:none;" readonly> -->
-        <!-- {% for dnd_class in all_classes %}
-            <div id="class_proficiency_list_{{dnd_class['class_id']}}" name="class_proficiency_lists" dnd_class_{{dnd_class['name']}} style="display: none;">
-                <label for="{{dnd_class.class_id}}" name="class_proficiencies_label"><strong>{{ dnd_class.name }}</strong></label><label for="{{dnd_class.name}}"><strong> Proficiencies:</strong></label><br>
-                {% for proficiency_list in class_proficiency_lists %} {% if proficiency_list['class_id'] == dnd_class['class_id'] %}
-                    <input type="number" id="class_proficiency_list_id" name="class_proficiency_list_{{dnd_class.class_id}}_ids" value="{{ proficiency_list['proficiency_list_id'] }}" style="display:none;" readonly>
-                    <input type="number" id="class_proficiency_list_length" name="class_proficiency_list_{{dnd_class.class_id}}_{{proficiency_list['proficiency_list_id']}}_length" value="{{ proficiency_list['max_choices'] }}" style="display:none;" readonly>
+                <h3>Physical Traits:</h3>
+                <label for="height">Height:</label>
+                <input type="text" id="height" name="height"><br>
+                <label for="weight">Weight:</label>
+                <input type="text" id="weight" name="weight"><br>
+                <label for="skin_color">Skin Color:</label>
+                <input type="text" id="skin_color" name="skin_color"><br>
+                <label for="hair_color">Hair Color:</label>
+                <input type="text" id="hair_color" name="hair_color"><br>
+                <label for="eye_color">Eye Color:</label>
+                <input type="text" id="eye_color" name="eye_color"><br>
+                <label for="age">Age:</label>
+                <input type="text" id="age" name="age"><br>
+                <label for="appearance">General Appearance:</label><br>
+                <textarea id="appearance" name="appearance" rows="4" cols="50"></textarea><br>
 
-                    <div id="class_proficiency_{{dnd_class.class_id}}_{{proficiency_list['proficiency_list_id']}}_div" class="selection_container">
-                    <label for="{{dnd_class.class_id}}_{{proficiency_list['proficiency_list_id']}}" name="class_proficiency_list_{{dnd_class.class_id}}_{{proficiency_list['proficiency_list_id']}}_choice">{{ proficiency_list['list_description'] }}</label><br>
-                    {% for i in range(proficiency_list['max_choices'])%}
-                        <select class="proficiency_choice_select" id="class_proficiency_list_{{dnd_class.class_id}}_{{proficiency_list['proficiency_list_id']}}_{{i}}" name="class_proficiency_list_{{dnd_class.class_id}}_{{proficiency_list['proficiency_list_id']}}_{{i}}_selection">
-                        {% for option in proficiency_list['proficiency_options'] %}
-                            <option value="{{option['id']}}">{{option['name']}}</option>
-                        {% endfor %}
-                        </select><br>
+                <h3>Other Details:</h3>
+                <label for="backstory">Backstory:</label><br>
+                <textarea id="backstory" name="backstory" rows="4" cols="50"></textarea><br>
+                <label for="bonds">Alliances and Organizations:</label><br>
+                <textarea id="bonds" name="bonds" rows="4" cols="50"></textarea><br>
+                <label for="misc_description">Anything else you'd like to add:</label><br>
+                <textarea id="misc_description" name="misc_description" rows="4" cols="50"></textarea>
+            </div>
+
+            <!-- Equipment -->
+            <div id="equipment" [hidden]="hiddenArray[6]">
+                <h2>Starting Equipment</h2>
+                <p>Select starting equipment based on your background, class, and race:</p>
+                <!-- Generate dynamically based on above-mentioned -->
+                <div id="equipment-options">
+                    <!-- {% for item in starting_equipment %}
+                        <label>
+                            <input type="checkbox" name="equipment" value="{{ item.id }}">
+                            {{ item.name }}
+                        </label><br>
+                    {% endfor %} -->
+                </div>
+                <p>Manual fill in for now</p>
+                <div class="form-section">
+                    <label for="equipmentList">Equipment List</label>
+                    <textarea id="equipmentList" rows="4" placeholder="List your character's equipment"></textarea>
+                </div>
+            </div>
+            <div id="debug" [hidden]="true">
+                <h2>Information from the Database</h2>
+
+                <!-- <p>Character Class: {{ current_class if current_class else "None" }}</p>
+                <p>Current Level: {{ current_level if current_level else "N/A" }}</p>
+                <p>All Classes: {{ all_classes }}</p>
+                <p>All Classes: {% for dnd_class in all_classes %}
+                    {{ dnd_class.class_id }} <br>
+                    {{ dnd_class.name }} <br>
+                    {{ dnd_class.description }} <br>
+                    {{ dnd_class.hit_die }} <br>
+                    {{ dnd_class.is_official }} <br>
                     {% endfor %}
-                    </div><br>
-                {% endif %}
-                {% endfor %}
-                <br>
+                </p> -->
             </div>
-        {% endfor %} -->
-        </div>
-
-        <!-- Attributes -->
-        <div id="attributes" [hidden]="hiddenArray[4]">
-            <h2>Set Your Attributes</h2>
-            <p>Choose a method to determine your stats:</p>
-            <label for="stat_method">Stat Allocation Method:</label>
-            <select id="stat_method" name="stat_method">
-                <option value="standard_array">Standard Array</option>
-                <option value="point_buy">Point Buy</option>
-                <option value="roll">Roll</option>
-                <option value="manual">Manual</option>
-            </select><br>
-
-            <!-- Standard Array -->
-            <div id="standard_array" style="display: block;">
-                <p><br>Assign values from the standard array <span id="attribute_array">[15, 14, 13, 12, 10, 8]</span>:<br></p><br>
+            <div class="button-group">
+                <br><button type="submit" onclick="prepFormSubmission()">Save Character</button>
             </div>
-
-            <!-- Point Buy -->
-            <div id="point_buy" style="display: none;">
-                <p><br>Allocate points (Max 27)<span id="remainingPoints">27</span><br></p>
+            <div style="display:none">
+                <input type="number" id="final-str" name="final-str" value="8" min="1" max="20" readonly><br>
+                <input type="number" id="final-dex" name="final-dex" value="8" min="1" max="20" readonly><br>
+                <input type="number" id="final-con" name="final-con" value="8" min="1" max="20" readonly><br>
+                <input type="number" id="final-int" name="final-int" value="8" min="1" max="20" readonly><br>
+                <input type="number" id="final-wis" name="final-wis" value="8" min="1" max="20" readonly><br>
+                <input type="number" id="final-cha" name="final-cha" value="8" min="1" max="20" readonly><br>
             </div>
-
-            <!-- Roll -->
-            <div id="roll" style="display: none;">
-                <br>
-                <div style="display: flex; align-items: center; gap: 4px;">
-                    <span>Roll </span>
-                    <input type="number" id="numDice" style="width: 40px;" value=4 min="0" max="100" placeholder="e.g., 4"> <!-- 40 px is to allow for 3 digits -->
-                    <span>d</span>
-                    <input type="number" id="typeDice" style="width: 40px;" value=6 min="0" max="100" placeholder="e.g., 6">
-                    <span> dice, then the drop lowest </span>
-                    <input type="number" id="dropDice" style="width: 40px;" value=1 min="0" max="100" placeholder="e.g., 1">
-                    <span> for each stat.</span>
-                </div>
-                <br>
-                <button type="button" id="rollStatsButton">Roll Stats</button><br>
-                <br><p>Assign values from the rolled values: <span id="roll_attribute_array">Press the roll button to get your values</span></p><br>
+            <!-- Right Panel -->
+            <div class="character-summary">
+                <h2>Character Summary</h2>
+                <p><strong>Name:</strong> <span id="summary-name">None</span></p>
+                <p><strong>Race:</strong> <span id="summary-race">None</span></p>
+                <p><strong>Class:</strong> <span id="summary-class">None</span></p>
+                <p><strong>Stats:</strong></p>
+                <ul>
+                    <li>Strength: <span id="summary-strength">8</span></li>
+                    <li>Dexterity: <span id="summary-dexterity">8</span></li>
+                    <li>Constitution: <span id="summary-constitution">8</span></li>
+                    <li>Intelligence: <span id="summary-intelligence">8</span></li>
+                    <li>Wisdom: <span id="summary-wisdom">8</span></li>
+                    <li>Charisma: <span id="summary-charisma">8</span></li>
+                </ul>
             </div>
-
-            <!-- Manual -->
-            <div id="manual" style="display: none;">
-                <p><br>Manually set stats (1-20):<br><br></p>
-            </div>
-
-            <!-- Manual or Point Buy (Both should have arrows), Rolling and Array should not -->
-            <div id="attribute_fields" style="display: block">
-                <div class="attribute-section">
-                    <label for="strength">Strength:</label>
-                    <button type="button" onclick="adjustStat('strength', -1)">-</button>
-                    <input type="number" id="strength" name="strength" value="8" min="1" max="20" readonly>
-                    <button type="button" onclick="adjustStat('strength', 1)">+</button>
-                </div>
-                <div class="attribute-section">
-                    <label for="dexterity">Dexterity:</label>
-                    <button type="button" onclick="adjustStat('dexterity', -1)">-</button>
-                    <input type="number" id="dexterity" name="dexterity" value="8" min="1" max="20" readonly>
-                    <button type="button" onclick="adjustStat('dexterity', 1)">+</button>
-                </div>
-                <div class="attribute-section">
-                    <label for="constitution">Constitution:</label>
-                    <button type="button" onclick="adjustStat('constitution', -1)">-</button>
-                    <input type="number" id="constitution" name="constitution" value="8" min="1" max="20" readonly>
-                    <button type="button" onclick="adjustStat('constitution', 1)">+</button>
-                </div>
-                <div class="attribute-section">
-                    <label for="intelligence">Intelligence:</label>
-                    <button type="button" onclick="adjustStat('intelligence', -1)">-</button>
-                    <input type="number" id="intelligence" name="intelligence" value="8" min="1" max="20" readonly>
-                    <button type="button" onclick="adjustStat('intelligence', 1)">+</button>
-                </div>
-                <div class="attribute-section">
-                    <label for="wisdom">Wisdom:</label>
-                    <button type="button" onclick="adjustStat('wisdom', -1)">-</button>
-                    <input type="number" id="wisdom" name="wisdom" value="8" min="1" max="20" readonly>
-                    <button type="button" onclick="adjustStat('wisdom', 1)">+</button>
-                </div>
-                <div class="attribute-section">
-                    <label for="charisma">Charisma:</label>
-                    <button type="button" onclick="adjustStat('charisma', -1)">-</button>
-                    <input type="number" id="charisma" name="charisma" value="8" min="1" max="20" readonly>
-                    <button type="button" onclick="adjustStat('charisma', 1)">+</button>
-                </div>
-            </div>
-            <div id="attribute_fields_dropdown" style="display: block">
-                <div class="attribute-section">
-                    <label for="strength">Strength:</label>
-                    <select id="strength_dd" name="stat_method" onchange="checkAvailability(this.id, this.value)">
-                        <option value="-1">—</option>
-                        <option value="0">value 0</option>
-                        <option value="1">value 1</option>
-                        <option value="2">value 2</option>
-                        <option value="3">value 3</option>
-                        <option value="4">value 4</option>
-                        <option value="5">value 5</option>
-                    </select>
-                </div>
-                <div class="attribute-section">
-                    <label for="dexterity">Dexterity:</label>
-                    <select id="dexterity_dd" name="stat_method" onchange="checkAvailability(this.id, this.value)">
-                        <option value="-1">—</option>
-                        <option value="0">value 0</option>
-                        <option value="1">value 1</option>
-                        <option value="2">value 2</option>
-                        <option value="3">value 3</option>
-                        <option value="4">value 4</option>
-                        <option value="5">value 5</option>
-                    </select>
-                </div>
-                <div class="attribute-section">
-                    <label for="constitution">Constitution:</label>
-                    <select id="constitution_dd" name="stat_method" onchange="checkAvailability(this.id, this.value)">
-                        <option value="-1">—</option>
-                        <option value="0">value 0</option>
-                        <option value="1">value 1</option>
-                        <option value="2">value 2</option>
-                        <option value="3">value 3</option>
-                        <option value="4">value 4</option>
-                        <option value="5">value 5</option>
-                    </select>
-                </div>
-                <div class="attribute-section">
-                    <label for="intelligence">Intelligence:</label>
-                    <select id="intelligence_dd" name="stat_method" onchange="checkAvailability(this.id, this.value)">
-                        <option value="-1">—</option>
-                        <option value="0">value 0</option>
-                        <option value="1">value 1</option>
-                        <option value="2">value 2</option>
-                        <option value="3">value 3</option>
-                        <option value="4">value 4</option>
-                        <option value="5">value 5</option>
-                    </select>
-                </div>
-                <div class="attribute-section">
-                    <label for="wisdom">Wisdom:</label>
-                    <select id="wisdom_dd" name="stat_method" onchange="checkAvailability(this.id, this.value)">
-                        <option value="-1">—</option>
-                        <option value="0">value 0</option>
-                        <option value="1">value 1</option>
-                        <option value="2">value 2</option>
-                        <option value="3">value 3</option>
-                        <option value="4">value 4</option>
-                        <option value="5">value 5</option>
-                    </select>
-                </div>
-                <div class="attribute-section">
-                    <label for="charisma">Charisma:</label>
-                    <select id="charisma_dd" name="stat_method" onchange="checkAvailability(this.id, this.value)">
-                        <option value="-1">—</option>
-                        <option value="0">value 0</option>
-                        <option value="1">value 1</option>
-                        <option value="2">value 2</option>
-                        <option value="3">value 3</option>
-                        <option value="4">value 4</option>
-                        <option value="5">value 5</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-
-        <!-- Character Details -->
-        <div id="details" [hidden]="hiddenArray[5]">
-            <h2>Character Details</h2><br>
-            <h3>Personality Traits:</h3>
-            <label for="background">Choose your character's background:</label>
-            <select id="background" name="background">
-                <!-- {% for background in all_backgrounds %}
-                    <option value="{{ background.background_id }}">{{ background.background_name }}</option>
-                {% endfor %} -->
-            </select><br>
-            <label for="alignment">Choose your character's alignment:</label>
-            <select id="alignment" name="alignment">
-                <option value="Lawful Good">Lawful Good</option>
-                <option value="Neutral Good">Neutral Good</option>
-                <option value="Chaotic Good">Chaotic Good</option>
-                <option value="Lawful Neutral">Lawful Neutral</option>
-                <option value="True Neutral">True Neutral</option>
-                <option value="Chaotic Neutral">Chaotic Neutral</option>
-                <option value="Lawful Evil">Lawful Evil</option>
-                <option value="Neutral Evil">Neutral Evil</option>
-                <option value="Chaotic Evil">Chaotic Evil</option>
-            </select><br>
-            <label for="personality">Personality:</label><br>
-            <textarea id="personality" name="personality" rows="4" cols="50"></textarea><br>
-            <label for="faith">Faith:</label>
-            <input type="text" id="faith" name="faith"><br>
-
-            <h3>Physical Traits:</h3>
-            <label for="height">Height:</label>
-            <input type="text" id="height" name="height"><br>
-            <label for="weight">Weight:</label>
-            <input type="text" id="weight" name="weight"><br>
-            <label for="skin_color">Skin Color:</label>
-            <input type="text" id="skin_color" name="skin_color"><br>
-            <label for="hair_color">Hair Color:</label>
-            <input type="text" id="hair_color" name="hair_color"><br>
-            <label for="eye_color">Eye Color:</label>
-            <input type="text" id="eye_color" name="eye_color"><br>
-            <label for="age">Age:</label>
-            <input type="text" id="age" name="age"><br>
-            <label for="appearance">General Appearance:</label><br>
-            <textarea id="appearance" name="appearance" rows="4" cols="50"></textarea><br>
-
-            <h3>Other Details:</h3>
-            <label for="backstory">Backstory:</label><br>
-            <textarea id="backstory" name="backstory" rows="4" cols="50"></textarea><br>
-            <label for="bonds">Alliances and Organizations:</label><br>
-            <textarea id="bonds" name="bonds" rows="4" cols="50"></textarea><br>
-            <label for="misc_description">Anything else you'd like to add:</label><br>
-            <textarea id="misc_description" name="misc_description" rows="4" cols="50"></textarea>
-        </div>
-
-        <!-- Equipment -->
-        <div id="equipment" [hidden]="hiddenArray[6]">
-            <h2>Starting Equipment</h2>
-            <p>Select starting equipment based on your background, class, and race:</p>
-            <!-- Generate dynamically based on above-mentioned -->
-            <div id="equipment-options">
-                <!-- {% for item in starting_equipment %}
-                    <label>
-                        <input type="checkbox" name="equipment" value="{{ item.id }}">
-                        {{ item.name }}
-                    </label><br>
-                {% endfor %} -->
-            </div>
-            <p>Manual fill in for now</p>
-            <div class="form-section">
-                <label for="equipmentList">Equipment List</label>
-                <textarea id="equipmentList" rows="4" placeholder="List your character's equipment"></textarea>
-            </div>
-        </div>
-        <div id="debug" [hidden]="true">
-            <h2>Information from the Database</h2>
-
-            <!-- <p>Character Class: {{ current_class if current_class else "None" }}</p>
-            <p>Current Level: {{ current_level if current_level else "N/A" }}</p>
-            <p>All Classes: {{ all_classes }}</p>
-            <p>All Classes: {% for dnd_class in all_classes %}
-                {{ dnd_class.class_id }} <br>
-                {{ dnd_class.name }} <br>
-                {{ dnd_class.description }} <br>
-                {{ dnd_class.hit_die }} <br>
-                {{ dnd_class.is_official }} <br>
-                {% endfor %}
-            </p> -->
-        </div>
-        <div class="button-group">
-            <br><button type="submit" onclick="prepFormSubmission()">Save Character</button>
-        </div>
-        <div style="display:none">
-            <input type="number" id="final-str" name="final-str" value="8" min="1" max="20" readonly><br>
-            <input type="number" id="final-dex" name="final-dex" value="8" min="1" max="20" readonly><br>
-            <input type="number" id="final-con" name="final-con" value="8" min="1" max="20" readonly><br>
-            <input type="number" id="final-int" name="final-int" value="8" min="1" max="20" readonly><br>
-            <input type="number" id="final-wis" name="final-wis" value="8" min="1" max="20" readonly><br>
-            <input type="number" id="final-cha" name="final-cha" value="8" min="1" max="20" readonly><br>
-        </div>
-        <!-- Right Panel -->
-        <div class="character-summary">
-            <h2>Character Summary</h2>
-            <p><strong>Name:</strong> <span id="summary-name">None</span></p>
-            <p><strong>Race:</strong> <span id="summary-race">None</span></p>
-            <p><strong>Class:</strong> <span id="summary-class">None</span></p>
-            <p><strong>Stats:</strong></p>
-            <ul>
-                <li>Strength: <span id="summary-strength">8</span></li>
-                <li>Dexterity: <span id="summary-dexterity">8</span></li>
-                <li>Constitution: <span id="summary-constitution">8</span></li>
-                <li>Intelligence: <span id="summary-intelligence">8</span></li>
-                <li>Wisdom: <span id="summary-wisdom">8</span></li>
-                <li>Charisma: <span id="summary-charisma">8</span></li>
-            </ul>
-        </div>
-    </form>
+        </form>
+    </div>
 </div>
