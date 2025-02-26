@@ -397,3 +397,24 @@ def delete_character(character_id):
             return jsonify({"error": "An error occurred while deleting the character"}), 500
     if request.method == 'GET':
         return redirect(url_for('core_bp.home'))
+
+#@character_bp.route('/characters', methods=['GET'])
+#@login_required()
+#def get_characters():
+#    user = current_user
+#    characters = Character.query.filter_by(owner_id=user.id).all()
+
+#    if not characters:
+#        return jsonify({"message": "No characters found"}), 404
+
+#    characters_list = []
+#    for char in characters:
+#        characters_list.append({
+#            "char_id": char.char_id,
+#            "name": char.name,
+#            "proficiency_bonus": char.proficiency_bonus,
+#            "total_level": char.total_level,
+#            "inspiration": char.inspiration
+#        })
+
+#    return jsonify(characters_list), 200

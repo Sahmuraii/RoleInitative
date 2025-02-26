@@ -19,27 +19,34 @@
             <div *ngIf="loginForm.get('email')?.errors?.['email']" class="text-danger">Please enter a valid email.</div>
           </div>
         </div>
-  
+
         <!-- Password input -->
-        <div class="form-group">
+        <div class="form-group password-group">
           <label for="password">Password</label>
-          <input
-            formControlName="password"
-            class="input-field"
-            [type]="showPassword ? 'text' : 'password'"
-            placeholder="YourPasswordHere!"
-          />
+          <div class="input-container">
+            <input
+              formControlName="password"
+              class="input-field"
+              [type]="showPassword ? 'text' : 'password'"
+              placeholder="YourPasswordHere!"
+            />
+            <i
+              class="fa"
+              [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"
+              (click)="togglePasswordVisibility()"
+              matTooltip="{{ passwordTooltip }}"
+              #tooltip="matTooltip"
+              (mouseenter)="tooltip.show()">
+            </i>
+          </div>
           <div *ngIf="loginForm.get('password')?.errors && loginForm.get('password')?.touched" class="error-messages">
             <div *ngIf="loginForm.get('password')?.errors?.['required']" class="text-danger">Password is required.</div>
           </div>
-          <button type="button" (click)="togglePasswordVisibility()">
-            {{ showPassword ? 'Hide' : 'Show' }} Password
-          </button>
         </div>
-  
+
         <button class="auth-button" type="submit" [disabled]="loginForm.invalid">Sign in</button>
       </form>
-  
+
       <div class="extra-links">
         <p class="link-text">New User? <a href="/register">Register now</a></p>
         <p class="link-text">Forgot Your Password? <a href="#">Not Implemented Yet</a></p>
