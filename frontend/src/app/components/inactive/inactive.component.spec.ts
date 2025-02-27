@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Inactive } from './inactive.component';
+import { InactiveComponent } from './inactive.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('InactiveComponent', () => {
   let component: InactiveComponent;
@@ -8,7 +9,7 @@ describe('InactiveComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [InactiveComponent]
+      imports: [InactiveComponent, HttpClientTestingModule]
     })
     .compileComponents();
 

@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CreateSpellComponent } from './create-spell.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('CreateSpellComponent', () => {
   let component: CreateSpellComponent;
@@ -8,7 +9,7 @@ describe('CreateSpellComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CreateSpellComponent]
+      imports: [CreateSpellComponent, HttpClientTestingModule]
     })
     .compileComponents();
     
