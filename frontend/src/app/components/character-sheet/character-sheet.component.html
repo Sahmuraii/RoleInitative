@@ -42,7 +42,7 @@
             [id]="'skill_' + skill.skill_id"
             >
             <div *ngIf="i < 18">
-                <span class="character_skill_line_proficient" [id]="'skill_' + skill.skill_id + '_proficient'">{{ skill?.proficient == undefined ? '&#9675;' : skill.proficient == true ? 'p&#9679;' : 'n&#9675;' }}</span>
+                <span class="character_skill_line_proficient" [id]="'skill_' + skill.skill_id + '_proficient'">{{ skill?.proficient == undefined ? '&#9675;' : skill.proficient == true ? '&#9679;' : '&#9675;' }}</span>
                 <span class="character_skill_line_skill_name" [id]="'skill_' + skill.skill_id + '_name'">{{ skill?.skill_name ?? '[Unknown Skill Name]' }}</span>
                 <span class="character_skill_line_mod" [id]="'mod_' + skill.skill_id + '_label'">{{ skill?.modifier_type !== undefined ? (skill.modifier_type.substring(0,3) | uppercase) : '[??]' }}</span>
                 <button [id]="'skill_' + skill.skill_id + '_modifier'" name="skill_id_modifier" class="character_skill_line_bonus"> 
