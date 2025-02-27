@@ -43,6 +43,7 @@ export class CreateCharacterComponent implements OnInit {
       classLevels: this.fb.array([]), // FormArray to store class levels
       primaryClass: this.fb.control("None"),
       classProficiencies: this.fb.array([]),
+      profSelects: this.fb.array([])
     });
   }
 
