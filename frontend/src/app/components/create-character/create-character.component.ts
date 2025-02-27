@@ -105,6 +105,7 @@ export class CreateCharacterComponent implements OnInit {
       }
     }
     
+    console.log(result.length)
     return result
   }
 
