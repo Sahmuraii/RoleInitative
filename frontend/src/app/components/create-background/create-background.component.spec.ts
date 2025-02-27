@@ -124,7 +124,7 @@ describe('CreateBackgroundComponent', () => {
     };
 
     expect(backgroundService.createBackground).toHaveBeenCalledWith(expectedFormData);
-    expect(router.navigate).toHaveBeenCalledWith(['/create-background']);
+    expect(router.navigate).toHaveBeenCalledWith(['/create_background']);
   });
 
   it('should handle form submission error', () => {
