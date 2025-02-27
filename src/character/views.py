@@ -95,7 +95,7 @@ def get_character_info(char_id) -> dict:
         .join(Proficiency_Types, Proficiency_Types.type_id == Proficiencies.proficiency_type)
         .where(Character_Proficiency_Choices.char_id == char_id)
     )]
-    print(char_proficiencies)
+    #print(char_proficiencies)
     char_info.update({'proficiencies': char_proficiencies})
 
     for proficiency in char_info['proficiencies']:
@@ -114,10 +114,11 @@ def get_character_info(char_id) -> dict:
 @character_bp.route("/character/<character_id>", methods=['GET', 'POST'])
 def character(character_id):
     user = current_user
-    if not current_user.is_authenticated:
-        return "Unauthorized access", 403
+    #if not current_user.is_authenticated:
+    #    return "Unauthorized access", 403
     
-    char = Character.query.filter_by(owner_id=user.id, char_id=character_id).first()
+    char = Character.query.filter_by(char_id=character_id).first()
+    #char = Character.query.filter_by(owner_id=user.id, char_id=character_id).first()
     if not char:
         return "Character not found", 404
 
@@ -133,7 +134,8 @@ def character(character_id):
     current_class = current_class_info[2] if current_class_info else None  # Class name 
     current_level = current_class_info[1] if current_class_info else None  # Class level
 
-    all_classes = DND_Class.query.all()
+    all_classes = [{k:v for k,v in row.__dict__.items() if k != "_sa_instance_state"} for row in DND_Class.query.all()]
+    print(all_classes)
 
     if request.method == 'POST':
         # Get the selected class ID and class level from the form
@@ -158,7 +160,10 @@ def character(character_id):
         db.session.commit()  # Save the changes
         return redirect(url_for('character_bp.character', character_id=character_id))
 
-    return render_template('character/character.html', user=user, character=char, current_class=current_class, current_level=current_level, all_classes=all_classes, char_si=get_character_info(char.char_id))
+    char_si = get_character_info(char.char_id)
+    #return render_template('character/character.html', user=user, character=char, current_class=current_class, current_level=current_level, all_classes=all_classes, char_si=get_character_info(char.char_id))
+    #return json.dumps({'character': jsonify(char.__dict__), 'current_class': jsonify(current_class), 'current_level(char.char_id)': jsonify(current_level), 'all_classes': jsonify(json.dumps(all_classes)), 'char_si': char_si})
+    return json.dumps({'character': (char.__dict__), 'current_class': (current_class), 'current_level(char.char_id)': (current_level), 'all_classes': ((all_classes)), 'char_si': char_si})
 
 def calculate_max_hp(character_id):
     character = Character.query.get(character_id) # Get the character by ID

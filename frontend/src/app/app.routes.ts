@@ -17,6 +17,7 @@ export const routes: Routes = [
   { path: 'create/character', component: CreateCharacterComponent},
   { path: 'create/spell', component: CreateSpellComponent},
   { path: 'character-sheet', component: CharacterSheetComponent},
+  { path: 'character-sheet/:char_id', component: CharacterSheetComponent},
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: '**', redirectTo: '/home' },
 ];

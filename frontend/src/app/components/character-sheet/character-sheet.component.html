@@ -16,16 +16,16 @@
         <span class="hit_points_block_label" id="hit_point_label">Hit Points</span>
         <div class="hp_display_block" id="hp_display_block">
             <span class="current_hp_label">Current</span><span class="max_hp_label">Max</span><span class="temp_hp_label">Temp</span>
-            <span class="current_hp_field" id="hp_current">{{ char_si?.hit_points ?? '--' }}</span>
+            <span class="current_hp_field" id="hp_current">{{ char_data.char_si?.hit_points ?? '--' }}</span>
             <span class="hp_divider_label" id="divider">/</span>
-            <span class="max_hp_field" id="hp_max">{{ char_si?.max_hit_points ?? '--' }}</span>
-            <span class="temp_hp_field" id="hp_temp">{{ char_si?.temp_hit_points ?? '--' }}</span>
+            <span class="max_hp_field" id="hp_max">{{ char_data.char_si?.max_hit_points ?? '--' }}</span>
+            <span class="temp_hp_field" id="hp_temp">{{ char_data.char_si?.temp_hit_points ?? '--' }}</span>
         </div>
     </div>
 
     <!-- Character Modifiers-->
     <div class="character_modifiers_block" id="modifiers_block">
-        <div *ngFor="let mod of char_si.modifier_scores; let i = index"
+        <div *ngFor="let mod of char_data.char_si.modifier_scores; let i = index"
             [class]="'character_modifier_' + ( i + 1) + ' character_modifier_base'"
             [id]="'modifier_' + (i + 1)"
             >
@@ -37,16 +37,16 @@
 
     <!-- Character Skills-->
     <div class="character_skills_block" id="character_skills">
-        <div *ngFor="let skill of char_si.skills; let i = index"  
+        <div *ngFor="let skill of char_data.char_si.skills; let i = index"  
             class="character_skill_line" 
             [id]="'skill_' + skill.skill_id"
             >
             <div *ngIf="i < 18">
-                <span class="character_skill_line_proficient" [id]="'skill_' + skill.skill_id + '_proficient'">{{ skill?.proficient == undefined ? '&#9675;' : skill.proficient == true ? '&#9679;' : '&#9675;' }}</span>
+                <span class="character_skill_line_proficient" [id]="'skill_' + skill.skill_id + '_proficient'">{{ skill?.proficient == undefined ? '&#9675;' : skill.proficient == true ? 'p&#9679;' : 'n&#9675;' }}</span>
                 <span class="character_skill_line_skill_name" [id]="'skill_' + skill.skill_id + '_name'">{{ skill?.skill_name ?? '[Unknown Skill Name]' }}</span>
                 <span class="character_skill_line_mod" [id]="'mod_' + skill.skill_id + '_label'">{{ skill?.modifier_type !== undefined ? (skill.modifier_type.substring(0,3) | uppercase) : '[??]' }}</span>
                 <button [id]="'skill_' + skill.skill_id + '_modifier'" name="skill_id_modifier" class="character_skill_line_bonus"> 
-                    {{ ((skill?.modifier_value !== undefined) ? (((skill?.proficient !== undefined ? true : false) && (char_si?.proficiency_bonus !== undefined ? true : false)) ? ((skill.modifier_value + char_si.proficiency_bonus >= 0 ? '+' : '') + (skill.modifier_value + char_si.proficiency_bonus)) : ((skill.modifier_value >= 0 ? '+' : '') + (skill.modifier_value))) : '--' )}}
+                    {{ ((skill?.modifier_value !== undefined) ? (((skill?.proficient !== undefined ? true : false) && (char_data.char_si?.proficiency_bonus !== undefined ? true : false)) ? ((skill.modifier_value + char_data.char_si.proficiency_bonus >= 0 ? '+' : '') + (skill.modifier_value + char_data.char_si.proficiency_bonus)) : ((skill.modifier_value >= 0 ? '+' : '') + (skill.modifier_value))) : '--' )}}
                 </button>
             </div>
         </div>
@@ -57,20 +57,20 @@
 
     <!-- Character Class Info-->
     <div class="character_info_block" id="character_info_block">
-        <span class="character_info_label" id="character_class_and_levels" *ngIf="char_si?.classes !== undefined">
-            <span *ngFor="let cls of char_si.classes; let isLast = last; let i = index">
-                <span>Level {{ cls.level }} {{ cls.class_name }}</span><span>&#44;   <ng-container *ngIf="!isLast">{{ char_si.classes.length/4 > 1 ? '&nbsp;' : ''}}</ng-container></span>
-                <ng-container *ngIg="i % Math.ceil(char_si.classes.length/4) == 0"><br></ng-container>
-                <ng-container *ngIg="i % Math.ceil(char_si.classes.length/4) != 0">&#9;</ng-container>
+        <span class="character_info_label" id="character_class_and_levels" *ngIf="char_data.char_si?.classes !== undefined">
+            <span *ngFor="let cls of char_data.char_si.classes; let isLast = last; let i = index">
+                <span>Level {{ cls.level }} {{ cls.class_name }}</span><span>&#44;   <ng-container *ngIf="!isLast">{{ char_data.char_si.classes.length/4 > 1 ? '&nbsp;' : ''}}</ng-container></span>
+                <ng-container *ngIg="i % Math.ceil(char_data.char_si.classes.length/4) == 0"><br></ng-container>
+                <ng-container *ngIg="i % Math.ceil(char_data.char_si.classes.length/4) != 0">&#9;</ng-container>
             </span>
         </span>
-        <span class="character_info_label" id="character_class_and_levels" *ngIf="char_si?.classes == undefined">[Unknown Class(es)]</span>
+        <span class="character_info_label" id="character_class_and_levels" *ngIf="char_data.char_si?.classes == undefined">[Unknown Class(es)]</span>
     </div>
 
     <!-- Character Name / Race / Level-->
-    <div class="title_block" id="title_block"><span class="character_name_label" id="character_name">{{ char_si?.name ?? 'Unknown' }}</span>
-        <span class="character_race_label">{{ char_si?.race_name ?? 'Unknown Race' }}</span>
-        <span class="character_level_label">{{ char_si?.total_level ?? 'Unknown Level' }}</span>
+    <div class="title_block" id="title_block"><span class="character_name_label" id="character_name">{{ char_data.char_si?.name ?? 'Unknown' }}</span>
+        <span class="character_race_label">{{ char_data.char_si?.race_name ?? 'Unknown Race' }}</span>
+        <span class="character_level_label">{{ char_data.char_si?.total_level ?? 'Unknown Level' }}</span>
         <div class="character_profile_image" id="character_profile_image"></div>
     </div>
 
@@ -78,27 +78,27 @@
     <div class="character_combat_stats_block" id="combat_stats">
         <div class="combat_skill_base inspiration_block" id="inspiration_block">
             <span class="inspiration_label" id="inspiration_label">Inspiration</span>
-            <button id="inspiration_field" class="inspiration_field">{{ (char_si?.inspiration !== undefined && char_si.inspiration) ? (char_si.inspiration == 1 ? '[ X ]' : '[ ' + char_si.inspiration + ' ]') : ('[  ]') }}</button>
+            <button id="inspiration_field" class="inspiration_field">{{ (char_data.char_si?.inspiration !== undefined && char_data.char_si.inspiration) ? (char_data.char_si.inspiration == 1 ? '[ X ]' : '[ ' + char_data.char_si.inspiration + ' ]') : ('[  ]') }}</button>
         </div>
         <div class="combat_skill_base initiative_block" id="initiative_block">
             <span class="initiative_label" id="initiative_label">Initiative<br></span>
-            <button id="initiative_field" class="initiative_field">{{ char_si?.initiative !== undefined ? (char_si.initiative >= 0 ? '+' + char_si.initiative : char_si.initiative) : '+X' }}</button>
+            <button id="initiative_field" class="initiative_field">{{ char_data.char_si?.initiative !== undefined ? (char_data.char_si.initiative >= 0 ? '+' + char_data.char_si.initiative : char_data.char_si.initiative) : '+X' }}</button>
         </div>
         <div class="combat_skill_base armor_class_block" id="armor_class_block">
             <span class="armor_class_bottom_label" id="armor_class_bottom_label">Class</span><span class="armor_class_top_label" id="armor_class_top_label">Armor</span>
-            <span class="armor_class_field" id="armor_class">{{ char_si?.armor_class ?? '--' }}</span>
+            <span class="armor_class_field" id="armor_class">{{ char_data.char_si?.armor_class ?? '--' }}</span>
         </div>
         <div class="combat_skill_base walking_speed_block" id="walking_speed_block">
             <span class="walking_speed_bottom_label" id="walking_speed_bottom_label">Speed</span><span class="walking_speed_top_label" id="walking_speed_top_label">Walking</span>
-            <span class="walking_speed_field" id="walking_speed">{{ char_si?.speed ?? '--' }}</span>
+            <span class="walking_speed_field" id="walking_speed">{{ char_data.char_si?.speed ?? '--' }}</span>
         </div>
         <div class="combat_skill_base passive_perception_block" id="passive_perception_block">
             <span class="passive_perception_bottom_label" id="passive_perception_bottom_label">Perception</span><span class="passive_perception_top_label" id="passive_perception_top_label">Passive<br></span>
-            <span class="passive_perception_field" id="passive_perception">{{ char_si?.passive_perception ?? '--' }}</span>
+            <span class="passive_perception_field" id="passive_perception">{{ char_data.char_si?.passive_perception ?? '--' }}</span>
         </div>
         <div class="combat_skill_base proficiency_bonus_block" id="proficiency_bonus_block">
             <span class="proficiency_bonus_bottom_label" id="proficiency_bonus_bottom_label">Bonus</span><span class="proficiency_bonus_top_label" id="proficiency_bonus_top_label">Proficiency</span>
-            <span class="proficiency_bonus_field" id="proficiency_bonus">{{ char_si?.proficiency_bonus ?? '--' }}</span>
+            <span class="proficiency_bonus_field" id="proficiency_bonus">{{ char_data.char_si?.proficiency_bonus ?? '--' }}</span>
         </div>
     </div>
 
@@ -112,15 +112,15 @@
             <span class="saving_throw_proficient" id="saving_throw_1_proficient">{{checkProficiency('STR') ? '&#9679;' : '&#9675;' }}</span>
             <span class="saving_throw_abbreviation" id="saving_throw_1_abbreviation">STR</span>
             <button id="saving_throw_1_field" class="saving_throw_field">
-                <ng-container *ngIf="char_si?.modifier_scores !== undefined">
-                    <ng-container *ngIf="checkProficiency('STR') && char_si?.proficiency_bonus !== undefined">
-                         {{ (char_si.modifier_scores[4].value + char_si.proficiency_bonus) >= 0 ? '+' : '' }} {{ (char_si.modifier_scores[4].value + char_si.proficiency_bonus) }}
+                <ng-container *ngIf="char_data.char_si?.modifier_scores !== undefined">
+                    <ng-container *ngIf="checkProficiency('STR') && char_data.char_si?.proficiency_bonus !== undefined">
+                         {{ (char_data.char_si.modifier_scores[4].value + char_data.char_si.proficiency_bonus) >= 0 ? '+' : '' }} {{ (char_data.char_si.modifier_scores[4].value + char_data.char_si.proficiency_bonus) }}
                     </ng-container>
-                    <ng-container *ngIf="!(checkProficiency('STR') && char_si?.proficiency_bonus !== undefined)">
-                        {{ char_si.modifier_scores[4].value >= 0 ? '+' : '' }} {{ char_si.modifier_scores[4].value }}
+                    <ng-container *ngIf="!(checkProficiency('STR') && char_data.char_si?.proficiency_bonus !== undefined)">
+                        {{ char_data.char_si.modifier_scores[4].value >= 0 ? '+' : '' }} {{ char_data.char_si.modifier_scores[4].value }}
                     </ng-container>
                 </ng-container>
-                <ng-container *ngIf="!(char_si?.modifier_scores !== undefined)">--</ng-container>
+                <ng-container *ngIf="!(char_data.char_si?.modifier_scores !== undefined)">--</ng-container>
             </button>
         </div>
         <!-- Dexterity -->
@@ -128,15 +128,15 @@
             <span class="saving_throw_proficient" id="saving_throw_1_proficient_1">{{checkProficiency('DEX') ? '&#9679;' : '&#9675;' }}</span>
             <span class="saving_throw_abbreviation" id="saving_throw_1_abbreviation_1">DEX</span>
             <button id="saving_throw_1_field_1" class="saving_throw_field">
-                <ng-container *ngIf="char_si?.modifier_scores !== undefined">
-                    <ng-container *ngIf="checkProficiency('DEX') && char_si?.proficiency_bonus !== undefined">
-                         {{ (char_si.modifier_scores[1].value + char_si.proficiency_bonus) >= 0 ? '+' : '' }} {{ (char_si.modifier_scores[1].value + char_si.proficiency_bonus) }}
+                <ng-container *ngIf="char_data.char_si?.modifier_scores !== undefined">
+                    <ng-container *ngIf="checkProficiency('DEX') && char_data.char_si?.proficiency_bonus !== undefined">
+                         {{ (char_data.char_si.modifier_scores[1].value + char_data.char_si.proficiency_bonus) >= 0 ? '+' : '' }} {{ (char_data.char_si.modifier_scores[1].value + char_data.char_si.proficiency_bonus) }}
                     </ng-container>
-                    <ng-container *ngIf="!(checkProficiency('DEX') && char_si?.proficiency_bonus !== undefined)">
-                        {{ char_si.modifier_scores[1].value >= 0 ? '+' : '' }} {{ char_si.modifier_scores[1].value }}
+                    <ng-container *ngIf="!(checkProficiency('DEX') && char_data.char_si?.proficiency_bonus !== undefined)">
+                        {{ char_data.char_si.modifier_scores[1].value >= 0 ? '+' : '' }} {{ char_data.char_si.modifier_scores[1].value }}
                     </ng-container>
                 </ng-container>
-                <ng-container *ngIf="!(char_si?.modifier_scores !== undefined)">--</ng-container>
+                <ng-container *ngIf="!(char_data.char_si?.modifier_scores !== undefined)">--</ng-container>
             </button>
         </div>
         <!-- Constitution -->
@@ -144,15 +144,15 @@
             <span class="saving_throw_proficient" id="saving_throw_1_proficient_2">{{checkProficiency('CON') ? '&#9679;' : '&#9675;' }}</span>
             <span class="saving_throw_abbreviation" id="saving_throw_1_abbreviation_2">CON</span>
             <button id="saving_throw_1_field_2" class="saving_throw_field">
-                <ng-container *ngIf="char_si?.modifier_scores !== undefined">
-                    <ng-container *ngIf="checkProficiency('CON') && char_si?.proficiency_bonus !== undefined">
-                         {{ (char_si.modifier_scores[0].value + char_si.proficiency_bonus) >= 0 ? '+' : '' }} {{ (char_si.modifier_scores[0].value + char_si.proficiency_bonus) }}
+                <ng-container *ngIf="char_data.char_si?.modifier_scores !== undefined">
+                    <ng-container *ngIf="checkProficiency('CON') && char_data.char_si?.proficiency_bonus !== undefined">
+                         {{ (char_data.char_si.modifier_scores[0].value + char_data.char_si.proficiency_bonus) >= 0 ? '+' : '' }} {{ (char_data.char_si.modifier_scores[0].value + char_data.char_si.proficiency_bonus) }}
                     </ng-container>
-                    <ng-container *ngIf="!(checkProficiency('CON') && char_si?.proficiency_bonus !== undefined)">
-                        {{ char_si.modifier_scores[0].value >= 0 ? '+' : '' }} {{ char_si.modifier_scores[0].value }}
+                    <ng-container *ngIf="!(checkProficiency('CON') && char_data.char_si?.proficiency_bonus !== undefined)">
+                        {{ char_data.char_si.modifier_scores[0].value >= 0 ? '+' : '' }} {{ char_data.char_si.modifier_scores[0].value }}
                     </ng-container>
                 </ng-container>
-                <ng-container *ngIf="!(char_si?.modifier_scores !== undefined)">--</ng-container>
+                <ng-container *ngIf="!(char_data.char_si?.modifier_scores !== undefined)">--</ng-container>
             </button>
         </div>
         <!-- Intelligence -->
@@ -160,15 +160,15 @@
             <span class="saving_throw_proficient" id="saving_throw_1_proficient_3">{{checkProficiency('INT') ? '&#9679;' : '&#9675;' }}</span>
             <span class="saving_throw_abbreviation" id="saving_throw_1_abbreviation_3">INT</span>
             <button id="saving_throw_1_field_3" class="saving_throw_field">
-                <ng-container *ngIf="char_si?.modifier_scores !== undefined">
-                    <ng-container *ngIf="checkProficiency('INT') && char_si?.proficiency_bonus !== undefined">
-                         {{ (char_si.modifier_scores[3].value + char_si.proficiency_bonus) >= 0 ? '+' : '' }} {{ (char_si.modifier_scores[3].value + char_si.proficiency_bonus) }}
+                <ng-container *ngIf="char_data.char_si?.modifier_scores !== undefined">
+                    <ng-container *ngIf="checkProficiency('INT') && char_data.char_si?.proficiency_bonus !== undefined">
+                         {{ (char_data.char_si.modifier_scores[3].value + char_data.char_si.proficiency_bonus) >= 0 ? '+' : '' }} {{ (char_data.char_si.modifier_scores[3].value + char_data.char_si.proficiency_bonus) }}
                     </ng-container>
-                    <ng-container *ngIf="!(checkProficiency('INT') && char_si?.proficiency_bonus !== undefined)">
-                        {{ char_si.modifier_scores[3].value >= 0 ? '+' : '' }} {{ char_si.modifier_scores[3].value }}
+                    <ng-container *ngIf="!(checkProficiency('INT') && char_data.char_si?.proficiency_bonus !== undefined)">
+                        {{ char_data.char_si.modifier_scores[3].value >= 0 ? '+' : '' }} {{ char_data.char_si.modifier_scores[3].value }}
                     </ng-container>
                 </ng-container>
-                <ng-container *ngIf="!(char_si?.modifier_scores !== undefined)">--</ng-container>
+                <ng-container *ngIf="!(char_data.char_si?.modifier_scores !== undefined)">--</ng-container>
             </button>
         </div>
         <!-- Wisdom -->
@@ -176,15 +176,15 @@
             <span class="saving_throw_proficient" id="saving_throw_1_proficient_4">{{checkProficiency('WIS') ? '&#9679;' : '&#9675;' }}</span>
             <span class="saving_throw_abbreviation" id="saving_throw_1_abbreviation_4">WIS</span>
             <button id="saving_throw_1_field_4" class="saving_throw_field">
-                <ng-container *ngIf="char_si?.modifier_scores !== undefined">
-                    <ng-container *ngIf="checkProficiency('WIS') && char_si?.proficiency_bonus !== undefined">
-                         {{ (char_si.modifier_scores[2].value + char_si.proficiency_bonus) >= 0 ? '+' : '' }} {{ (char_si.modifier_scores[2].value + char_si.proficiency_bonus) }}
+                <ng-container *ngIf="char_data.char_si?.modifier_scores !== undefined">
+                    <ng-container *ngIf="checkProficiency('WIS') && char_data.char_si?.proficiency_bonus !== undefined">
+                         {{ (char_data.char_si.modifier_scores[2].value + char_data.char_si.proficiency_bonus) >= 0 ? '+' : '' }} {{ (char_data.char_si.modifier_scores[2].value + char_data.char_si.proficiency_bonus) }}
                     </ng-container>
-                    <ng-container *ngIf="!(checkProficiency('WIS') && char_si?.proficiency_bonus !== undefined)">
-                        {{ char_si.modifier_scores[2].value >= 0 ? '+' : '' }} {{ char_si.modifier_scores[2].value }}
+                    <ng-container *ngIf="!(checkProficiency('WIS') && char_data.char_si?.proficiency_bonus !== undefined)">
+                        {{ char_data.char_si.modifier_scores[2].value >= 0 ? '+' : '' }} {{ char_data.char_si.modifier_scores[2].value }}
                     </ng-container>
                 </ng-container>
-                <ng-container *ngIf="!(char_si?.modifier_scores !== undefined)">--</ng-container>
+                <ng-container *ngIf="!(char_data.char_si?.modifier_scores !== undefined)">--</ng-container>
             </button>
         </div>
         <!-- Charisma -->
@@ -192,15 +192,15 @@
             <span class="saving_throw_proficient" id="saving_throw_1_proficient_5">{{checkProficiency('CHA') ? '&#9679;' : '&#9675;' }}</span>
             <span class="saving_throw_abbreviation" id="saving_throw_1_abbreviation_5">CHA</span>
             <button id="saving_throw_1_field_5" class="saving_throw_field">
-                <ng-container *ngIf="char_si?.modifier_scores !== undefined">
-                    <ng-container *ngIf="checkProficiency('CHA') && char_si?.proficiency_bonus !== undefined">
-                         {{ (char_si.modifier_scores[5].value + char_si.proficiency_bonus) >= 0 ? '+' : '' }} {{ (char_si.modifier_scores[5].value + char_si.proficiency_bonus) }}
+                <ng-container *ngIf="char_data.char_si?.modifier_scores !== undefined">
+                    <ng-container *ngIf="checkProficiency('CHA') && char_data.char_si?.proficiency_bonus !== undefined">
+                         {{ (char_data.char_si.modifier_scores[5].value + char_data.char_si.proficiency_bonus) >= 0 ? '+' : '' }} {{ (char_data.char_si.modifier_scores[5].value + char_data.char_si.proficiency_bonus) }}
                     </ng-container>
-                    <ng-container *ngIf="!(checkProficiency('CHA') && char_si?.proficiency_bonus !== undefined)">
-                        {{ char_si.modifier_scores[5].value >= 0 ? '+' : '' }} {{ char_si.modifier_scores[5].value }}
+                    <ng-container *ngIf="!(checkProficiency('CHA') && char_data.char_si?.proficiency_bonus !== undefined)">
+                        {{ char_data.char_si.modifier_scores[5].value >= 0 ? '+' : '' }} {{ char_data.char_si.modifier_scores[5].value }}
                     </ng-container>
                 </ng-container>
-                <ng-container *ngIf="!(char_si?.modifier_scores !== undefined)">--</ng-container>
+                <ng-container *ngIf="!(char_data.char_si?.modifier_scores !== undefined)">--</ng-container>
             </button>
         </div>
     </div>

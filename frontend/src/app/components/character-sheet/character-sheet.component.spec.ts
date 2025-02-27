@@ -20,4 +20,9 @@ describe('CharacterSheetComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('Should gather data', () => {
+    expect(component.char_data).toBeDefined();
+    expect(component.char_data.char_si).toBeDefined();
+  });
 });

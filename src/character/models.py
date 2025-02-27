@@ -27,6 +27,10 @@ class Character(db.Model):
     charCondition = db.relationship('Character_Condition', backref='char', cascade="all, delete-orphan")
     charInventory = db.relationship('Character_Inventory', backref='char', cascade="all, delete-orphan")
 
+    def __repr__(self):
+        dict_repr = self.__dict__; [dict_repr.pop(i, None) for i in ["_sa_instance_state"]]
+        return f"<{self.__class__.__name__}({self.__dict__})>"
+
 #----------------------------------------------------------
 #   D&D tables
 class DND_Race(db.Model):
