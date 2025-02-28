@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, QueryList, signal, ViewChild, ViewChildren, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormBuilder, FormArray, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CreateCharacterService } from '../../services/create-character.service';
-import { catchError } from 'rxjs';
+import { catchError, lastValueFrom } from 'rxjs';
 import { DND_Class } from '../../models/dnd_class.type';
 import { DND_Race } from '../../models/dnd_race.type';
 import { Class_Proficiency_Option } from '../../models/class_proficiency_option.type';
@@ -116,7 +116,9 @@ export class CreateCharacterComponent implements OnInit {
         list_desc: x.list_description,
         selects: this.initializeProfOptions(x)
       }))
+
     })
+    //console.log(this.classProficiencies.value)
     
   }
 
@@ -144,10 +146,12 @@ export class CreateCharacterComponent implements OnInit {
         this.maxLevel.push(20)
       })
     })
+
     this.createCharacterService.getClassProficiencyData().subscribe((options) => {
       this.classProficiencyOptions.set(options)
 
     })
+
   }
   
   public showTab(tabId: string) {

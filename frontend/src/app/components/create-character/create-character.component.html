@@ -102,23 +102,29 @@
     
 
             <!-- Class Proficiencies -->
-            <div id="class_proficiencies" name="character_class_proficiencies" [hidden]="hiddenArray[3]">
+            <div id="class_proficiencies" name="character_class_proficiencies" formArrayName="classProficiencies" [hidden]="hiddenArray[3]">
                 @if (primaryClass == "None") {
                     <p>No Class Selected</p>
                 } @else {
-                    <div formArrayName="classProficiencies">
+                    <div>
+                        <!-- <p>{{classProficiencies.controls}}</p> -->
                         @for (profSet of classProficiencies.controls; track i; let i = $index) {
                             <div [formGroupName]="i">
-                                <p>List description: {{profSet.value.list_desc}}</p>
-                                    @for (sel of profSet.value.selects; track j; let j = $index) {
-                                        <div [formGroupName]="j">
-                                            <select formControlName="profSelects">
-                                                @for (opt of sel['prof_list']; track $index) {
-                                                    <option [value]="opt.id">{{opt.name}}</option>
-                                                }
-                                            </select>
-                                        </div>
-                                    }
+                                <div formArrayName="Columns">
+                                    <p>List description: {{profSet.value.list_desc}}</p>
+                                    <!-- <p>{{profSet.value.selects | json}}</p> -->
+                                        @for (sel of profSet.value.selects; track j; let j = $index) {
+                                            <div [formGroupName]="j">
+                                                <p>{{sel['prof_list'] | json}}</p>
+                                                <select formControlName="profSelect">
+                                                    @for (opt of sel['prof_list']; track $index) {
+                                                        <option [value]="opt.id">{{opt.name}}</option>
+                                                    }
+                                                    
+                                                </select>
+                                            </div>
+                                        }
+                                </div>
                             </div>
                         }
                     </div>
