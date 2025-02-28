@@ -27,7 +27,7 @@ export class CreateSpellComponent implements OnInit {
     '5th-level', '6th-level', '7th-level', '8th-level', '9th-level'
   ];
 
-  spellComponents = ['V', 'S', 'M']; 
+  spellComponents = ['V', 'S', 'M'];
 
   spellRituals = ['Yes', 'No'];
 
@@ -35,18 +35,16 @@ export class CreateSpellComponent implements OnInit {
     'Action', 'Bonus Action', 'Reaction', 'Minute', 'Hour', 'No Action', 'Special'
   ];
 
-  spellRange = ['Self', 'Touch', 'Distance', 'Sight', 'Unlimited']; 
+  spellRange = ['Self', 'Touch', 'Distance', 'Sight', 'Unlimited'];
 
   DurationType = ['Instantaneous', 'Concentration', 'Time', 'Special', 'Until Dispelled', 'Until Dispelled or Triggered'];
 
-  
-  areaTypes = ['Square', 'Cone', 'Line', 'Sphere', 'Cube', 'Cylinder']; 
+  areaTypes = ['Square', 'Cone', 'Line', 'Sphere', 'Cube', 'Cylinder'];
 
-  saveStats = ['Strength', 'Dexterity', 'Constitution', 'Intelligence', 'Wisdom', 'Charisma']; 
-  attackTypes = ['Melee', 'Ranged']; 
-  conditions = ['Blinded', 'Charmed', 'Deafened', 'Frightened', 'Grappled', 'Incapacitated', 'Invisible', 'Paralyzed', 'Petrified', 'Poisoned', 'Prone', 'Restrained', 'Stunned', 'Unconscious']; // Array of conditions
-
-  
+  saveStats = ['Strength', 'Dexterity', 'Constitution', 'Intelligence', 'Wisdom', 'Charisma'];
+  attackTypes = ['Melee', 'Ranged'];
+  damageTypes = ['Acid', 'Bludgeoning', 'Cold', 'Fire', 'Force', 'Lightning', 'Necrotic', 'Piercing', 'Poison', 'Psychic', 'Radiant', 'Slashing', 'Thunder'];
+  conditions = ['Blinded', 'Charmed', 'Deafened', 'Frightened', 'Grappled', 'Incapacitated', 'Invisible', 'Paralyzed', 'Petrified', 'Poisoned', 'Prone', 'Restrained', 'Stunned', 'Unconscious'];
 
   constructor(
     private fb: FormBuilder,
@@ -62,12 +60,12 @@ export class CreateSpellComponent implements OnInit {
       school: [''],
       castingTime: [''],
       reactionDescription: [''],
-      components: this.fb.array([]), 
+      components: this.fb.array([]),
       materialsDescription: [''],
-      spellRangeType: [''], 
-      range: [''], 
-      areaLength: [''], 
-      areaType: [''], 
+      spellRangeType: [''],
+      range: [''],
+      areaLength: [''],
+      areaType: [''],
       durationType: [''],
       duration: [''],
       durationTime: [''],
@@ -77,12 +75,15 @@ export class CreateSpellComponent implements OnInit {
       HigherLevelScaling: [''],
       classes: this.fb.array([]),
       subclasses: this.fb.array([]),
-      saveRequired: [false], 
+      isSaveOrAttack: [''], 
       saveStat: [''], 
-      isAttack: [false], 
-      attackType: [''],
+      attackType: [''], 
+      hasDamage: [false], 
+      damage: [''], 
+      damageType: [''], 
+      effect: [''],
       inflictsConditions: [false],
-      conditions: this.fb.array([]) 
+      conditions: this.fb.array([])
     });
 
     this.initializeComponents();
@@ -105,7 +106,7 @@ export class CreateSpellComponent implements OnInit {
   initializeComponents(): void {
     const componentsArray = this.spellForm.get('components') as FormArray;
     this.spellComponents.forEach(component => {
-      componentsArray.push(this.fb.control(false)); 
+      componentsArray.push(this.fb.control(false));
     });
   }
 
@@ -167,7 +168,7 @@ export class CreateSpellComponent implements OnInit {
           missingFields.push(controlName);
         }
       }
-  
+
       if (missingFields.length > 0) {
         alert(`The following fields are required: ${missingFields.join(', ')}`);
       } else {
@@ -175,36 +176,36 @@ export class CreateSpellComponent implements OnInit {
       }
       return;
     }
-  
+
     const selectedComponents = this.spellComponents
       .filter((component, index) => this.components.at(index).value)
       .join(', ');
-  
+
     const materialDescription = this.isMaterialSelected ? ` (${this.spellForm.value.materialsDescription})` : '';
-  
+
     const conditions = this.conditionsArray.value.join(', ');
-  
+
     const range = this.spellForm.get('spellRangeType')?.value;
     const areaLength = this.spellForm.get('areaLength')?.value;
     const areaType = this.spellForm.get('areaType')?.value;
     const rangeDescription = areaLength && areaType ? `${range} (${areaLength} ${areaType})` : range;
-  
+
     const spellData = {
       ...this.spellForm.value,
       components: selectedComponents + materialDescription,
       conditions: conditions,
-      range: rangeDescription, 
+      range: rangeDescription,
       creatorID: this.currentUserID,
       classes: this.classes.value,
       subclasses: this.subclasses.value
     };
 
-    console.log('Spell data:', spellData); 
-  
+    console.log('Spell data:', spellData);
+
     this.spellService.createSpell(spellData).subscribe({
       next: (response) => {
         alert('Spell created successfully!');
-        console.log('Spell created with response:', response); 
+        console.log('Spell created with response:', response);
         this.router.navigate(['/spells']);
       },
       error: (error) => {

@@ -62,29 +62,54 @@
       <input type="text" id="materialsDescription" formControlName="materialsDescription" placeholder="e.g., a tiny ball of bat guano and sulfur">
     </div><br>
 
-    <!-- Save Required -->
+    <!-- Save or Attack -->
     <label>
-      <input type="checkbox" formControlName="saveRequired"> Save Required
+      <input type="radio" formControlName="isSaveOrAttack" value="save"> Save
+      <input type="radio" formControlName="isSaveOrAttack" value="attack"> Attack
     </label><br>
 
-    <!-- Save Stat (Conditional) -->
-    <div *ngIf="spellForm.get('saveRequired')?.value">
+    <!-- Save Section (Conditional) -->
+    <div *ngIf="spellForm.get('isSaveOrAttack')?.value === 'save'">
       <label for="saveStat">Save Stat:</label>
       <select id="saveStat" formControlName="saveStat" required>
         <option *ngFor="let stat of saveStats" [value]="stat">{{ stat }}</option>
       </select><br>
+
+      <label>
+        <input type="checkbox" formControlName="hasDamage"> Does it deal damage?
+      </label><br>
+
+      <!-- Damage Section (Conditional) -->
+      <div *ngIf="spellForm.get('hasDamage')?.value">
+        <label for="damage">Damage:</label>
+        <input type="text" id="damage" formControlName="damage" placeholder="e.g., 8d6"><br>
+
+        <label for="damageType">Damage Type:</label>
+        <select id="damageType" formControlName="damageType">
+          <option *ngFor="let type of damageTypes" [value]="type">{{ type }}</option>
+        </select><br>
+      </div>
+
+      <!-- Effect Section (Conditional) -->
+      <div *ngIf="!spellForm.get('hasDamage')?.value">
+        <label for="effect">Effect:</label>
+        <textarea id="effect" formControlName="effect" placeholder="e.g., Target is blinded"></textarea><br>
+      </div>
     </div>
 
-    <!-- Attack -->
-    <label>
-      <input type="checkbox" formControlName="isAttack"> Attack
-    </label><br>
-
-    <!-- Attack Type (Conditional) -->
-    <div *ngIf="spellForm.get('isAttack')?.value">
+    <!-- Attack Section (Conditional) -->
+    <div *ngIf="spellForm.get('isSaveOrAttack')?.value === 'attack'">
       <label for="attackType">Attack Type:</label>
       <select id="attackType" formControlName="attackType" required>
         <option *ngFor="let type of attackTypes" [value]="type">{{ type }}</option>
+      </select><br>
+
+      <label for="damage">Damage:</label>
+      <input type="text" id="damage" formControlName="damage" placeholder="e.g., 8d6"><br>
+
+      <label for="damageType">Damage Type:</label>
+      <select id="damageType" formControlName="damageType">
+        <option *ngFor="let type of damageTypes" [value]="type">{{ type }}</option>
       </select><br>
     </div>
 
