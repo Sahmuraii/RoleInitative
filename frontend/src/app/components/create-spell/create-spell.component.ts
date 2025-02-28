@@ -1,15 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, FormControl } from '@angular/forms';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { FormBuilder, FormGroup, FormArray, FormControl, FormsModule } from '@angular/forms';
 import { SpellService } from '../../services/spell.service';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-create-spell',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './create-spell.component.html',
   styleUrls: ['./create-spell.component.css']
 })
@@ -27,7 +27,7 @@ export class CreateSpellComponent implements OnInit {
     '5th-level', '6th-level', '7th-level', '8th-level', '9th-level'
   ];
 
-  spellComponents = ['V', 'S', 'M'];
+  spellComponents = ['V', 'S', 'M']; 
 
   spellRituals = ['Yes', 'No'];
 
@@ -35,15 +35,25 @@ export class CreateSpellComponent implements OnInit {
     'Action', 'Bonus Action', 'Reaction', 'Minute', 'Hour', 'No Action', 'Special'
   ];
 
-  spellRange = ['Self', 'Touch', 'Ranged', 'Sight', 'Unlimited'];
+  spellRange = ['Self', 'Touch', 'Distance', 'Sight', 'Unlimited']; 
 
   DurationType = ['Instantaneous', 'Concentration', 'Time', 'Special', 'Until Dispelled', 'Until Dispelled or Triggered'];
+
+  
+  areaTypes = ['Square', 'Cone', 'Line', 'Sphere', 'Cube', 'Cylinder']; 
+
+  saveStats = ['Strength', 'Dexterity', 'Constitution', 'Intelligence', 'Wisdom', 'Charisma']; 
+  attackTypes = ['Melee', 'Ranged']; 
+  conditions = ['Blinded', 'Charmed', 'Deafened', 'Frightened', 'Grappled', 'Incapacitated', 'Invisible', 'Paralyzed', 'Petrified', 'Poisoned', 'Prone', 'Restrained', 'Stunned', 'Unconscious']; // Array of conditions
+
+  
 
   constructor(
     private fb: FormBuilder,
     private spellService: SpellService,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.spellForm = this.fb.group({
       name: [''],
@@ -52,10 +62,12 @@ export class CreateSpellComponent implements OnInit {
       school: [''],
       castingTime: [''],
       reactionDescription: [''],
-      components: this.fb.array([]),
+      components: this.fb.array([]), 
       materialsDescription: [''],
-      spellRangeType: [''],
-      range: [''],
+      spellRangeType: [''], 
+      range: [''], 
+      areaLength: [''], 
+      areaType: [''], 
       durationType: [''],
       duration: [''],
       durationTime: [''],
@@ -64,24 +76,45 @@ export class CreateSpellComponent implements OnInit {
       higherLevelDescription: [''],
       HigherLevelScaling: [''],
       classes: this.fb.array([]),
-      subclasses: this.fb.array([])
+      subclasses: this.fb.array([]),
+      saveRequired: [false], 
+      saveStat: [''], 
+      isAttack: [false], 
+      attackType: [''],
+      inflictsConditions: [false],
+      conditions: this.fb.array([]) 
     });
+
+    this.initializeComponents();
   }
 
   ngOnInit(): void {
-    const currentUser = this.authService.getCurrentUser();
-    console.log('Current User:', currentUser); // Debugging
-    if (currentUser && currentUser.id != null) {
-      this.currentUserID = currentUser.id;
-      console.log('User ID:', this.currentUserID); // Debugging
+    if (isPlatformBrowser(this.platformId)) {
+      const currentUser = this.authService.getCurrentUser();
+      if (currentUser && currentUser.id != null) {
+        this.currentUserID = currentUser.id;
+      } else {
+        console.error('No user is logged in for Spells.');
+        this.router.navigate(['/login']);
+      }
     } else {
-      console.error('No user is logged in for Spells.');
-      this.router.navigate(['/login']);
+      console.warn('Running on the server. Skipping localStorage access.');
     }
+  }
+
+  initializeComponents(): void {
+    const componentsArray = this.spellForm.get('components') as FormArray;
+    this.spellComponents.forEach(component => {
+      componentsArray.push(this.fb.control(false)); 
+    });
   }
 
   get components(): FormArray {
     return this.spellForm.get('components') as FormArray;
+  }
+
+  get isMaterialSelected(): boolean {
+    return this.components.at(2).value;
   }
 
   get classes(): FormArray {
@@ -92,12 +125,8 @@ export class CreateSpellComponent implements OnInit {
     return this.spellForm.get('subclasses') as FormArray;
   }
 
-  addComponent(): void {
-    this.components.push(new FormControl(''));
-  }
-
-  removeComponent(index: number): void {
-    this.components.removeAt(index);
+  get conditionsArray(): FormArray {
+    return this.spellForm.get('conditions') as FormArray;
   }
 
   addClass(): void {
@@ -116,26 +145,70 @@ export class CreateSpellComponent implements OnInit {
     this.subclasses.removeAt(index);
   }
 
+  addCondition(): void {
+    this.conditionsArray.push(new FormControl(''));
+  }
+
+  removeCondition(index: number): void {
+    this.conditionsArray.removeAt(index);
+  }
+
+  get requiresAreaDetails(): boolean {
+    const range = this.spellForm.get('spellRangeType')?.value;
+    return ['Self', 'Touch', 'Distance', 'Sight'].includes(range);
+  }
+
   onSubmit(): void {
     if (this.spellForm.invalid || !this.currentUserID) {
-      alert('Please fill out all required fields and ensure you are logged in.');
+      const missingFields = [];
+      for (const controlName in this.spellForm.controls) {
+        const control = this.spellForm.get(controlName);
+        if (control?.invalid && control?.errors?.['required']) {
+          missingFields.push(controlName);
+        }
+      }
+  
+      if (missingFields.length > 0) {
+        alert(`The following fields are required: ${missingFields.join(', ')}`);
+      } else {
+        alert('Please ensure you are logged in and fill out all required fields.');
+      }
       return;
     }
-
+  
+    const selectedComponents = this.spellComponents
+      .filter((component, index) => this.components.at(index).value)
+      .join(', ');
+  
+    const materialDescription = this.isMaterialSelected ? ` (${this.spellForm.value.materialsDescription})` : '';
+  
+    const conditions = this.conditionsArray.value.join(', ');
+  
+    const range = this.spellForm.get('spellRangeType')?.value;
+    const areaLength = this.spellForm.get('areaLength')?.value;
+    const areaType = this.spellForm.get('areaType')?.value;
+    const rangeDescription = areaLength && areaType ? `${range} (${areaLength} ${areaType})` : range;
+  
     const spellData = {
       ...this.spellForm.value,
+      components: selectedComponents + materialDescription,
+      conditions: conditions,
+      range: rangeDescription, 
       creatorID: this.currentUserID,
-      components: this.components.value,
       classes: this.classes.value,
       subclasses: this.subclasses.value
     };
 
+    console.log('Spell data:', spellData); 
+  
     this.spellService.createSpell(spellData).subscribe({
       next: (response) => {
         alert('Spell created successfully!');
+        console.log('Spell created with response:', response); 
         this.router.navigate(['/spells']);
       },
       error: (error) => {
+        console.log('Error creating spell:', error);
         console.error('Error creating spell:', error);
         alert('Failed to create spell. Please try again.');
       }
