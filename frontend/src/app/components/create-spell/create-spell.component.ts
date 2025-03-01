@@ -195,7 +195,7 @@ export class CreateSpellComponent implements OnInit {
       components: selectedComponents + materialDescription,
       conditions: conditions,
       range: rangeDescription,
-      creatorID: this.currentUserID,
+      userID: this.currentUserID,
       classes: this.classes.value,
       subclasses: this.subclasses.value
     };
@@ -206,7 +206,7 @@ export class CreateSpellComponent implements OnInit {
       next: (response) => {
         alert('Spell created successfully!');
         console.log('Spell created with response:', response);
-        this.router.navigate(['/spells']);
+        this.router.navigate(['/create_spell']);
       },
       error: (error) => {
         console.log('Error creating spell:', error);

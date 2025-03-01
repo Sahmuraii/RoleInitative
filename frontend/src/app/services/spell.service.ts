@@ -11,7 +11,7 @@ export class SpellService {
 
   // Create a new spell
   createSpell(spellData: any): Observable<any> {
-    return this.http.post(`${API_URL}/spells`, spellData);
+    return this.http.post(`${API_URL}/create_spell`, spellData);
   }
 
   // Fetch all spells

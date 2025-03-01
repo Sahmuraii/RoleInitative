@@ -159,6 +159,45 @@ class DND_Spell(db.Model):
         dict_repr = self.__dict__; [dict_repr.pop(i, None) for i in ["_sa_instance_state"]]
         return f"<{self.__class__.__name__}({self.__dict__})>"
 
+class UserSpell(db.Model):
+    __tablename__ = 'user_spell'
+    user_spell_id = db.Column(db.Integer, primary_key=True, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # Reference to the user who created the spell
+    spell_name = db.Column(db.String(100), nullable=False)  # Spell name
+    version = db.Column(db.String(50), nullable=True)  # Optional version
+    level = db.Column(db.String(20), nullable=False)  # Spell level (e.g., "1st-level")
+    school = db.Column(db.String(50), nullable=False)  # Spell school (e.g., "Evocation")
+    casting_time = db.Column(db.String(50), nullable=False)  # Casting time (e.g., "1 Action")
+    reaction_description = db.Column(db.Text, nullable=True)  # Optional reaction condition
+    components = db.Column(db.ARRAY(db.String(10)), nullable=False)  # Spell components (e.g., ["V", "S", "M"])
+    materials_description = db.Column(db.Text, nullable=True)  # Optional material description
+    spell_range_type = db.Column(db.String(50), nullable=False)  # Range type (e.g., "Self", "Touch")
+    range = db.Column(db.String(50), nullable=True)  # Optional range value (e.g., "30 feet")
+    area_length = db.Column(db.String(50), nullable=True)  # Optional area length (e.g., "30 feet")
+    area_type = db.Column(db.String(50), nullable=True)  # Optional area type (e.g., "Cone")
+    duration_type = db.Column(db.String(50), nullable=False)  # Duration type (e.g., "Instantaneous")
+    duration = db.Column(db.String(50), nullable=True)  # Optional duration (e.g., "1 minute")
+    duration_time = db.Column(db.String(50), nullable=True)  # Optional duration time
+    description = db.Column(db.Text, nullable=False)  # Spell description
+    ritual_spell = db.Column(db.String(10), nullable=False)  # Is it a ritual spell? (e.g., "Yes" or "No")
+    higher_level_description = db.Column(db.Text, nullable=True)  # Optional higher-level description
+    higher_level_scaling = db.Column(db.Text, nullable=True)  # Optional higher-level scaling
+    classes = db.Column(db.ARRAY(db.String(50)), nullable=True)  # Classes that can use the spell (e.g., ["Wizard", "Sorcerer"])
+    subclasses = db.Column(db.ARRAY(db.String(50)), nullable=True)  # Subclasses that can use the spell
+    isSaveOrAttack = db.Column(db.String, nullable=True)  # Is it a save or attack spell?
+    save_stat = db.Column(db.String(50), nullable=True)  # Save stat (e.g., "Dexterity")
+    attack_type = db.Column(db.String(50), nullable=True)  # Attack type (e.g., "Melee" or "Ranged")
+    damage = db.Column(db.String(50), nullable=True)  # Damage (e.g., "8d6")
+    damage_type = db.Column(db.String(50), nullable=True)  # Damage type (e.g., "Fire")
+    effect = db.Column(db.Text, nullable=True)  # Optional effect (if no damage)
+    inflicts_conditions = db.Column(db.Boolean, nullable=True)  # Does it inflict conditions?
+    conditions = db.Column(db.ARRAY(db.String(50)), nullable=True)  # Conditions inflicted (e.g., ["Blinded", "Frightened"])
+
+    def __repr__(self):
+        dict_repr = self.__dict__
+        dict_repr.pop("_sa_instance_state", None)  # Remove SQLAlchemy internal state
+        return f"<{self.__class__.__name__}({dict_repr})>"
+
 
 #----------------------------------------------------------
 #   D&D relation tables
