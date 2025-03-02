@@ -4,7 +4,7 @@
         <p>Welcome to the character creator! Here you can design your own Dungeons and Dragons character.</p>
         <p>Follow the steps below to build your character:</p>
         <p>Value: {{ characterForm.value | json }}</p>
-        <!-- <p>{{this.getArrayOfProfTypes("1").length}}</p> -->
+        <!-- <p>{{getArrayofProfOptions("2")[1] | json}}</p> -->
         <br>
     </div>
     <div class="tabs">
@@ -110,23 +110,22 @@
                         <!-- <p>{{classProficiencies.controls}}</p> -->
                         @for (profSet of classProficiencies.controls; track i; let i = $index) {
                             <div [formGroupName]="i">
-                                <div formArrayName="Columns">
-                                    <p>List description: {{profSet.value.list_desc}}</p>
-                                    <!-- <p>{{profSet.value.selects | json}}</p> -->
-                                        @for (sel of profSet.value.selects; track j; let j = $index) {
-                                            <div [formGroupName]="j">
-                                                <p>{{sel['prof_list'] | json}}</p>
-                                                <select formControlName="profSelect">
-                                                    @for (opt of sel['prof_list']; track $index) {
-                                                        <option [value]="opt.id">{{opt.name}}</option>
-                                                    }
-                                                    
-                                                </select>
-                                            </div>
-                                        }
-                                </div>
+                                <p>set: {{i}}</p>
+                                <p>List description: {{profSet.value.list_desc}}</p>
+                                    @for (sel of profSet.value.selects; track j; let j = $index) {
+                                        <div [formGroupName]="j">
+                                            <p>selects: {{j}}</p>
+                                            <select formArrayName="profSelects">
+                                                @for (opt of getArrayofProfOptions(this.primaryClass)[i]; track k; let k = $index) {
+                                                    <option [value]="opt.id">{{opt.name}}</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    }
                             </div>
                         }
+                        <br>
+                        
                     </div>
                 }
                 
@@ -137,158 +136,179 @@
                 <h2>Set Your Attributes</h2>
                 <p>Choose a method to determine your stats:</p>
                 <label for="stat_method">Stat Allocation Method:</label>
-                <select id="stat_method" name="stat_method">
+                <select id="stat_method" name="stat_method" formControlName="statRuleset" (change)="showAttributeRuleset(this.statRuleset)">
+                    <option value="roll">Roll</option>
                     <option value="standard_array">Standard Array</option>
                     <option value="point_buy">Point Buy</option>
-                    <option value="roll">Roll</option>
                     <option value="manual">Manual</option>
                 </select><br>
 
-                <!-- Standard Array -->
-                <div id="standard_array" style="display: block;">
-                    <p><br>Assign values from the standard array <span id="attribute_array">[15, 14, 13, 12, 10, 8]</span>:<br></p><br>
-                </div>
-
-                <!-- Point Buy -->
-                <div id="point_buy" style="display: none;">
-                    <p><br>Allocate points (Max 27)<span id="remainingPoints">27</span><br></p>
-                </div>
-
                 <!-- Roll -->
-                <div id="roll" style="display: none;">
+                <div id="roll" [hidden]="attrRulesHiddenArray[0]">
                     <br>
                     <div style="display: flex; align-items: center; gap: 4px;">
                         <span>Roll </span>
-                        <input type="number" id="numDice" style="width: 40px;" value=4 min="0" max="100" placeholder="e.g., 4"> <!-- 40 px is to allow for 3 digits -->
+                        <input type="number" id="numDice" style="width: 40px;" value=4 min="0" max="100" placeholder="e.g., 4" formControlName="rollDiceAmt"> <!-- 40 px is to allow for 3 digits -->
                         <span>d</span>
-                        <input type="number" id="typeDice" style="width: 40px;" value=6 min="0" max="100" placeholder="e.g., 6">
+                        <input type="number" id="typeDice" style="width: 40px;" value=6 min="0" max="100" placeholder="e.g., 6" formControlName="rollDiceType">
                         <span> dice, then the drop lowest </span>
-                        <input type="number" id="dropDice" style="width: 40px;" value=1 min="0" max="100" placeholder="e.g., 1">
+                        <input type="number" id="dropDice" style="width: 40px;" value=1 min="0" max="100" placeholder="e.g., 1" formControlName="rollDropAmt">
                         <span> for each stat.</span>
                     </div>
                     <br>
-                    <button type="button" id="rollStatsButton">Roll Stats</button><br>
-                    <br><p>Assign values from the rolled values: <span id="roll_attribute_array">Press the roll button to get your values</span></p><br>
+                    <button type="button" id="rollStatsButton" (click)="rollStats()">Roll Stats</button><br>
+                    <br><p>Assign values from the rolled values: [ {{rolledStats}} ]</p>
+                    <label>Strength: </label>
+                    <select formControlName="str">
+                        @for (stat of rolledStats; track $index) {
+                            <option [value]="stat">{{stat}}</option>
+                        }
+                    </select>
+                    <br>
+                    <label>Dexterity: </label>
+                    <select formControlName="dex">
+                        @for (stat of rolledStats; track $index) {
+                            <option [value]="stat">{{stat}}</option>
+                        }
+                    </select>
+                    <br>
+                    <label>Constitution: </label>
+                    <select formControlName="con">
+                        @for (stat of rolledStats; track $index) {
+                            <option [value]="stat">{{stat}}</option>
+                        }
+                    </select>
+                    <br>
+                    <label>Intelligence: </label>
+                    <select formControlName="int">
+                        @for (stat of rolledStats; track $index) {
+                            <option [value]="stat">{{stat}}</option>
+                        }
+                    </select>
+                    <br>
+                    <label>Wisdom: </label>
+                    <select formControlName="wis">
+                        @for (stat of rolledStats; track $index) {
+                            <option [value]="stat">{{stat}}</option>
+                        }
+                    </select>
+                    <br>
+                    <label>Charisma: </label>
+                    <select formControlName="cha">
+                        @for (stat of rolledStats; track $index) {
+                            <option [value]="stat">{{stat}}</option>
+                        }
+                    </select>
+                    <br>
+                </div>
+
+                <!-- Standard Array -->
+                <div id="standard_array" [hidden]="attrRulesHiddenArray[1]">
+                    <p><br>Assign values from the standard array: [15, 14, 13, 12, 10, 8]<br></p>
+                    <label>Strength: </label>
+                    <select formControlName="str">
+                        @for (stat of standardArray; track $index) {
+                            <option [value]="stat">{{stat}}</option>
+                        }
+                    </select>
+                    <br>
+                    <label>Dexterity: </label>
+                    <select formControlName="dex">
+                        @for (stat of standardArray; track $index) {
+                            <option [value]="stat">{{stat}}</option>
+                        }
+                    </select>
+                    <br>
+                    <label>Constitution: </label>
+                    <select formControlName="con">
+                        @for (stat of standardArray; track $index) {
+                            <option [value]="stat">{{stat}}</option>
+                        }
+                    </select>
+                    <br>
+                    <label>Intelligence: </label>
+                    <select formControlName="int">
+                        @for (stat of standardArray; track $index) {
+                            <option [value]="stat">{{stat}}</option>
+                        }
+                    </select>
+                    <br>
+                    <label>Wisdom: </label>
+                    <select formControlName="wis">
+                        @for (stat of standardArray; track $index) {
+                            <option [value]="stat">{{stat}}</option>
+                        }
+                    </select>
+                    <br>
+                    <label>Charisma: </label>
+                    <select formControlName="cha">
+                        @for (stat of standardArray; track $index) {
+                            <option [value]="stat">{{stat}}</option>
+                        }
+                    </select>
+                    <br>
+                </div>
+
+                <!-- Point Buy -->
+                <div id="point_buy" [hidden]="attrRulesHiddenArray[2]">
+                    <p>Allocate points</p>
+                    <p><br>You have a max of 27 points to spend, and higher stats cost more points.<br></p>
+                    <p class="tooltip">Hover here to see the cost of each stat 
+                        <span class="tooltiptext">
+                            8 = 0 points<br>
+                            9 = 1 points<br>
+                            10 = 2 points<br>
+                            11 = 3 points<br>
+                            12 = 4 points<br>
+                            13 = 5 points<br>
+                            14 = 7 points<br>
+                            15 = 9 points<br></span></p>
+                    <p>Remaining points: {{27 - spentPoints}}</p>
+                    <br>
+                    <label>Strength: </label>
+                    <input type="number" value="8" min="8" [max]="maxBuyStatArray[0]" (change)="updateMaxStats([this.str, this.dex, this.con, this.int, this.wis, this.cha])" formControlName="str">
+                    <br>
+                    <label>Dexterity: </label>
+                    <input type="number" value="8" min="8" [max]="maxBuyStatArray[1]" (change)="updateMaxStats([this.str, this.dex, this.con, this.int, this.wis, this.cha])" formControlName="dex">
+                    <br>
+                    <label>Constitution: </label>
+                    <input type="number" value="8" min="8" [max]="maxBuyStatArray[2]" (change)="updateMaxStats([this.str, this.dex, this.con, this.int, this.wis, this.cha])" formControlName="con">
+                    <br>
+                    <label>Intelligence: </label>
+                    <input type="number" value="8" min="8" [max]="maxBuyStatArray[3]" (change)="updateMaxStats([this.str, this.dex, this.con, this.int, this.wis, this.cha])" formControlName="int">
+                    <br>
+                    <label>Wisdom: </label>
+                    <input type="number" value="8" min="8" [max]="maxBuyStatArray[4]" (change)="updateMaxStats([this.str, this.dex, this.con, this.int, this.wis, this.cha])" formControlName="wis">
+                    <br>
+                    <label>Charisma: </label>
+                    <input type="number" value="8" min="8" [max]="maxBuyStatArray[5]" (change)="updateMaxStats([this.str, this.dex, this.con, this.int, this.wis, this.cha])" formControlName="cha">
+                    <br>
                 </div>
 
                 <!-- Manual -->
-                <div id="manual" style="display: none;">
-                    <p><br>Manually set stats (1-20):<br><br></p>
+                <div id="manual" [hidden]="attrRulesHiddenArray[3]">
+                    <p><br>Manually set stats (1-20):<br></p>
+                    <label>Strength: </label>
+                    <input type="number" min="1" max="20" formControlName="str">
+                    <br>
+                    <label>Dexterity: </label>
+                    <input type="number" min="1" max="20" formControlName="str">
+                    <br>
+                    <label>Constitution: </label>
+                    <input type="number" min="1" max="20" formControlName="str">
+                    <br>
+                    <label>Intelligence: </label>
+                    <input type="number" min="1" max="20" formControlName="str">
+                    <br>
+                    <label>Wisdom: </label>
+                    <input type="number" min="1" max="20" formControlName="str">
+                    <br>
+                    <label>Charisma: </label>
+                    <input type="number" min="1" max="20" formControlName="str">
+                    <br>
                 </div>
 
-                <!-- Manual or Point Buy (Both should have arrows), Rolling and Array should not -->
-                <div id="attribute_fields" style="display: block">
-                    <div class="attribute-section">
-                        <label for="strength">Strength:</label>
-                        <button type="button" onclick="adjustStat('strength', -1)">-</button>
-                        <input type="number" id="strength" name="strength" value="8" min="1" max="20" readonly>
-                        <button type="button" onclick="adjustStat('strength', 1)">+</button>
-                    </div>
-                    <div class="attribute-section">
-                        <label for="dexterity">Dexterity:</label>
-                        <button type="button" onclick="adjustStat('dexterity', -1)">-</button>
-                        <input type="number" id="dexterity" name="dexterity" value="8" min="1" max="20" readonly>
-                        <button type="button" onclick="adjustStat('dexterity', 1)">+</button>
-                    </div>
-                    <div class="attribute-section">
-                        <label for="constitution">Constitution:</label>
-                        <button type="button" onclick="adjustStat('constitution', -1)">-</button>
-                        <input type="number" id="constitution" name="constitution" value="8" min="1" max="20" readonly>
-                        <button type="button" onclick="adjustStat('constitution', 1)">+</button>
-                    </div>
-                    <div class="attribute-section">
-                        <label for="intelligence">Intelligence:</label>
-                        <button type="button" onclick="adjustStat('intelligence', -1)">-</button>
-                        <input type="number" id="intelligence" name="intelligence" value="8" min="1" max="20" readonly>
-                        <button type="button" onclick="adjustStat('intelligence', 1)">+</button>
-                    </div>
-                    <div class="attribute-section">
-                        <label for="wisdom">Wisdom:</label>
-                        <button type="button" onclick="adjustStat('wisdom', -1)">-</button>
-                        <input type="number" id="wisdom" name="wisdom" value="8" min="1" max="20" readonly>
-                        <button type="button" onclick="adjustStat('wisdom', 1)">+</button>
-                    </div>
-                    <div class="attribute-section">
-                        <label for="charisma">Charisma:</label>
-                        <button type="button" onclick="adjustStat('charisma', -1)">-</button>
-                        <input type="number" id="charisma" name="charisma" value="8" min="1" max="20" readonly>
-                        <button type="button" onclick="adjustStat('charisma', 1)">+</button>
-                    </div>
-                </div>
-                <div id="attribute_fields_dropdown" style="display: block">
-                    <div class="attribute-section">
-                        <label for="strength">Strength:</label>
-                        <select id="strength_dd" name="stat_method" onchange="checkAvailability(this.id, this.value)">
-                            <option value="-1">—</option>
-                            <option value="0">value 0</option>
-                            <option value="1">value 1</option>
-                            <option value="2">value 2</option>
-                            <option value="3">value 3</option>
-                            <option value="4">value 4</option>
-                            <option value="5">value 5</option>
-                        </select>
-                    </div>
-                    <div class="attribute-section">
-                        <label for="dexterity">Dexterity:</label>
-                        <select id="dexterity_dd" name="stat_method" onchange="checkAvailability(this.id, this.value)">
-                            <option value="-1">—</option>
-                            <option value="0">value 0</option>
-                            <option value="1">value 1</option>
-                            <option value="2">value 2</option>
-                            <option value="3">value 3</option>
-                            <option value="4">value 4</option>
-                            <option value="5">value 5</option>
-                        </select>
-                    </div>
-                    <div class="attribute-section">
-                        <label for="constitution">Constitution:</label>
-                        <select id="constitution_dd" name="stat_method" onchange="checkAvailability(this.id, this.value)">
-                            <option value="-1">—</option>
-                            <option value="0">value 0</option>
-                            <option value="1">value 1</option>
-                            <option value="2">value 2</option>
-                            <option value="3">value 3</option>
-                            <option value="4">value 4</option>
-                            <option value="5">value 5</option>
-                        </select>
-                    </div>
-                    <div class="attribute-section">
-                        <label for="intelligence">Intelligence:</label>
-                        <select id="intelligence_dd" name="stat_method" onchange="checkAvailability(this.id, this.value)">
-                            <option value="-1">—</option>
-                            <option value="0">value 0</option>
-                            <option value="1">value 1</option>
-                            <option value="2">value 2</option>
-                            <option value="3">value 3</option>
-                            <option value="4">value 4</option>
-                            <option value="5">value 5</option>
-                        </select>
-                    </div>
-                    <div class="attribute-section">
-                        <label for="wisdom">Wisdom:</label>
-                        <select id="wisdom_dd" name="stat_method" onchange="checkAvailability(this.id, this.value)">
-                            <option value="-1">—</option>
-                            <option value="0">value 0</option>
-                            <option value="1">value 1</option>
-                            <option value="2">value 2</option>
-                            <option value="3">value 3</option>
-                            <option value="4">value 4</option>
-                            <option value="5">value 5</option>
-                        </select>
-                    </div>
-                    <div class="attribute-section">
-                        <label for="charisma">Charisma:</label>
-                        <select id="charisma_dd" name="stat_method" onchange="checkAvailability(this.id, this.value)">
-                            <option value="-1">—</option>
-                            <option value="0">value 0</option>
-                            <option value="1">value 1</option>
-                            <option value="2">value 2</option>
-                            <option value="3">value 3</option>
-                            <option value="4">value 4</option>
-                            <option value="5">value 5</option>
-                        </select>
-                    </div>
-                </div>
+                
             </div>
 
             <!-- Character Details -->
@@ -396,12 +416,12 @@
                 <p><strong>Class:</strong> <span id="summary-class">None</span></p>
                 <p><strong>Stats:</strong></p>
                 <ul>
-                    <li>Strength: <span id="summary-strength">8</span></li>
-                    <li>Dexterity: <span id="summary-dexterity">8</span></li>
-                    <li>Constitution: <span id="summary-constitution">8</span></li>
-                    <li>Intelligence: <span id="summary-intelligence">8</span></li>
-                    <li>Wisdom: <span id="summary-wisdom">8</span></li>
-                    <li>Charisma: <span id="summary-charisma">8</span></li>
+                    <li>Strength: {{this.str}}</li>
+                    <li>Dexterity: {{this.dex}}</li>
+                    <li>Constitution: {{this.con}}</li>
+                    <li>Intelligence: {{this.int}}</li>
+                    <li>Wisdom: {{this.wis}}</li>
+                    <li>Charisma: {{this.cha}}</li>
                 </ul>
             </div>
         </form>
