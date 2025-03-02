@@ -15,6 +15,10 @@ export class BackgroundService {
     return this.http.get(API_URL);
   }
 
+  getBackgroundsByUser(userId: number): Observable<any> {
+    return this.http.get(`${API_URL}/backgrounds`, { params: { userID: userId.toString() } });
+  }
+
   // Create a new background
   createBackground(backgroundData: any): Observable<any> {
     return this.http.post(`${API_URL}/create_background`, backgroundData, {

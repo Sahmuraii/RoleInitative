@@ -1,0 +1,19 @@
+<div class="profile-container">
+    <div class="profile-header">
+      <h1>{{ username }}'s Profile</h1>
+    </div>
+    <div class="profile-tabs">
+      <button (click)="selectedTab = 'overview'">Overview</button>
+      <button (click)="selectedTab = 'homebrew'">My Homebrew</button>
+    </div>
+    <div class="profile-content">
+      @if (selectedTab === 'overview') {
+        <div class="overview">
+          <p>Welcome to your profile! Here you can manage your homebrew content.</p>
+        </div>
+      }
+      @if (selectedTab === 'homebrew') {
+        <app-my-homebrew [userId]="userId"></app-my-homebrew>
+      }
+    </div>
+  </div>

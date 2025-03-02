@@ -85,6 +85,28 @@ def create_background():
     # Handle GET request (if needed)
     return render_template('homebrew/create_background.html')
 
+@homebrew_bp.route('/backgrounds', methods=['GET'])
+def get_backgrounds():
+    user_id = request.args.get('userID')   # Get the user ID from the query parameters
+    if not user_id:
+        return jsonify({"error": "User ID is required"}), 400
+
+    try:
+        backgrounds = UserBackground.query.filter_by(user_id=user_id).all()
+        # Extract the background data from the query results
+        background_data = [
+            {
+                "background_name": background.background_name,
+                "background_description": background.background_description,
+            }
+            for background in backgrounds
+        ]
+
+        return jsonify(background_data), 200
+    except Exception as e:
+        print(f"Error fetching backgrounds: {e}")
+        return jsonify({"error": "Failed to fetch backgrounds"}), 500
+
 @homebrew_bp.route('/create_spell', methods=['GET', 'POST'])
 def create_spell():
     print("Received a request to /create_spell")
@@ -182,3 +204,27 @@ def create_spell():
 
     # Handle GET request (if needed)
     return render_template('homebrew/create_spell.html')
+
+@homebrew_bp.route('/spells', methods=['GET'])
+def get_spells():
+    user_id = request.args.get('userID')  # Get the user ID from the query parameters
+    if not user_id:
+        return jsonify({"error": "User ID is required"}), 400
+
+    try:
+        spells = UserSpell.query.filter_by(user_id=user_id).all()
+        # Extract the spell data from the query results
+        spells_data = [
+            {
+                "spell_name": spell.spell_name,
+                "level": spell.level,
+                "school": spell.school,
+                "description": spell.description,
+            }
+            for spell in spells
+        ]
+
+        return jsonify(spells_data), 200
+    except Exception as e:
+        print(f"Error fetching spells: {e}")
+        return jsonify({"error": "Failed to fetch spells"}), 500

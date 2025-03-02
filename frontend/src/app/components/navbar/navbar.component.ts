@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
-import { CommonModule } from '@angular/common'; // Import CommonModule for *ngIf
+import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router'; // Import Router
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule], // Add CommonModule for *ngIf
+  imports: [CommonModule],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
@@ -13,7 +14,7 @@ export class NavbarComponent implements OnInit {
   isLoggedIn: boolean = false;
   username: string = '';
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private router: Router) {} // Inject Router
 
   ngOnInit(): void {
     this.authService.isLoggedIn$.subscribe((loggedIn) => {
@@ -36,5 +37,11 @@ export class NavbarComponent implements OnInit {
 
   logout(): void {
     this.authService.logout();
+  }
+
+  navigateToProfile(): void {
+    if (this.username) {
+      this.router.navigate(['/profile', this.username]); // Navigate to the profile page
+    }
   }
 }

@@ -19,6 +19,11 @@ export class SpellService {
     return this.http.get(`${API_URL}/spells`);
   }
 
+  // Fetch spells by user ID
+  getSpellsByUser(userId: number): Observable<any> {
+    return this.http.get(`${API_URL}/spells`, { params: { userID: userId.toString() } });
+  }
+  
   // Fetch a single spell by ID
   getSpellById(spellId: number): Observable<any> {
     return this.http.get(`${API_URL}/spells/${spellId}`);

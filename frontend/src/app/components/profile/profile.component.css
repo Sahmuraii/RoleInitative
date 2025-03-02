@@ -1,0 +1,18 @@
+.profile-container {
+    padding: 20px;
+  }
+  
+  .profile-tabs {
+    margin-bottom: 20px;
+  }
+  
+  .profile-tabs button {
+    margin-right: 10px;
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+  
+  .profile-content {
+    border: 1px solid #ccc;
+    padding: 20px;
+  }

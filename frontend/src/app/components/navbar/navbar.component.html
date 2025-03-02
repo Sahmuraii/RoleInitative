@@ -11,7 +11,7 @@
     </div>
     @if (isLoggedIn) {
         <div class="profile">
-            <span class="profile-name">{{ username }}</span>
+            <span class="profile-name" (click)="navigateToProfile()">{{ username }}</span>
             <button (click)="logout()">Log Out</button>
         </div>
     } @else {
