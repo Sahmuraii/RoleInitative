@@ -28,6 +28,7 @@ body, html {
     top: 10%;
     left: 10%;
     width: 40vw;
+    min-width: 400px;
     height: 80vh;
     background-color: var(--tertiary-color);
     display: flex;

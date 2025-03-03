@@ -139,7 +139,7 @@ if errorlevel 4 (
 		echo #RUN git clone -b dev-branch https://github.com/Sahmuraii/RoleInitiative.git
 		echo.
 		echo WORKDIR %appFolder%%projectFolder%
-		echo COPY requirements.txt .
+		echo COPY . .
 		echo.
 		echo RUN pip install -r requirements.txt
 		echo.
@@ -182,7 +182,7 @@ docker image prune -f
 
 :: Build the new image using the selected Dockerfile
 echo Building new Docker image using %dockerfilePath%...
-docker build -t %imageName% -f %dockerfilePath% .
+docker build --no-cache -t %imageName% -f %dockerfilePath% .
 
 :: Check if the image was built successfully
 if errorlevel 1 (
