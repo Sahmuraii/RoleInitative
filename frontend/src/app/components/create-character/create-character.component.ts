@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, QueryList, signal, ViewChild, ViewChildren, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormBuilder, FormArray, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { CreateCharacterService } from '../../services/create-character.service';
-import { catchError, lastValueFrom } from 'rxjs';
+import { catchError, lastValueFrom, max } from 'rxjs';
 import { DND_Class } from '../../models/dnd_class.type';
 import { DND_Race } from '../../models/dnd_race.type';
 import { Class_Proficiency_Option } from '../../models/class_proficiency_option.type';
 import { Proficiency } from '../../models/proficiency.type';
+import { sourceMapsEnabled } from 'node:process';
 
 @Component({
   selector: 'app-create-character',
@@ -32,9 +33,8 @@ export class CreateCharacterComponent implements OnInit {
   chosenClasses: number[] = []
 
 
-
   //Class Proficiency Variables
-
+  selectionValue: number = 0
 
 
   //Attribute variables
@@ -61,13 +61,21 @@ export class CreateCharacterComponent implements OnInit {
   constructor(private fb: FormBuilder) {
     // Initialize the form with a FormArray for class levels
     this.characterForm = this.fb.group({
+      //Basic Info form elements
+      name: this.fb.control(null),
+      ruleset: this.fb.control("2014"),
+      levelMethod: this.fb.control("experience"),
+      encumberance: this.fb.control("false"),
+
+      //Race selection form elements
+      race: this.fb.control(null),
+
       //class selection form elements
       classLevels: this.fb.array([]), // FormArray to store class levels
       primaryClass: this.fb.control("None"),
 
       //class proficiency form elements
       classProficiencies: this.fb.array([]),
-      profSelects: this.fb.array([]),
 
       //stat allocation form elements
       statRuleset: this.fb.control("roll"),
@@ -80,11 +88,50 @@ export class CreateCharacterComponent implements OnInit {
       int: this.fb.control(8),
       wis: this.fb.control(8),
       cha: this.fb.control(8),
+
+      //Character details form elements
+      background: this.fb.control(""),
+      alignment: this.fb.control(""),
+      personality: this.fb.control(""),
+      faith: this.fb.control(""),
+      height: this.fb.control(""),
+      weight: this.fb.control(""),
+      skinColor: this.fb.control(""),
+      hairColor: this.fb.control(""),
+      eyeColor: this.fb.control(""),
+      age: this.fb.control(""),
+      appearance: this.fb.control(""),
+      backstory: this.fb.control(""),
+      bonds: this.fb.control(""),
+      miscDetails: this.fb.control(""),
+
+      //Equipment details form elements, subject to change
+      equipment: this.fb.control("")
       
     });
   }
 
   //Getters and setters
+  get name(): string {
+    return this.characterForm.get('name')?.value;
+  }
+
+  get ruleset(): string {
+    return this.characterForm.get('ruleset')?.value;
+  }
+
+  get levelMethod(): string {
+    return this.characterForm.get('levelMethod')?.value;
+  }
+
+  get encumberance(): string {
+    return this.characterForm.get('encumberance')?.value;
+  }
+
+  get race(): number {
+    return this.characterForm.get('race')?.value;
+  }
+
   get classLevels(): FormArray {
     return this.characterForm.get('classLevels') as FormArray;
   }
@@ -140,10 +187,31 @@ export class CreateCharacterComponent implements OnInit {
   get cha(): number {
     return this.characterForm.get('cha')?.value
   }
-  
-  set classProficiencies(newArray: []) {
-    this.characterForm.setValue([])
+
+  set str(num: number) {
+    this.characterForm.get("str")?.setValue(num)
   }
+
+  set dex(num: number) {
+    this.characterForm.get('dex')?.setValue(num)
+  }
+
+  set con (num: number) {
+    this.characterForm.get('con')?.setValue(num)
+  }
+
+  set int(num: number) {
+    this.characterForm.get('int')?.setValue(num)
+  }
+
+  set wis(num: number){
+    this.characterForm.get('wis')?.setValue(num)
+  }
+
+  set cha(num: number) {
+    this.characterForm.get('cha')?.setValue(num)
+  }
+
 
   //Class Selection Methods
   initializeClassLevels(classes: DND_Class[]): void {
@@ -176,6 +244,35 @@ export class CreateCharacterComponent implements OnInit {
     }
   }
 
+  getClassString() {
+    let levelArray = this.getClassLevels()
+    let finalString = ""
+    let nonPrimaryClassString = ""
+    let numOfClasses = 0
+    for(let dndClass of levelArray) {
+      if(dndClass.level > 0) {
+        numOfClasses++;
+      }
+    }
+    if(this.primaryClass != "None") {
+      for(let dndClass of levelArray) { //initial search for primary class
+        if(dndClass.class_id.toString() == this.primaryClass) {
+          finalString += `${this.dndClassesSignal()[dndClass.class_id-1].name} Lvl. ${dndClass.level}`
+        } else if(dndClass.level > 0) {
+          nonPrimaryClassString += `, ${this.dndClassesSignal()[dndClass.class_id-1].name} Lvl. ${dndClass.level}`
+        }
+      } 
+    } else {
+      for(let dndClass of levelArray) { //initial search for primary class
+        if(dndClass.level > 0) {
+          nonPrimaryClassString += `${this.dndClassesSignal()[dndClass.class_id-1].name} Lvl. ${dndClass.level}${numOfClasses > 1 ? ", " : ""}`
+          numOfClasses--;
+        }
+      }
+    }
+    return finalString + nonPrimaryClassString
+  }
+
   //Class Proficiency Methods
   getArrayOfProfTypes(dndClass: string): Class_Proficiency_Option[] {
     let classNum = parseInt(dndClass)
@@ -191,33 +288,38 @@ export class CreateCharacterComponent implements OnInit {
   getArrayofProfOptions(dndClass: string): Proficiency[][] {
     let profTypes = this.getArrayOfProfTypes(dndClass)
     let result: Proficiency[][] = []
-    profTypes.forEach((profOption, index) => {
+    profTypes.forEach((profOption, upperIndex) => {
       result.push([])
-      profOption.proficiency_options.forEach((option) => {
-        result[index].push(option)
+      profOption.proficiency_options.forEach((option, index) => {
+        result[upperIndex].push(option)
       })
     })
     return result
   }
 
+  getProfFirstOption(dndClass: string, index: number): number {
+    let profTypes = this.getArrayOfProfTypes(dndClass)
+    return profTypes[index].proficiency_options[0].id
+  }
+
   initializeClassProficiencies(dndClass: string): void {
     this.classProficiencies.clear()
-    this.getArrayOfProfTypes(dndClass).forEach(x => {
+    this.getArrayOfProfTypes(dndClass).forEach((x, index) => {
       this.classProficiencies.push(this.fb.group({
         list_desc: x.list_description,
-        selects: this.initializeProfOptions(x)
+        selects: this.initializeProfOptions(x, index)
       }))
 
     })
     
   }
 
-  initializeProfOptions(x: Class_Proficiency_Option) {
+  initializeProfOptions(x: Class_Proficiency_Option, index: number) {
     let arr = new FormArray<FormGroup>([])
     for(let i = 0; i < x.max_choices; i++) {
       arr.push(this.fb.group({
         prof_list: new FormControl(x.proficiency_options),
-        option: null
+        option: "None"
       }))
     }
     return arr
@@ -227,6 +329,12 @@ export class CreateCharacterComponent implements OnInit {
 
   //Attribute methods
   showAttributeRuleset(rulesID: string) {
+    this.str = 8;
+    this.dex = 8;
+    this.con = 8;
+    this.int = 8;
+    this.wis = 8;
+    this.cha = 8;
     switch(rulesID) {
       case "roll": {
         this.attrRulesHiddenArray = [false, true, true, true]
@@ -272,24 +380,18 @@ export class CreateCharacterComponent implements OnInit {
   }
 
   getNewMaxBuyStat(stat: number, points: number) {
-    if(points >= 9) {
-      return 15
-    } else if(points >= 7) {
-      return 14
-    } else if(points >= 5) {
-      return 13
-    } else if(points == 4) {
-      return 12
-    } else if(points == 3) {
-      return 11
-    } else if(points == 2) {
-      return 10
-    } else if(points == 1) {
-      return 9
-    } else {
-      return 8
+    let maxStat = stat
+    while(maxStat < 13 && points > 0) {
+      maxStat++;
+      points--;
     }
+    while(maxStat < 15 && points >= 2) {
+      maxStat++;
+      points -= 2;
+    }
+    return maxStat
   }
+
   updateMaxStats(allStats: number[]) {
     let totalCost = 0
     for(let stat of allStats) {
@@ -297,13 +399,22 @@ export class CreateCharacterComponent implements OnInit {
     }
     this.spentPoints = totalCost
     for(let i = 0; i < 6; i++) {
-
+      this.maxBuyStatArray[i] = this.getNewMaxBuyStat(allStats[i], (27-this.spentPoints))
     }
   }
 
 
 
   //Miscellaneous Methods
+  calculateStatModifier(stat: number): string {
+    let modifier = Math.floor((stat - 10) / 2)
+    if(modifier >= 0) {
+      return `+${modifier}`
+    } else {
+      return `${modifier}`
+    }
+  }
+
   ngOnInit(): void {
     this.createCharacterService.getRaceData().subscribe((races) => {
       this.dndRaces.set(races)
