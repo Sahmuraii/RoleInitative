@@ -1,0 +1,23 @@
+<div class="navbar">
+    <a class="logoLink" href="">
+        <img src="/assets/images/RILogoWithTextNoBorder.png" alt="Logo" class="nav-logo">
+    </a>
+    <div class="navbar-links">
+        <a href="#">Search (WIP)</a>
+        <a href="#">Campaigns (WIP)</a>
+        <a href="#">News (WIP)</a>
+        <a href="#">Collection (WIP)</a>
+        <a href="#">Forums (WIP)</a>
+    </div>
+    @if (isLoggedIn) {
+        <div class="profile">
+            <span class="profile-name" (click)="navigateToProfile()">{{ username }}</span>
+            <button (click)="logout()">Log Out</button>
+        </div>
+    } @else {
+        <div class="navbar-links">
+            <a href="/login">Log In</a>
+            <a href="/register">Register</a>
+        </div>
+    }
+</div>

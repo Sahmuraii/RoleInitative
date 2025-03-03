@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title_content %}Home{% endblock %}
+
+{% block body_content %}
+    <style>
+        .container {
+          position: relative;
+          width: 50%;
+        }
+
+        .image {
+          display: block;
+          width: 100%;
+          height: auto;
+        }
+
+        .overlay {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          background-color: #008CBA;
+          overflow: hidden;
+          width: 0;
+          height: 100%;
+          transition: .5s ease;
+        }
+
+        .container:hover .overlay {
+          width: 100%;
+        }
+
+        .text {
+          color: white;
+          font-size: 20px;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          -webkit-transform: translate(-50%, -50%);
+          -ms-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+          white-space: nowrap;
+        }
+    </style>
+    <!-- Main Content -->
+    <div class="main-content">
+        <h2>Slide in Overlay from the Left</h2>
+        <p>Hover over the image to see the effect.</p>
+
+        <a href="{{ url_for('homebrew_bp.create_background') }}">
+            <div class="container">
+                <img src="../../static/images/homebrew/background.jpg" alt="Avatar" class="image">
+                <div class="overlay">
+                    <div class="text">Create a background here</div>
+                </div>
+            </div>
+        </a>
+
+        <a href="{{ url_for('homebrew_bp.create_spell') }}">
+            <div class="container">
+                <img src="../../static/images/homebrew/background.jpg" alt="Avatar" class="image">
+                <div class="overlay">
+                    <div class="text">Create a spell here</div>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <script src="../../static/js/main.js"></script>
+{% endblock %}
