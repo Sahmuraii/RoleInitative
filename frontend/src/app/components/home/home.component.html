@@ -1,7 +1,117 @@
 <div class="main-content">
     <p>Temporary Default Home Page</p>
     <ul>
-        <li routerLink="/create/background">Create Background Page Link</li>
-        <li routerLink="/create/character">Create Character Page Link</li>
+        <li [routerLink]="['/create/background']">Create Background Page Link</li>
+        <li [routerLink]="['/create/character']">Create Character Page Link</li>
     </ul>
+
+    <!-- Search Bar -->
+    <div class="search-container" (click)="onFocus()" (focusout)="onBlur()">
+      <input
+        type="text"
+        placeholder="Search Campaigns, Homebrews, Characters, and Users..."
+        [(ngModel)]="searchTerm"
+        (input)="filterCharacters()"
+        (focus)="onFocus()"
+        class="search-input"
+      />
+      <i class="fa fa-search search-icon"></i>
+
+      <!-- Search results dropdown (Only show if focused and results exist) -->
+      <div *ngIf="isFocused && filteredCharacters.length" class="search-results">
+        <div *ngFor="let character of filteredCharacters" class="search-result-item">
+          <div class="character-info">
+            <div>
+              <a [routerLink]="['/character-sheet', character.character_id]" class="search-result-item">
+                <h4>{{ character.character_name }}</h4>
+              </a>
+              <p>Owner: {{ character.owner_name }}</p>
+              <p>Race: {{ character.race }}</p>
+              <p>Class: {{ character.highest_class }} (Level {{ character.total_level }})</p>
+            </div>
+            <i class="fa fa-bookmark bookmark-icon" (click)="bookmarkCharacter(character)"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- If user is logged in -->
+    <div *ngIf="(authService.isLoggedIn$ | async); else loginPrompt">
+
+        <h2>Character List</h2>
+
+        <div *ngIf="char_data.length; else noResults">
+          <div class="character-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 16px;">
+            <div *ngFor="let character of char_data" class="character-card">
+
+              <div class="character-card" style="display: flex; border: 1px solid #ddd; overflow: hidden; background: #f5deb3; border-radius: 8px; box-shadow: 0px 4px 6px rgba(0,0,0,0.1);">
+                  <!-- Character Image -->
+                  <a [routerLink]="['/character-sheet', character.character_id]" class="character-card-link"
+                     style="text-decoration: none; color: inherit; display: flex; width: 100%;">
+
+                      <div class="character-image" style="width: 50%; height: auto; aspect-ratio: 1/1; overflow: hidden; position: relative;">
+                          <img [src]="'assets/images/race_profile/' + character.race + 'CharacterImage.jpg'"
+                               [alt]="character.race + ' Character Image'"
+                               style="width: 100%; height: 100%; object-fit: cover; transition: .3s;">
+
+                          <!-- Class Icon -->
+                          <div class="class-icon" style="position: absolute; top: 8px; left: 8px; width: 40px; height: 40px; background: #fff; border-radius: 50%; overflow: hidden; display: flex; justify-content: center; align-items: center; box-shadow: 0px 2px 4px rgba(0,0,0,0.2);">
+                              <img [src]="'assets/images/class_logo/' + character.classes[0] + 'Logo.png'"
+                                   [alt]="character.classes[0] + ' Class Icon'"
+                                   style="width: 50px; height: 50px; object-fit: cover;">
+                          </div>
+                      </div>
+
+                      <!-- Card Content -->
+                      <div class="character-info-container" style="padding: 16px; width: 70%; display: flex; flex-direction: column; justify-content: space-between;">
+
+                          <!-- Owner Avatar -->
+                          <a [routerLink]="['/profile', character.owner_name]" class="author-avatar"
+                             style="display: flex; align-items: center; margin-bottom: 8px; color: inherit;">
+                              <img [src]="'assets/images/avatars/' + character.owner + '.png'"
+                                   [alt]="character.owner_name + '\'s Avatar'"
+                                   style="width: 32px; height: 32px; border-radius: 50%; margin-right: 8px;">
+                              <span style="font-weight: bold;">{{ character.owner_name }}</span>
+
+                          </a>
+                          <div>
+                              <span class="character-name">{{ character.character_name }}</span>
+                          </div>
+                          <div>
+                              <h3 style="margin: 0; font-size: 20px;">{{ character.title }}</h3>
+                              <div class="char-meta" style="margin: 8px 0; font-size: 14px; color: #666;">
+                                  <span>Level {{ character.total_level }}</span> • <span>{{ character.race }}</span> • <span>{{ character.highest_class }}</span>
+                              </div>
+                              <div class="char-tags" style="font-size: 12px; color: #999;">
+                                  No community tags
+                              </div>
+                          </div>
+
+                          <!-- Campaign and Engagement Information -->
+                          <div style="display: flex; justify-content: space-between; align-items: center;">
+                              <div class="campaign-info" style="color: #333; font-size: 14px; display: flex; align-items: center;">
+                                  <img src="assets/images/CampaignIcon.png" alt="Campaign Icon" style="width: 20px; height: 20px; margin-right: 4px;">
+                                  <span>No Campaign</span>
+                              </div>
+
+                              <div class="character-engagement-information" style="color: #333; font-size: 14px; text-align: right;">
+                                  <span>{{ character.views }} views • Created {{ character.timestamp }} ago</span>
+                              </div>
+                          </div>
+                      </div>
+                  </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <ng-template #noResults>
+            <p>No characters found.</p>
+        </ng-template>
+    </div>
+
+    <ng-template #loginPrompt>
+        <p>Please <a [routerLink]="['/login']">log in</a> to view characters.</p>
+    </ng-template>
+
 </div>
