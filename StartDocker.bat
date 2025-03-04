@@ -97,6 +97,8 @@ if errorlevel 4 (
 		echo RUN npm install
 		echo RUN npm install -g http-server
 		echo.
+		echo RUN ng add @angular/material
+		echo.
 		echo EXPOSE 4200
 		echo.
 		echo # Set the working directory to the output folder of the Angular build
@@ -151,7 +153,10 @@ if errorlevel 4 (
 		echo RUN npm config set strict-ssl false
 		echo RUN npm install -g @angular/cli
 		echo RUN npm install
-		echo RUN npm install -g http-server		echo.
+		echo RUN npm install -g http-server
+		echo.
+		echo RUN ng add @angular/material
+		echo.
 		echo EXPOSE 4200
 		echo.
 		echo # Set the working directory to the output folder of the Angular build
@@ -212,6 +217,8 @@ if errorlevel 4 (
 		echo RUN npm install
 		echo RUN npm install -g http-server
 		echo.
+		echo RUN ng add @angular/material
+		echo.
 		echo EXPOSE 4200
 		echo.
 		echo # Set the working directory to the output folder of the Angular build
@@ -268,6 +275,8 @@ if errorlevel 4 (
 		echo RUN npm install -g @angular/cli
 		echo RUN npm install
 		echo RUN npm install -g http-server
+		echo.
+		echo RUN ng add @angular/material
 		echo.
 		echo EXPOSE 4200
 		echo.
