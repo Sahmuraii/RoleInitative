@@ -102,7 +102,7 @@ if errorlevel 4 (
 		echo EXPOSE 4200
 		echo.
 		echo # Set the working directory to the output folder of the Angular build
-		echo WORKDIR %appFolder%%projectFolder%%angularPath%/dist/%angularAppName%
+		echo #WORKDIR %appFolder%%projectFolder%%angularPath%/dist/%angularAppName%
 		echo.
 		echo #ENTRYPOINT http-server . --port 4200
 		echo ENTRYPOINT ng serve --host 0.0.0.0
@@ -160,7 +160,7 @@ if errorlevel 4 (
 		echo EXPOSE 4200
 		echo.
 		echo # Set the working directory to the output folder of the Angular build
-		echo WORKDIR %appFolder%%projectFolder%%angularPath%/dist/%angularAppName%
+		echo #WORKDIR %appFolder%%projectFolder%%angularPath%/dist/%angularAppName%
 		echo.
 		echo #ENTRYPOINT http-server . --port 4200
 		echo ENTRYPOINT ng serve --host 0.0.0.0
@@ -281,7 +281,7 @@ if errorlevel 4 (
 		echo EXPOSE 4200
 		echo.
 		echo # Set the working directory to the output folder of the Angular build
-		echo WORKDIR %appFolder%%projectFolder%%angularPath%/dist/%angularAppName%
+		echo #WORKDIR %appFolder%%projectFolder%%angularPath%/dist/%angularAppName%
 		echo.
 		echo #ENTRYPOINT http-server . --port 4200
 		echo ENTRYPOINT ng serve --host 0.0.0.0
