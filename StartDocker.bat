@@ -81,9 +81,12 @@ if errorlevel 4 (
 	echo Creating Dockerfile2 (Custom - %choice%^)...
 	(
 		echo # Dockerfile - Custom-branch configuration - frontend
-		echo FROM node:16-alpine
+		echo FROM node:22-alpine
 		echo.
 		echo ARG CACHEBUST=1
+		echo.
+		echo # Install git
+		echo RUN apk update ^&^& apk add --no-cache git
 		echo.
 		echo WORKDIR %appFolder%
 		echo RUN git clone -b %choice% https://github.com/Sahmuraii/RoleInitiative.git
@@ -138,9 +141,12 @@ if errorlevel 4 (
 	echo Creating Dockerfile2 (LocalFile^)...
 	(
 		echo # Dockerfile - Local File configuration - frontend
-		echo FROM node:16-alpine
+		echo FROM node:22-alpine
 		echo.
 		echo ARG CACHEBUST=1
+		echo.
+		echo # Install git
+		echo RUN apk update ^&^& apk add --no-cache git
 		echo.
 		echo WORKDIR %appFolder%
 		echo #RUN git clone -b main https://github.com/Sahmuraii/RoleInitiative.git
@@ -249,19 +255,22 @@ if errorlevel 4 (
 		echo EXPOSE 5000
 		echo.
 		echo #Run Github Branch
-		echo WORKDIR %appFolder%%projectFolder%/%appPath%
+		echo WORKDIR %appFolder%%projectFolder%%appPath%
 		echo.
 		echo #Run local development
-		echo #WORKDIR %appFolder%/%appPath%
+		echo #WORKDIR %appFolder%%appPath%
 		echo.
 		echo ENTRYPOINT FLASK_APP=%appName% FLASK_DEBUG=1 flask run --port=5000 --host=0.0.0.0
     ) > %dockerfileBackendPath%
 	echo Creating Dockerfile2 (MainGit^)...
 	(
 		echo # Dockerfile - Main Github configuration - frontend
-		echo FROM node:16-alpine
+		echo FROM node:22-alpine
 		echo.
 		echo ARG CACHEBUST=1
+		echo.
+		echo # Install git
+		echo RUN apk update ^&^& apk add --no-cache git
 		echo.
 		echo WORKDIR %appFolder%
 		echo RUN git clone -b main https://github.com/Sahmuraii/RoleInitiative.git
