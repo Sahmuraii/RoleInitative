@@ -1,0 +1,34 @@
+services:
+    frontend-angular:
+        build:
+            context: .
+            dockerfile: BatchDockerfile1.local
+            args:
+                - "no-cache=true"
+        image: angular-app
+        container_name: RoleInitiative-frontend-container
+        restart: always
+        ports:
+            - "4200:4200"
+        networks:
+            - localnet
+        depends_on:
+            - backend-flask
+        links:
+            - "backend-flask:127.0.0.1"
+    backend-flask:
+        build:
+            context: .
+            dockerfile: BatchDockerfile2.local
+            args:
+                - "no-cache=true"
+        image: flask-app
+        container_name: RoleInitiative-backend-container
+        restart: always
+        ports:
+            - "5000:5000"
+        networks:
+            - localnet
+networks:
+    localnet:
+        driver: bridge

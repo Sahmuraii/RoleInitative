@@ -422,3 +422,155 @@ def delete_character(character_id):
 #        })
 
 #    return jsonify(characters_list), 200
+
+@character_bp.route("/characters/<int:user_id>", methods=['GET', 'POST'])
+def characters(user_id):
+
+    # Fetch all characters owned by the user and join with the User table for owner name
+    user_chars = (
+        db.session.query(
+            Character.char_id,
+            Character.name.label("character_name"),
+            Character.owner_id,
+            User.username.label("owner_name")
+        )
+        .join(User, User.id == Character.owner_id)
+        .filter(Character.owner_id == user_id)
+        .all()
+    )
+
+    if not user_chars:
+        return json.dumps({"error": "No characters found"}), 404
+
+    characters_data = []
+
+    for char in user_chars:
+        char_obj = Character.query.get(char.char_id)
+
+        # Fetch class and level information
+        class_info = [(cc.class_.name, cc.class_level) for cc in char_obj.charClass]
+        classes = [entry[0] for entry in class_info]  # Class names
+        levels = [entry[1] for entry in class_info]  # Corresponding levels
+        # Compute sum of levels
+        total_level = sum(entry[1] for entry in class_info)
+        # Find the highest-level class
+        highest_class = max(class_info, key=lambda x: x[1])[0] if class_info else "None"
+
+        # Fetch race information
+        race = char_obj.charRace[0].race.name if char_obj.charRace else "Unknown"
+
+        characters_data.append({
+            'character_id': char.char_id,
+            'character_name': char.character_name,
+            'owner_id': char.owner_id,
+            'owner_name': char.owner_name,
+            'race': race,
+            'classes': classes,
+            'levels': levels,
+            'highest_class': highest_class,
+            'total_level': total_level
+        })
+
+    # Fetch all available classes
+    all_classes = [
+        {k: v for k, v in row.__dict__.items() if k != "_sa_instance_state"}
+        for row in DND_Class.query.all()
+    ]
+
+    if request.method == 'POST':
+        # Handle character class updates
+        character_id = request.form.get('character_id')
+        new_class_id = request.form.get('class_id')
+        new_class_level = int(request.form.get('class_level', 1))  # Default level is 1
+
+        char = next((c for c in user_chars if str(c.char_id) == character_id), None)
+        if not char:
+            return json.dumps({"error": "Character not found"}), 404
+
+        # Check if character already has a class entry
+        char_class_entry = Character_Class.query.filter_by(char_id=char.char_id, class_id=new_class_id).first()
+        if char_class_entry:
+            char_class_entry.class_level = new_class_level
+        else:
+            db.session.add(Character_Class(char_id=char.char_id, class_id=new_class_id, class_level=new_class_level))
+
+        db.session.commit()
+        return redirect(url_for('core_bp.home'))
+
+    return json.dumps({'characters': characters_data, 'all_classes': all_classes})
+
+@character_bp.route("/all_characters", methods=['GET', 'POST'])
+def all_characters():
+
+    # Fetch all characters owned by the user and join with the User table for owner name
+    all_chars = (
+        db.session.query(
+            Character.char_id,
+            Character.name.label("character_name"),
+            Character.owner_id,
+            User.username.label("owner_name")
+        )
+        .join(User, User.id == Character.owner_id)
+        .all()
+    )
+
+    if not all_chars:
+        return json.dumps({"error": "No characters found"}), 404
+
+    characters_data = []
+
+    for char in all_chars:
+        char_obj = Character.query.get(char.char_id)
+
+        # Fetch class and level information
+        class_info = [(cc.class_.name, cc.class_level) for cc in char_obj.charClass]
+        classes = [entry[0] for entry in class_info]  # Class names
+        levels = [entry[1] for entry in class_info]  # Corresponding levels
+        # Compute sum of levels
+        total_level = sum(entry[1] for entry in class_info)
+        # Find the highest-level class
+        highest_class = max(class_info, key=lambda x: x[1])[0] if class_info else "None"
+
+        # Fetch race information
+        race = char_obj.charRace[0].race.name if char_obj.charRace else "Unknown"
+
+        characters_data.append({
+            'character_id': char.char_id,
+            'character_name': char.character_name,
+            'owner_id': char.owner_id,
+            'owner_name': char.owner_name,
+            'race': race,
+            'classes': classes,
+            'levels': levels,
+            'highest_class': highest_class,
+            'total_level': total_level
+        })
+
+    # Fetch all available classes
+    all_classes = [
+        {k: v for k, v in row.__dict__.items() if k != "_sa_instance_state"}
+        for row in DND_Class.query.all()
+    ]
+
+    if request.method == 'POST':
+        # Handle character class updates
+        character_id = request.form.get('character_id')
+        new_class_id = request.form.get('class_id')
+        new_class_level = int(request.form.get('class_level', 1))  # Default level is 1
+
+        char = next((c for c in all_chars if str(c.char_id) == character_id), None)
+        if not char:
+            return json.dumps({"error": "Character not found"}), 404
+
+        # Check if character already has a class entry
+        char_class_entry = Character_Class.query.filter_by(char_id=char.char_id, class_id=new_class_id).first()
+        if char_class_entry:
+            char_class_entry.class_level = new_class_level
+        else:
+            db.session.add(Character_Class(char_id=char.char_id, class_id=new_class_id, class_level=new_class_level))
+
+        db.session.commit()
+        return redirect(url_for('core_bp.home'))
+
+    return json.dumps({'characters': characters_data, 'all_classes': all_classes})
+

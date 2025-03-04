@@ -17,12 +17,15 @@ import { NONE_TYPE } from '@angular/compiler';
 })
 export class CharacterSheetComponent {
     
+    Math: any;
     http = inject(HttpClient);
     char_data: any = {};
 
     constructor(
         private route: ActivatedRoute
-    ) { }
+    ) {
+        this.Math = Math;
+     }
 
     
     ngOnInit() {

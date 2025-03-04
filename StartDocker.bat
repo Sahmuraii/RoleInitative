@@ -1,32 +1,43 @@
 @echo off
 
+::################################################################################################
+
 :: Set the image name and container name
-set imageName=flask-app
-set containerName=RoleInitiative-container
+set frontendImageName=angular-app
+set backendImageName=flask-app
+set frontendContainerName=RoleInitiative-frontend-container
+set backendContainerName=RoleInitiative-backend-container
 
 :: Set dockerfile name
-set dockerfilePath=BatchDockerfile.local
+set dockerfileFrontendPath=BatchDockerfile1.local
+set dockerfileBackendPath=BatchDockerfile2.local
+set dockerComposePath=Docker-Compose.yml
 
 :: Set file structure information
 set appFolder=/RoleInitiativeFolder
 set projectFolder=/RoleInitiative
 set appPath=
 set appName=run
+set angularPath=/frontend
+set angularAppName=frontend
+
+
+::################################################################################################
 
 
 :: Check if Docker is running by using docker info
 docker info >nul 2>&1
 if errorlevel 1 (
-    echo Docker Desktop is not running. Please start Docker Desktop and try again.
-    timeout /t 5 /nobreak
-    exit /b 1
+	echo Docker Desktop is not running. Please start Docker Desktop and try again.
+	timeout /t 5 /nobreak
+	exit /b 1
 )
 
 :: Check for .env file. Database will not work without it.
 if NOT EXIST .env (
-    echo Environment File not found. Please contact an admin only if you should be in posession of this file.
-    timeout /t 10 /nobreak
-    exit /b 1
+	echo Environment File not found. Please contact an admin if you should be in posession of this file.
+	timeout /t 10 /nobreak
+	exit /b 1
 )
 
 :: Prompt the user for which Dockerfile to use
@@ -42,15 +53,15 @@ echo.
 :: Determine which Dockerfile to use based on user input
 if errorlevel 4 (
 	set /p choice="Enter the name of the branch: "
-	echo Creating Dockerfile (Custom - %choice%^)...
-    (
-        echo # Dockerfile - Custom-branch configuration
-        echo FROM python:3.12.7
+	echo Creating Dockerfile1 (Custom - %choice%^)...
+	(
+		echo # Dockerfile - Custom-branch configuration
+		echo FROM python:3.12.7
 		echo.
 		echo ARG CACHEBUST=1
 		echo.
 		echo WORKDIR %appFolder%
-		echo #RUN git clone -b %choice% https://github.com/Sahmuraii/RoleInitiative.git
+		echo RUN git clone -b %choice% https://github.com/Sahmuraii/RoleInitiative.git
 		echo.
 		echo WORKDIR %appFolder%%projectFolder%
 		echo COPY . . 
@@ -60,19 +71,48 @@ if errorlevel 4 (
 		echo EXPOSE 5000
 		echo.
 		echo #Run Github Branch
-		echo #WORKDIR %appFolder%%projectFolder%/%appPath%
+		echo #WORKDIR %appFolder%%projectFolder%%appPath%
 		echo.
 		echo #Run local development
-		echo WORKDIR %appFolder%%projectFolder%/%appPath%
+		echo WORKDIR %appFolder%%projectFolder%%appPath%
 		echo.
 		echo ENTRYPOINT FLASK_APP=%appName% FLASK_DEBUG=1 flask run --port=5000 --host=0.0.0.0
-    ) > %dockerfilePath%
-    echo Using Dockerfile - Custom-branch configuration...
+	) > %dockerfileBackendPath%
+	echo Creating Dockerfile2 (Custom - %choice%^)...
+	(
+		echo # Dockerfile - Custom-branch configuration - frontend
+		echo FROM node:16-alpine
+		echo.
+		echo ARG CACHEBUST=1
+		echo.
+		echo WORKDIR %appFolder%
+		echo RUN git clone -b %choice% https://github.com/Sahmuraii/RoleInitiative.git
+		echo.
+		echo WORKDIR %appFolder%%projectFolder%
+		echo COPY . . 
+		echo.
+		echo WORKDIR %appFolder%%projectFolder%%angularPath%
+		echo RUN npm config set strict-ssl false
+		echo RUN npm install -g @angular/cli
+		echo RUN npm install
+		echo RUN npm install -g http-server
+		echo.
+		echo RUN ng add @angular/material
+		echo.
+		echo EXPOSE 4200
+		echo.
+		echo # Set the working directory to the output folder of the Angular build
+		echo WORKDIR %appFolder%%projectFolder%%angularPath%/dist/%angularAppName%
+		echo.
+		echo #ENTRYPOINT http-server . --port 4200
+		echo ENTRYPOINT ng serve --host 0.0.0.0
+	) > %dockerfileFrontendPath%
+	echo Using Dockerfile - Custom-branch configuration...
 ) else if errorlevel 3 (
-	echo Creating Dockerfile (LocalFile^)...
-    (
-        echo # Dockerfile - Local File configuration
-        echo FROM python:3.12.7
+	echo Creating Dockerfile1 (LocalFile^)...
+	(
+		echo # Dockerfile - Local File configuration
+		echo FROM python:3.12.7
 		echo.
 		echo ARG CACHEBUST=1
 		echo.
@@ -88,19 +128,49 @@ if errorlevel 4 (
 		echo EXPOSE 5000
 		echo.
 		echo #Run Github Branch
-		echo #WORKDIR %appFolder%%projectFolder%/%appPath%
+		echo #WORKDIR %appFolder%%projectFolder%%appPath%
 		echo.
 		echo #Run local development
-		echo WORKDIR %appFolder%%projectFolder%/%appPath%
+		echo WORKDIR %appFolder%%projectFolder%%appPath%
 		echo.
 		echo ENTRYPOINT FLASK_APP=%appName% FLASK_DEBUG=1 flask run --port=5000 --host=0.0.0.0
-    ) > %dockerfilePath%
-    echo Using Dockerfile - Local File configuration...
+	) > %dockerfileBackendPath%
+	echo Creating Dockerfile2 (LocalFile^)...
+	(
+		echo # Dockerfile - Local File configuration - frontend
+		echo FROM node:16-alpine
+		echo.
+		echo ARG CACHEBUST=1
+		echo.
+		echo WORKDIR %appFolder%
+		echo #RUN git clone -b main https://github.com/Sahmuraii/RoleInitiative.git
+		echo #RUN git clone -b dev-branch https://github.com/Sahmuraii/RoleInitiative.git
+		echo.
+		echo WORKDIR %appFolder%%projectFolder%
+		echo COPY . . 
+		echo.
+		echo WORKDIR %appFolder%%projectFolder%%angularPath%
+		echo RUN npm config set strict-ssl false
+		echo RUN npm install -g @angular/cli
+		echo RUN npm install
+		echo RUN npm install -g http-server
+		echo.
+		echo RUN ng add @angular/material
+		echo.
+		echo EXPOSE 4200
+		echo.
+		echo # Set the working directory to the output folder of the Angular build
+		echo WORKDIR %appFolder%%projectFolder%%angularPath%/dist/%angularAppName%
+		echo.
+		echo #ENTRYPOINT http-server . --port 4200
+		echo ENTRYPOINT ng serve --host 0.0.0.0
+	) > %dockerfileFrontendPath%
+	echo Using Dockerfile - Local File configuration...
 ) else if errorlevel 2 (
-    echo Creating Dockerfile (DevGit^)...
-    (
-        echo # Dockerfile - Developer Github configuration
-        echo FROM python:3.12.7
+	echo Creating Dockerfile1 (DevGit^)...
+	(
+		echo # Dockerfile - Developer Github configuration
+		echo FROM python:3.12.7
 		echo.
 		echo ARG CACHEBUST=1
 		echo.
@@ -117,19 +187,52 @@ if errorlevel 4 (
 		echo EXPOSE 5000
 		echo.
 		echo #Run Github Branch
-		echo WORKDIR %appFolder%%projectFolder%/%appPath%
+		echo WORKDIR %appFolder%%projectFolder%%appPath%
 		echo.
 		echo #Run local development
-		echo #WORKDIR %appFolder%/%appPath%
+		echo #WORKDIR %appFolder%%appPath%
 		echo.
 		echo ENTRYPOINT FLASK_APP=%appName% FLASK_DEBUG=1 flask run --port=5000 --host=0.0.0.0
-    ) > %dockerfilePath%
+    ) > %dockerfileBackendPath%
+	echo Creating Dockerfile2 (DevGit^)...
+	(
+		echo # Dockerfile - Developer Github configuration - frontend
+		echo FROM node:22-alpine
+		echo.
+		echo ARG CACHEBUST=1
+		echo.
+		echo # Install git
+		echo RUN apk update ^&^& apk add --no-cache git
+		echo.
+		echo WORKDIR %appFolder%
+		echo #RUN git clone -b main https://github.com/Sahmuraii/RoleInitiative.git
+		echo RUN git clone -b dev-branch https://github.com/Sahmuraii/RoleInitiative.git
+		echo.
+		echo WORKDIR %appFolder%%projectFolder%
+		echo COPY . . 
+		echo.
+		echo WORKDIR %appFolder%%projectFolder%%angularPath%
+		echo RUN npm config set strict-ssl false
+		echo RUN npm install -g @angular/cli
+		echo RUN npm install
+		echo RUN npm install -g http-server
+		echo.
+		echo RUN ng add @angular/material
+		echo.
+		echo EXPOSE 4200
+		echo.
+		echo # Set the working directory to the output folder of the Angular build
+		echo #WORKDIR %appFolder%%projectFolder%%angularPath%/dist/%angularAppName%
+		echo.
+		echo #ENTRYPOINT http-server . --port 4200
+		echo ENTRYPOINT ng serve --host 0.0.0.0
+	) > %dockerfileFrontendPath%
     echo Using Dockerfile - Developer Github configuration...
 ) else if errorlevel 1 (
-	echo Creating Dockerfile (MainGit^)...
+	echo Creating Dockerfile1 (MainGit^)...
 	(
-        echo # Dockerfile - Main Github configuration
-        echo FROM python:3.12.7
+		echo # Dockerfile - Main Github configuration
+		echo FROM python:3.12.7
 		echo.
 		echo ARG CACHEBUST=1
 		echo.
@@ -152,53 +255,128 @@ if errorlevel 4 (
 		echo #WORKDIR %appFolder%/%appPath%
 		echo.
 		echo ENTRYPOINT FLASK_APP=%appName% FLASK_DEBUG=1 flask run --port=5000 --host=0.0.0.0
-    ) > %dockerfilePath%
+    ) > %dockerfileBackendPath%
+	echo Creating Dockerfile2 (MainGit^)...
+	(
+		echo # Dockerfile - Main Github configuration - frontend
+		echo FROM node:16-alpine
+		echo.
+		echo ARG CACHEBUST=1
+		echo.
+		echo WORKDIR %appFolder%
+		echo RUN git clone -b main https://github.com/Sahmuraii/RoleInitiative.git
+		echo #RUN git clone -b dev-branch https://github.com/Sahmuraii/RoleInitiative.git
+		echo.
+		echo WORKDIR %appFolder%%projectFolder%
+		echo COPY . . 
+		echo.
+		echo WORKDIR %appFolder%%projectFolder%%angularPath%
+		echo RUN npm config set strict-ssl false
+		echo RUN npm install -g @angular/cli
+		echo RUN npm install
+		echo RUN npm install -g http-server
+		echo.
+		echo RUN ng add @angular/material
+		echo.
+		echo EXPOSE 4200
+		echo.
+		echo # Set the working directory to the output folder of the Angular build
+		echo WORKDIR %appFolder%%projectFolder%%angularPath%/dist/%angularAppName%
+		echo.
+		echo #ENTRYPOINT http-server . --port 4200
+		echo ENTRYPOINT ng serve --host 0.0.0.0
+	) > %dockerfileFrontendPath%
     echo Using Dockerfile - Main Github configuration...
 ) else (
-    echo Invalid choice. Please enter 1, 2, 3, or 4.
+	echo Invalid choice. Please enter 1, 2, 3, or 4.
 	echo Closing in 5 seconds...
 	timeout /t 5 /nobreak >nul
-    exit /b 1
+	exit /b 1
 )
 timeout /t 1 /nobreak >nul
 
 :: Check for any running container with the same name
 echo.
 echo -------------------------------------------------------------
-echo Checking for any running container with the name %containerName%...
-for /f "tokens=*" %%i in ('docker ps -a -q -f "name=%containerName%"') do set containerExists=%%i
+echo Checking for any running container with the name %frontendContainerName%...
+for /f "tokens=*" %%i in ('docker ps -a -q -f "name=%frontendContainerName%"') do set containerExists=%%i
 
 if defined containerExists (
-    echo Stopping the existing container %containerName%...
-    docker stop %containerName% >nul
-    docker rm %containerName% >nul
+	echo Stopping the existing container %frontendContainerName%...
+	docker stop %frontendContainerName% >nul
+	docker rm %frontendContainerName% >nul
 ) else (
-    echo No existing container with the name %containerName% found.
+	echo   All Clear. No existing container with the name %frontendContainerName% found.
 )
 
+echo Checking for any running container with the name %backendContainerName%...
+for /f "tokens=*" %%i in ('docker ps -a -q -f "name=%backendContainerName%"') do set containerExists=%%i
+
+if defined containerExists (
+	echo Stopping the existing container %backendContainerName%...
+	docker stop %backendContainerName% >nul
+	docker rm %backendContainerName% >nul
+) else (
+	echo   All Clear. No existing container with the name %backendContainerName% found.
+)
+
+
 :: Prune unused Docker images
+echo.
+echo -------------------------------------------------------------
 echo Pruning unused Docker images...
 docker image prune -f
 
-:: Build the new image using the selected Dockerfile
-echo Building new Docker image using %dockerfilePath%...
-docker build --no-cache -t %imageName% -f %dockerfilePath% .
 
-:: Check if the image was built successfully
+:: Run new images using a docker-compose.yml file
+echo.
+echo -------------------------------------------------------------
+echo Creating Docker-Compose
+(
+	echo services:
+	echo     frontend-angular:
+	echo         build:
+	echo             context: .
+	echo             dockerfile: %dockerfileFrontendPath%
+	echo             args:
+	echo                 - "no-cache=true"
+	echo         image: %frontendImageName%
+	echo         container_name: %frontendContainerName%
+	echo         restart: always
+	echo         ports:
+	echo             - "4200:4200"
+	echo         networks:
+	echo             - localnet
+	echo         depends_on:
+	echo             - backend-flask
+	echo         links:
+	echo             - "backend-flask:backend"
+	echo     backend-flask:
+	echo         build:
+	echo             context: .
+	echo             dockerfile: %dockerfileBackendPath%
+	echo             args:
+	echo                 - "no-cache=true"
+	echo         image: %backendImageName%
+	echo         container_name: %backendContainerName%
+	echo         restart: always
+	echo         ports:
+	echo             - "5000:5000"
+	echo         networks:
+	echo             - localnet
+	echo networks:
+	echo     localnet:
+	echo         driver: bridge
+
+) > %dockerComposePath%
+
+:: Run the Docker-Compose file
+docker-compose up --build -d
+
+:: Check if the containers were started successfully
 if errorlevel 1 (
-    echo Docker image build failed.
-    exit /b 1
-)
-
-:: Run the newly built image with port mapping and container name
-echo Running Docker image with container name %containerName% and port mapping (5000:5000)...
-docker run -d -p 5000:5000 --name %containerName% %imageName%
-::docker run --network=host -d --name %containerName% %imageName%
-
-:: Check if the image ran successfully
-if errorlevel 1 (
-    echo Failed to run Docker image.
-    exit /b 1
+	echo Docker-Compose failed to build and/or start the containers.
+	exit /b 1
 )
 
 echo.
@@ -223,14 +401,18 @@ echo -------------------------------------------------------------
 if errorlevel 3 (
 	echo Setting 75 second timer...
 	timeout /t 75
-	echo Stopping the container %containerName%...
-	docker stop %containerName% >nul
+	echo Stopping the container %backendContainerName%...
+	docker stop %backendContainerName% >nul
+	echo Stopping the container %frontendContainerName%...
+	docker stop %frontendContainerName% >nul
 ) else if errorlevel 2 (
 	::Do nothing...
 	echo Leaving Container Open. Closing CMD...
 ) else if errorlevel 1 (
-	echo Stopping the container %containerName%...
-	docker stop %containerName% >nul
+	echo Stopping the container %backendContainerName%...
+	docker stop %backendContainerName% >nul
+	echo Stopping the container %frontendContainerName%...
+	docker stop %frontendContainerName% >nul
 ) else (
 	echo Invalid choice. Please enter 1, 2, or 3
 	echo Closing in 5 seconds...
